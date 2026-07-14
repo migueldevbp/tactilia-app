@@ -16,6 +16,12 @@ const I18N = {
     a11yTitle: "⚙ Accesibilidad", a11yContrast: "Alto contraste",
     a11yVibration: "Vibración al acertar", a11yTextSize: "Tamaño de texto",
     activeStudent: "Estudiante activo", newStudent: "+ Nuevo",
+    setLabel: "Kit / set temático",
+    setBasico: "Letras · números · figuras",
+    setEmociones: "Emociones",
+    setRutinas: "Rutinas diarias",
+    setTodos: "Todos los sets",
+    setHelp: "Elige el banco de piezas para los retos (útil en discapacidad intelectual: emoción / rutina).",
     exerciseMode: "Modo ejercicio", exercisePrompt: "Presiona \"Nuevo reto\" para comenzar",
     newChallenge: "🎯 Nuevo reto", repeat: "🔊 Repetir",
     scanPiece: "Escanear pieza (Realidad Aumentada)",
@@ -35,6 +41,12 @@ const I18N = {
     a11yTitle: "⚙ Runa yanapay", a11yContrast: "Sinchi rikch'ay",
     a11yVibration: "Kuyuchiy allin kaqtin", a11yTextSize: "Qillqa hatunchay",
     activeStudent: "Kunan yachaqaq", newStudent: "+ Musuq",
+    setLabel: "Impay kit",
+    setBasico: "Letras · yupay · rikch'akuna",
+    setEmociones: "Sunquykuna",
+    setRutinas: "Sapa p'unchaw",
+    setTodos: "Llapan",
+    setHelp: "Akllay riqsichinakunata (emocionkuna / sapa p'unchaw).",
     exerciseMode: "Yachay pukllay", exercisePrompt: "\"Musuq atipanakuy\" nisqata ñitiy qallariy",
     newChallenge: "🎯 Musuq atipanakuy", repeat: "🔊 Kutichiy",
     scanPiece: "Rikuchiy (Realidad Aumentada)",
@@ -64,43 +76,74 @@ const t = (key, ...args) => {
    se mantiene el nombre de la letra en español dentro de una frase
    portadora en quechua, en vez de forzar una traducción literal. */
 const CONCEPTS = [
-  { id: "letra-a", type: "letra", label: "Letra A", icon: "A",
+  // Set básico (letras, números, figuras)
+  { id: "letra-a", set: "basico", type: "letra", label: "Letra A", icon: "A",
     say: "Letra A, como en Araña.", label_qu: "Letra A", say_qu: "Kayqa letra A, allqu hina (allqu = perro)." },
-  { id: "letra-e", type: "letra", label: "Letra E", icon: "E",
+  { id: "letra-e", set: "basico", type: "letra", label: "Letra E", icon: "E",
     say: "Letra E, como en Elefante.", label_qu: "Letra E", say_qu: "Kayqa letra E." },
-  { id: "letra-i", type: "letra", label: "Letra I", icon: "I",
+  { id: "letra-i", set: "basico", type: "letra", label: "Letra I", icon: "I",
     say: "Letra I, como en Iguana.", label_qu: "Letra I", say_qu: "Kayqa letra I, inti hina (inti = sol)." },
-  { id: "letra-o", type: "letra", label: "Letra O", icon: "O",
+  { id: "letra-o", set: "basico", type: "letra", label: "Letra O", icon: "O",
     say: "Letra O, como en Oso.", label_qu: "Letra O", say_qu: "Kayqa letra O." },
-  { id: "letra-u", type: "letra", label: "Letra U", icon: "U",
+  { id: "letra-u", set: "basico", type: "letra", label: "Letra U", icon: "U",
     say: "Letra U, como en Uva.", label_qu: "Letra U", say_qu: "Kayqa letra U, urpi hina (urpi = paloma)." },
 
-  { id: "numero-1", type: "numero", label: "Número 1", icon: "1",
+  { id: "numero-1", set: "basico", type: "numero", label: "Número 1", icon: "1",
     say: "Número uno.", label_qu: "Huk", say_qu: "Huk." },
-  { id: "numero-2", type: "numero", label: "Número 2", icon: "2",
+  { id: "numero-2", set: "basico", type: "numero", label: "Número 2", icon: "2",
     say: "Número dos.", label_qu: "Iskay", say_qu: "Iskay." },
-  { id: "numero-3", type: "numero", label: "Número 3", icon: "3",
+  { id: "numero-3", set: "basico", type: "numero", label: "Número 3", icon: "3",
     say: "Número tres.", label_qu: "Kimsa", say_qu: "Kimsa." },
-  { id: "numero-4", type: "numero", label: "Número 4", icon: "4",
+  { id: "numero-4", set: "basico", type: "numero", label: "Número 4", icon: "4",
     say: "Número cuatro.", label_qu: "Tawa", say_qu: "Tawa." },
-  { id: "numero-5", type: "numero", label: "Número 5", icon: "5",
+  { id: "numero-5", set: "basico", type: "numero", label: "Número 5", icon: "5",
     say: "Número cinco.", label_qu: "Pichqa", say_qu: "Pichqa." },
 
-  { id: "figura-circulo", type: "figura", label: "Círculo", icon: "⚪",
+  { id: "figura-circulo", set: "basico", type: "figura", label: "Círculo", icon: "⚪",
     say: "Esta es la figura círculo.", label_qu: "Muyu", say_qu: "Kayqa muyu." },
-  { id: "figura-cuadrado", type: "figura", label: "Cuadrado", icon: "◻️",
+  { id: "figura-cuadrado", set: "basico", type: "figura", label: "Cuadrado", icon: "◻️",
     say: "Esta es la figura cuadrado.", label_qu: "Tawa kuchu", say_qu: "Kayqa tawa kuchu (tawa kuchuyuq)." },
-  { id: "figura-triangulo", type: "figura", label: "Triángulo", icon: "🔺",
+  { id: "figura-triangulo", set: "basico", type: "figura", label: "Triángulo", icon: "🔺",
     say: "Esta es la figura triángulo.", label_qu: "Kimsa kuchu", say_qu: "Kayqa kimsa kuchu." },
-  { id: "figura-estrella", type: "figura", label: "Estrella", icon: "⭐",
+  { id: "figura-estrella", set: "basico", type: "figura", label: "Estrella", icon: "⭐",
     say: "Esta es la figura estrella.", label_qu: "Ch'aska", say_qu: "Kayqa ch'aska." },
-  { id: "figura-corazon", type: "figura", label: "Corazón", icon: "❤️",
+  { id: "figura-corazon", set: "basico", type: "figura", label: "Corazón", icon: "❤️",
     say: "Esta es la figura corazón.", label_qu: "Sonqo", say_qu: "Kayqa sonqo." },
+
+  // Set emociones (pictogramas — discapacidad intelectual / socioemocional)
+  { id: "emocion-alegre", set: "emociones", type: "emocion", label: "Alegre", icon: "😊",
+    say: "Emoción: alegre, contento.", label_qu: "Kusisqa", say_qu: "Kayqa kusisqa." },
+  { id: "emocion-triste", set: "emociones", type: "emocion", label: "Triste", icon: "😢",
+    say: "Emoción: triste.", label_qu: "Llakisqa", say_qu: "Kayqa llakisqa." },
+  { id: "emocion-enojo", set: "emociones", type: "emocion", label: "Enojo", icon: "😠",
+    say: "Emoción: enojo.", label_qu: "Phiña", say_qu: "Kayqa phiña." },
+  { id: "emocion-miedo", set: "emociones", type: "emocion", label: "Miedo", icon: "😨",
+    say: "Emoción: miedo.", label_qu: "Manchakuq", say_qu: "Kayqa manchakuq." },
+  { id: "emocion-calma", set: "emociones", type: "emocion", label: "Calma", icon: "😌",
+    say: "Emoción: calma, tranquilo.", label_qu: "Thak", say_qu: "Kayqa thak." },
+
+  // Set rutinas diarias
+  { id: "rutina-lavarse", set: "rutinas", type: "rutina", label: "Lavarse", icon: "🧼",
+    say: "Rutina: lavarse las manos o la cara.", label_qu: "Maqllikuy", say_qu: "Maqllikuy." },
+  { id: "rutina-comer", set: "rutinas", type: "rutina", label: "Comer", icon: "🍽️",
+    say: "Rutina: comer.", label_qu: "Mikuy", say_qu: "Mikuy." },
+  { id: "rutina-dormir", set: "rutinas", type: "rutina", label: "Dormir", icon: "🛏️",
+    say: "Rutina: dormir.", label_qu: "Puñuy", say_qu: "Puñuy." },
+  { id: "rutina-escuela", set: "rutinas", type: "rutina", label: "Ir a la escuela", icon: "🏫",
+    say: "Rutina: ir a la escuela.", label_qu: "Yachay wasi", say_qu: "Yachay wasiman riy." },
+  { id: "rutina-jugar", set: "rutinas", type: "rutina", label: "Jugar", icon: "🎲",
+    say: "Rutina: jugar.", label_qu: "Pukllay", say_qu: "Pukllay." },
 ];
 const QR_PREFIX = "TACTILIA:";
 const findConcept = (id) => CONCEPTS.find((c) => c.id === id);
 const conceptLabel = (c) => (LANG === "qu" ? c.label_qu : c.label);
 const conceptSay = (c) => (LANG === "qu" ? c.say_qu : c.say);
+
+let activeSet = localStorage.getItem("tactilia_set") || "basico";
+function conceptsInActiveSet() {
+  if (activeSet === "todos") return CONCEPTS;
+  return CONCEPTS.filter((c) => c.set === activeSet);
+}
 
 /* ---------- 2. Almacenamiento local (estudiantes + registro + prefs) ---- */
 const STORAGE_KEY = "tactilia_data_v1";
@@ -156,6 +199,16 @@ function toast(msg) {
   toast._t = setTimeout(() => (el.hidden = true), 2200);
 }
 
+function announceForScreenReader(msg) {
+  const el = document.getElementById("sr-announce");
+  if (!el) return;
+  el.textContent = "";
+  // Forzar re-anuncio en lectores de pantalla
+  requestAnimationFrame(() => {
+    el.textContent = msg;
+  });
+}
+
 /* ---------- 4. Aplicar traducciones a elementos [data-i18n] -------------- */
 function applyI18n() {
   document.querySelectorAll("[data-i18n]").forEach((el) => {
@@ -163,6 +216,12 @@ function applyI18n() {
     const val = I18N[LANG][key];
     if (typeof val === "string") el.textContent = val;
   });
+  document.querySelectorAll("[data-i18n-option]").forEach((el) => {
+    const key = el.dataset.i18nOption;
+    const val = I18N[LANG][key];
+    if (typeof val === "string") el.textContent = val;
+  });
+  document.documentElement.lang = LANG === "qu" ? "qu" : "es";
   document.getElementById("exercise-target").textContent = currentTarget
     ? t("findPiece", conceptLabel(currentTarget))
     : t("exercisePrompt");
@@ -173,8 +232,11 @@ document.querySelectorAll(".lang-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     LANG = btn.dataset.lang;
     localStorage.setItem("tactilia_lang", LANG);
-    document.querySelectorAll(".lang-btn").forEach((b) => b.classList.remove("active"));
-    btn.classList.add("active");
+    document.querySelectorAll(".lang-btn").forEach((b) => {
+      const on = b.dataset.lang === LANG;
+      b.classList.toggle("active", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
     applyI18n();
   });
 });
@@ -182,14 +244,28 @@ document.querySelectorAll(".lang-btn").forEach((btn) => {
 /* ---------- 5. Navegación por pestañas ---------- */
 document.querySelectorAll(".tab-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
-    document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+    document.querySelectorAll(".tab-btn").forEach((b) => {
+      const on = b === btn;
+      b.classList.toggle("active", on);
+      b.setAttribute("aria-selected", on ? "true" : "false");
+    });
     document.querySelectorAll(".view").forEach((v) => v.classList.remove("active"));
-    btn.classList.add("active");
     document.getElementById("view-" + btn.dataset.view).classList.add("active");
     if (btn.dataset.view === "docente") renderDashboard();
   });
 });
 
+/* ---------- 5b. Selector de set temático ---------- */
+const setSelect = document.getElementById("set-select");
+if (setSelect) {
+  setSelect.value = activeSet;
+  setSelect.addEventListener("change", () => {
+    activeSet = setSelect.value;
+    localStorage.setItem("tactilia_set", activeSet);
+    currentTarget = null;
+    applyI18n();
+  });
+}
 /* ---------- 6. Selector de estudiante ---------- */
 const studentSelect = document.getElementById("student-select");
 function renderStudentSelect() {
@@ -236,9 +312,13 @@ applyPrefs();
 let currentTarget = null;
 
 document.getElementById("btn-new-challenge").addEventListener("click", () => {
-  currentTarget = CONCEPTS[Math.floor(Math.random() * CONCEPTS.length)];
-  document.getElementById("exercise-target").textContent = t("findPiece", conceptLabel(currentTarget));
+  const pool = conceptsInActiveSet();
+  if (pool.length === 0) return;
+  currentTarget = pool[Math.floor(Math.random() * pool.length)];
+  const msg = t("findPiece", conceptLabel(currentTarget));
+  document.getElementById("exercise-target").textContent = msg;
   speak(t("sayFind", conceptLabel(currentTarget)));
+  announceForScreenReader(msg);
 });
 
 document.getElementById("btn-repeat-audio").addEventListener("click", () => {
@@ -259,6 +339,7 @@ let stream = null;
 let scanning = false;
 let lastReadTs = 0;
 let lastCode = null; // { concept, location, ts }
+let particles = []; // burst de celebración al acertar (canvas 2D, sin three.js)
 
 document.getElementById("btn-start-scan").addEventListener("click", startScan);
 document.getElementById("btn-stop-scan").addEventListener("click", stopScan);
@@ -284,10 +365,66 @@ async function startScan() {
 function stopScan() {
   scanning = false;
   lastCode = null;
+  particles = [];
   if (stream) stream.getTracks().forEach((tr) => tr.stop());
   document.getElementById("btn-start-scan").hidden = false;
   document.getElementById("btn-stop-scan").hidden = true;
   document.getElementById("scan-status").textContent = t("cameraOff");
+}
+
+function spawnAchievementBurst(x, y) {
+  const colors = ["#facc15", "#22c55e", "#38bdf8", "#f472b6", "#ffffff"];
+  for (let i = 0; i < 28; i++) {
+    const angle = (Math.PI * 2 * i) / 28 + Math.random() * 0.4;
+    const speed = 2.5 + Math.random() * 4;
+    particles.push({
+      x, y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 1.5,
+      life: 1,
+      decay: 0.018 + Math.random() * 0.012,
+      size: 3 + Math.random() * 4,
+      color: colors[i % colors.length],
+      kind: i % 5 === 0 ? "star" : "dot",
+    });
+  }
+}
+
+function updateAndDrawParticles() {
+  if (particles.length === 0) return;
+  const next = [];
+  for (const p of particles) {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.12;
+    p.life -= p.decay;
+    if (p.life <= 0) continue;
+    ctx.globalAlpha = Math.max(0, p.life);
+    ctx.fillStyle = p.color;
+    if (p.kind === "star") {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.life * 6);
+      ctx.beginPath();
+      for (let i = 0; i < 5; i++) {
+        const a = (i * Math.PI * 2) / 5 - Math.PI / 2;
+        const r = p.size * 1.4;
+        ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+        const a2 = a + Math.PI / 5;
+        ctx.lineTo(Math.cos(a2) * r * 0.45, Math.sin(a2) * r * 0.45);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    } else {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    next.push(p);
+  }
+  ctx.globalAlpha = 1;
+  particles = next;
 }
 
 function scanLoop() {
@@ -307,17 +444,17 @@ function scanLoop() {
         drawAROverlay(concept, code.location);
         if (now - lastReadTs > 1200) {
           lastReadTs = now;
-          handleScan(concept);
+          handleScan(concept, code.location);
         }
       }
     } else if (lastCode && now - lastCode.ts < 350) {
       // sostiene la etiqueta un instante para que no "parpadee" entre frames
       drawAROverlay(lastCode.concept, lastCode.location);
     }
+    updateAndDrawParticles();
   }
   requestAnimationFrame(scanLoop);
 }
-
 /* Dibuja el overlay de Realidad Aumentada: recuadro que sigue las 4
    esquinas del QR físico + etiqueta grande flotando sobre la pieza. */
 function drawAROverlay(concept, loc) {
@@ -381,7 +518,7 @@ function roundRectPath(c, x, y, w, h, r) {
 }
 
 /* ---------- 10. Manejo de una pieza escaneada ---------- */
-function handleScan(concept) {
+function handleScan(concept, location) {
   const resultCard = document.getElementById("result-card");
   resultCard.hidden = false;
   document.getElementById("result-icon").textContent = concept.icon;
@@ -389,21 +526,32 @@ function handleScan(concept) {
 
   if (currentTarget) {
     const correct = concept.id === currentTarget.id;
-    document.getElementById("result-feedback").textContent = correct
+    const feedback = correct
       ? t("correct")
       : t("almost", conceptLabel(currentTarget));
+    document.getElementById("result-feedback").textContent = feedback;
     speak(correct ? t("sayCorrect", conceptSay(concept)) : t("sayWrong", conceptLabel(concept), conceptLabel(currentTarget)));
     vibrate(correct ? 180 : [60, 40, 60]);
+    announceForScreenReader(`${conceptLabel(concept)}. ${feedback}`);
     logAttempt(concept.id, currentTarget.id, correct);
-    if (correct) currentTarget = null;
+    if (correct && location) {
+      const { topLeftCorner: tl, topRightCorner: tr, bottomRightCorner: br, bottomLeftCorner: bl } = location;
+      spawnAchievementBurst(
+        (tl.x + tr.x + br.x + bl.x) / 4,
+        (tl.y + tr.y + br.y + bl.y) / 4
+      );
+      currentTarget = null;
+    } else if (correct) {
+      currentTarget = null;
+    }
   } else {
     document.getElementById("result-feedback").textContent = t("freeMode");
     speak(conceptSay(concept));
     vibrate(90);
+    announceForScreenReader(`${conceptLabel(concept)}. ${t("freeMode")}`);
     logAttempt(concept.id, null, true);
   }
 }
-
 function logAttempt(conceptId, targetId, correct) {
   DATA.logs.push({
     student: studentSelect.value || DATA.students[0],
@@ -548,5 +696,9 @@ if ("serviceWorker" in navigator) {
 }
 
 /* ---------- 15. Estado inicial de idioma ---------- */
-document.querySelectorAll(".lang-btn").forEach((b) => b.classList.toggle("active", b.dataset.lang === LANG));
+document.querySelectorAll(".lang-btn").forEach((b) => {
+  const on = b.dataset.lang === LANG;
+  b.classList.toggle("active", on);
+  b.setAttribute("aria-pressed", on ? "true" : "false");
+});
 applyI18n();

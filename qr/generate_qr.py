@@ -19,10 +19,17 @@ import qrcode
 
 # Debe mantenerse sincronizado con CONCEPTS en app.js
 CONCEPT_IDS = [
+    # Set básico
     "letra-a", "letra-e", "letra-i", "letra-o", "letra-u",
     "numero-1", "numero-2", "numero-3", "numero-4", "numero-5",
     "figura-circulo", "figura-cuadrado", "figura-triangulo",
     "figura-estrella", "figura-corazon",
+    # Set emociones
+    "emocion-alegre", "emocion-triste", "emocion-enojo",
+    "emocion-miedo", "emocion-calma",
+    # Set rutinas
+    "rutina-lavarse", "rutina-comer", "rutina-dormir",
+    "rutina-escuela", "rutina-jugar",
 ]
 
 OUT_DIR = os.path.join(os.path.dirname(__file__), "output")

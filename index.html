@@ -15,26 +15,26 @@
 <header class="topbar">
   <div class="brand-row">
     <div class="brand">
-      <span class="brand-dot"></span>
+      <span class="brand-dot" aria-hidden="true"></span>
       <h1>TactilIA</h1>
       <span class="brand-sub">Makiwan Yachay</span>
     </div>
-    <div class="lang-switch" role="group" aria-label="Idioma">
-      <button id="lang-es" class="lang-btn active" data-lang="es">ES</button>
-      <button id="lang-qu" class="lang-btn" data-lang="qu">QU</button>
+    <div class="lang-switch" role="group" aria-label="Idioma / Simi">
+      <button id="lang-es" class="lang-btn active" data-lang="es" aria-pressed="true">ES</button>
+      <button id="lang-qu" class="lang-btn" data-lang="qu" aria-pressed="false">QU</button>
     </div>
   </div>
-  <nav class="tabs">
-    <button class="tab-btn active" data-view="estudiante" data-i18n="tabEstudiante">Estudiante</button>
-    <button class="tab-btn" data-view="docente" data-i18n="tabDocente">Docente</button>
-    <button class="tab-btn" data-view="acerca" data-i18n="tabAcerca">Acerca de</button>
+  <nav class="tabs" role="tablist" aria-label="Vistas principales">
+    <button class="tab-btn active" role="tab" aria-selected="true" data-view="estudiante" data-i18n="tabEstudiante" id="tab-estudiante" aria-controls="view-estudiante">Estudiante</button>
+    <button class="tab-btn" role="tab" aria-selected="false" data-view="docente" data-i18n="tabDocente" id="tab-docente" aria-controls="view-docente">Docente</button>
+    <button class="tab-btn" role="tab" aria-selected="false" data-view="acerca" data-i18n="tabAcerca" id="tab-acerca" aria-controls="view-acerca">Acerca de</button>
   </nav>
 </header>
 
 <main>
 
   <!-- VISTA ESTUDIANTE -->
-  <section id="view-estudiante" class="view active">
+  <section id="view-estudiante" class="view active" role="tabpanel" aria-labelledby="tab-estudiante">
 
     <details class="card a11y-card">
       <summary data-i18n="a11yTitle">⚙ Accesibilidad</summary>
@@ -49,7 +49,7 @@
         </label>
         <div class="a11y-row">
           <span data-i18n="a11yTextSize">Tamaño de texto</span>
-          <select id="sel-textsize">
+          <select id="sel-textsize" aria-label="Tamaño de texto">
             <option value="normal">Normal</option>
             <option value="grande">Grande</option>
             <option value="xl">Muy grande</option>
@@ -62,35 +62,46 @@
       <label for="student-select" data-i18n="activeStudent">Estudiante activo</label>
       <div class="row">
         <select id="student-select"></select>
-        <button id="btn-new-student" class="btn-secondary" title="Agregar estudiante" data-i18n="newStudent">+ Nuevo</button>
+        <button id="btn-new-student" class="btn-secondary" type="button" data-i18n="newStudent">+ Nuevo</button>
       </div>
+    </div>
+
+    <div class="card set-card">
+      <label for="set-select" data-i18n="setLabel">Kit / set temático</label>
+      <select id="set-select" aria-describedby="set-help">
+        <option value="basico" data-i18n-option="setBasico">Letras · números · figuras</option>
+        <option value="emociones" data-i18n-option="setEmociones">Emociones</option>
+        <option value="rutinas" data-i18n-option="setRutinas">Rutinas diarias</option>
+        <option value="todos" data-i18n-option="setTodos">Todos los sets</option>
+      </select>
+      <p id="set-help" class="muted" data-i18n="setHelp">Elige el banco de piezas para los retos (útil en discapacidad intelectual: emoción / rutina).</p>
     </div>
 
     <div class="card exercise-card">
       <h2 data-i18n="exerciseMode">Modo ejercicio</h2>
-      <p id="exercise-target" class="target-text" data-i18n="exercisePrompt">Presiona "Nuevo reto" para comenzar</p>
+      <p id="exercise-target" class="target-text" data-i18n="exercisePrompt" role="status" aria-live="polite">Presiona "Nuevo reto" para comenzar</p>
       <div class="row">
-        <button id="btn-new-challenge" class="btn-primary" data-i18n="newChallenge">Nuevo reto</button>
-        <button id="btn-repeat-audio" class="btn-secondary" data-i18n="repeat">Repetir</button>
+        <button id="btn-new-challenge" class="btn-primary" type="button" data-i18n="newChallenge">Nuevo reto</button>
+        <button id="btn-repeat-audio" class="btn-secondary" type="button" data-i18n="repeat">Repetir</button>
       </div>
     </div>
 
     <div class="card scanner-card">
       <h2 data-i18n="scanPiece">Escanear pieza (Realidad Aumentada)</h2>
-      <div id="scanner-wrap" class="scanner-wrap">
+      <div id="scanner-wrap" class="scanner-wrap" role="img" aria-label="Vista de cámara con realidad aumentada">
         <video id="camera-view" playsinline muted></video>
-        <canvas id="camera-canvas"></canvas>
-        <div id="scan-frame" class="scan-frame"></div>
+        <canvas id="camera-canvas" aria-hidden="true"></canvas>
+        <div id="scan-frame" class="scan-frame" aria-hidden="true"></div>
       </div>
       <div class="row">
-        <button id="btn-start-scan" class="btn-primary" data-i18n="startCamera">Activar cámara</button>
-        <button id="btn-stop-scan" class="btn-secondary" hidden data-i18n="stopCamera">Detener</button>
+        <button id="btn-start-scan" class="btn-primary" type="button" data-i18n="startCamera">Activar cámara</button>
+        <button id="btn-stop-scan" class="btn-secondary" type="button" hidden data-i18n="stopCamera">Detener</button>
       </div>
-      <p id="scan-status" class="status-text" data-i18n="cameraOff">Cámara apagada.</p>
+      <p id="scan-status" class="status-text" data-i18n="cameraOff" role="status" aria-live="polite">Cámara apagada.</p>
     </div>
 
-    <div class="card result-card" id="result-card" hidden>
-      <div id="result-icon" class="result-icon">—</div>
+    <div class="card result-card" id="result-card" hidden role="status" aria-live="assertive" aria-atomic="true">
+      <div id="result-icon" class="result-icon" aria-hidden="true">—</div>
       <div id="result-label" class="result-label">—</div>
       <div id="result-feedback" class="result-feedback">—</div>
     </div>
@@ -98,7 +109,7 @@
   </section>
 
   <!-- VISTA DOCENTE -->
-  <section id="view-docente" class="view">
+  <section id="view-docente" class="view" role="tabpanel" aria-labelledby="tab-docente">
     <div class="card">
       <h2>Panel del docente</h2>
       <p class="muted">Resumen de progreso guardado localmente en el dispositivo (funciona sin internet).</p>
@@ -117,27 +128,28 @@
     <div class="card">
       <h3>Recomendación con IA</h3>
       <p class="muted">Consulta Claude vía el backend en <code>server/</code> (clave solo en el servidor). Sin internet o sin backend, usa la heurística local offline.</p>
-      <button id="btn-ai-recommend" class="btn-primary" aria-describedby="ai-help">✨ Generar recomendación</button>
+      <button id="btn-ai-recommend" class="btn-primary" type="button" aria-describedby="ai-help">✨ Generar recomendación</button>
       <p id="ai-help" class="muted" hidden>La recomendación se anuncia a continuación.</p>
       <div id="ai-output" class="ai-output" role="status" aria-live="polite" aria-atomic="true"></div>
     </div>
 
     <div class="card">
       <div class="row">
-        <button id="btn-export" class="btn-secondary">⬇ Exportar datos (JSON)</button>
-        <button id="btn-clear" class="btn-danger">🗑 Borrar todos los datos</button>
+        <button id="btn-export" class="btn-secondary" type="button">⬇ Exportar datos (JSON)</button>
+        <button id="btn-clear" class="btn-danger" type="button">🗑 Borrar todos los datos</button>
       </div>
     </div>
   </section>
 
   <!-- VISTA ACERCA DE -->
-  <section id="view-acerca" class="view">
+  <section id="view-acerca" class="view" role="tabpanel" aria-labelledby="tab-acerca">
     <div class="card">
       <h2>TactilIA · Makiwan Yachay</h2>
       <p><em>Makiwan Yachay</em> significa, en quechua, "aprendizaje con las manos". Es el nombre bilingüe del proyecto, en honor a las comunidades quechuahablantes de Pasco y de otras regiones andinas.</p>
       <p>Kit de aprendizaje multisensorial: piezas manipulables impresas en 3D (letras, números y figuras en relieve) identificadas con un código QR, combinadas con esta app que reconoce cada pieza mediante <strong>realidad aumentada</strong> (resalta la pieza en la cámara en tiempo real), da retroalimentación auditiva inmediata en <strong>español o quechua</strong>, y adapta los retos al ritmo de cada estudiante.</p>
-      <p>Pensado para estudiantes de Educación Básica Especial y aulas rurales con conectividad limitada. La app funciona <strong>100% sin internet</strong> una vez instalada (PWA offline), incluye modo de <strong>alto contraste</strong>, texto ajustable y retroalimentación por <strong>vibración</strong> para estudiantes con discapacidad visual, auditiva o intelectual.</p>
-      <p class="muted">Nota lingüística: el quechua usa tradicionalmente un sistema de tres vocales (a, i, u). Los textos en quechua de este prototipo son una primera aproximación y deben ser revisados por un especialista en Educación Intercultural Bilingüe (EIB) o hablante nativo de la variedad de Pasco antes de su uso oficial.</p>
+      <p>Incluye sets temáticos de <strong>emociones</strong> y <strong>rutinas diarias</strong> (pictogramas) para apoyar a estudiantes con discapacidad intelectual, además del kit básico de letras, números y figuras.</p>
+      <p>Pensado para estudiantes de Educación Básica Especial y aulas rurales con conectividad limitada. La app funciona <strong>100% sin internet</strong> una vez instalada (PWA offline), incluye modo de <strong>alto contraste</strong>, texto ajustable, roles ARIA para lectores de pantalla y retroalimentación por <strong>vibración</strong>.</p>
+      <p class="muted">Nota lingüística: el quechua usa tradicionalmente un sistema de tres vocales (a, i, u). Los textos en quechua de este prototipo son una primera aproximación — use <strong>VALIDACION_QUECHUA.md</strong> para revisión con un especialista EIB o hablante nativo de Pasco antes de su uso oficial.</p>
       <p class="muted">Proyecto para la Hackathon en Tecnologías Digitales 2026 — Minedu — Categoría A.</p>
       <p class="muted">Alineado a ODS 4 (Educación de calidad) y ODS 10 (Reducción de las desigualdades).</p>
     </div>
@@ -145,7 +157,9 @@
 
 </main>
 
-<div id="toast" class="toast" hidden></div>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<div id="sr-announce" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
 
 <script src="lib/jsQR.js"></script>
 <script src="app.js"></script>

@@ -86,40 +86,68 @@ pieza buscada, verde si es la respuesta correcta.
 
 ```
 tactilia-app/
-├── index.html          Interfaz (estudiante / docente / acerca de)
-├── styles.css           Estilos
-├── app.js                Lógica: escaneo QR, voz, ejercicios, dashboard, IA
+├── index.html            Interfaz (estudiante / docente / acerca de)
+├── styles.css            Estilos + accesibilidad
+├── app.js                Lógica: escaneo QR, RA, voz, sets, dashboard, IA
 ├── manifest.json         Config de instalación como PWA
 ├── service-worker.js     Caché offline
-├── lib/jsQR.js            Librería de lectura de QR (incluida, sin CDN externo)
-├── icons/                 Íconos de la app (192px y 512px)
+├── VALIDACION_QUECHUA.md Checklist para especialista EIB / hablante nativo
+├── server/               Backend mínimo: POST /api/recommend → Claude
+│   ├── index.js
+│   ├── .env.example
+│   └── README.md
+├── lib/jsQR.js           Librería de lectura de QR (incluida, sin CDN)
+├── icons/                Íconos 192 / 512
 └── qr/
-    ├── generate_qr.py      Genera los 15 QR de las piezas del kit
-    └── output/*.png         QR listos para imprimir y pegar en cada pieza 3D
+    ├── generate_qr.py    Genera QR de todos los sets
+    └── output/*.png      Etiquetas listos para imprimir
 ```
 
 ## 6. Cómo se usa con las piezas impresas en 3D
 
-1. Imprime en 3D las 15 piezas (letras A·E·I·O·U, números 1-5, figuras
-   círculo/cuadrado/triángulo/estrella/corazón) con relieve táctil.
-2. Imprime las etiquetas de `qr/output/` y pégalas en la base de cada pieza.
-3. En la app, pestaña **Estudiante**: elige idioma (ES/QU) arriba a la
-   derecha, ajusta accesibilidad si hace falta, activa la cámara, presiona
-   "Nuevo reto" (la app dice y muestra qué pieza buscar), el estudiante
-   busca la pieza al tacto y la muestra a la cámara → la app confirma por
-   voz y con el recuadro de Realidad Aumentada si acertó.
-4. Pestaña **Docente**: progreso por estudiante (intentos, aciertos,
-   precisión) guardado localmente en el dispositivo, exportable a JSON.
+1. Imprime en 3D las piezas del kit (básico: letras A·E·I·O·U, números 1-5,
+   figuras; opcional: emociones y rutinas) con relieve o pictograma táctil.
+2. Genera/imprime las etiquetas: `cd qr && python3 generate_qr.py` → carpeta
+   `output/`, y pégalas en la base de cada pieza.
+3. En la app, pestaña **Estudiante**: elige idioma (ES/QU), elige el
+   **set temático**, ajusta accesibilidad, activa la cámara, “Nuevo reto”.
+4. Pestaña **Docente**: progreso local + botón de recomendación IA
+   (backend en `server/`, ver abajo).
 
-## 7. Siguientes pasos con IA (para seguir construyendo en Cursor)
+## 7. Recomendaciones con IA (Claude)
 
-El botón "Generar recomendación" ya funciona con una heurística local, y el
-quechua/RA/accesibilidad ya están implementados en esta versión. Para
-conectar la recomendación a Claude de verdad, sumar más idiomas o pictogramas,
-o evolucionar la RA hacia modelos 3D con WebXR, usa el prompt en
-**`CURSOR_PROMPT.md`**.
+```bash
+cd server
+cp .env.example .env   # pega ANTHROPIC_API_KEY
+npm install && npm start
+```
 
-## 8. Nota legal / propiedad intelectual
+La PWA llama por defecto a `http://localhost:8787/api/recommend`.
+Puedes cambiar la URL en consola: `localStorage.setItem('tactilia_ai_url', 'https://tu-api/api/recommend')`.
+Sin backend o sin red, el botón usa la heurística **offline** automáticamente.
+
+## 8. Validación del quechua
+
+Antes de exponer el piloto a un jurado quechuahablante, imprime o abre
+**`VALIDACION_QUECHUA.md`** y pide a un especialista EIB o hablante nativo
+de Pasco que marque cada frase (✅ / ✏️ / ❌).
+
+## 9. Empaquetado opcional como APK (Capacitor) — no necesario para el MVP
+
+La PWA ya es instalable desde el navegador. Si el jurado pide un `.apk`
+sin Chrome:
+
+1. `npm init @capacitor/app` en una carpeta auxiliar (o en la raíz).
+2. Copia `index.html`, `styles.css`, `app.js`, `lib/`, `icons/`, `manifest.json`
+   al `webDir` (ej. `www/`).
+3. `npx cap add android` → abre Android Studio → Build APK.
+4. Permisos de cámara en `AndroidManifest.xml`.
+
+No lo hacemos en este repo porque duplica tooling (Gradle/SDK) y complica
+el despliegue estático a GitHub Pages; la PWA cumple el mismo caso de uso
+offline en Android.
+
+## 10. Nota legal / propiedad intelectual
 
 Recuerda que, según las bases del evento, el código fuente debe ponerse a
 disposición del equipo organizador y las soluciones no deben haber sido
