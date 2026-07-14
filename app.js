@@ -13,7 +13,7 @@
 const I18N = {
   es: {
     tabEstudiante: "Estudiante", tabDocente: "Docente", tabAcerca: "Acerca de",
-    a11yTitle: "⚙ Accesibilidad", a11yContrast: "Alto contraste",
+    a11yTitle: "Accesibilidad", a11yContrast: "Alto contraste",
     a11yVibration: "Vibración al acertar", a11yTextSize: "Tamaño de texto",
     a11yVoice: "Voz / audio", a11yMotion: "Menos movimiento",
     activeStudent: "Estudiante activo", newStudent: "+ Nuevo",
@@ -25,13 +25,13 @@ const I18N = {
     setHelp: "Elige el banco de piezas para los retos (útil en discapacidad intelectual: emoción / rutina).",
     exerciseMode: "Modo ejercicio adaptativo",
     exercisePrompt: "Presiona \"Nuevo reto\" para comenzar",
-    newChallenge: "🎯 Nuevo reto", repeat: "🔊 Repetir",
+    newChallenge: "Nuevo reto", repeat: "Repetir",
     scanPiece: "Escanear pieza (Realidad Aumentada)",
-    startCamera: "📷 Activar cámara", stopCamera: "⏹ Detener",
+    startCamera: "Activar cámara", stopCamera: "Detener",
     cameraOff: "Cámara apagada.", cameraOn: "Cámara activa. Apunta a la pieza.",
     findPiece: (label) => `Encuentra la pieza: ${label}`,
     sayFind: (label) => `Busca la pieza ${label}`,
-    correct: "¡Correcto! Muy bien 🎉",
+    correct: "¡Correcto! Muy bien",
     almost: (label) => `Casi. Buscabas: ${label}`,
     sayCorrect: (say) => `¡Correcto! ${say}`,
     sayWrong: (label, target) => `Esa es ${label}. Sigue buscando ${target}.`,
@@ -51,13 +51,13 @@ const I18N = {
     aiTitle: "Recomendación con IA",
     aiHelp: "Consulta Claude vía el backend en server/ (clave solo en el servidor). Sin internet o sin backend, usa la heurística local offline.",
     aiButton: "Generar recomendación",
-    btnExport: "⬇ Exportar datos (JSON)",
-    btnImport: "⬆ Importar JSON",
-    btnClear: "🗑 Borrar todos los datos",
+    btnExport: "Exportar datos (JSON)",
+    btnImport: "Importar JSON",
+    btnClear: "Borrar todos los datos",
   },
   qu: {
     tabEstudiante: "Yachaqaq", tabDocente: "Yachachiq", tabAcerca: "Kaymanta",
-    a11yTitle: "⚙ Runa yanapay", a11yContrast: "Sinchi rikch'ay",
+    a11yTitle: "Runa yanapay", a11yContrast: "Sinchi rikch'ay",
     a11yVibration: "Kuyuchiy allin kaqtin", a11yTextSize: "Qillqa hatunchay",
     a11yVoice: "Rimay / uyarina", a11yMotion: "Aswanta mana kuyuchiy",
     activeStudent: "Kunan yachaqaq", newStudent: "+ Musuq",
@@ -69,13 +69,13 @@ const I18N = {
     setHelp: "Akllay riqsichinakunata (emocionkuna / sapa p'unchaw).",
     exerciseMode: "Yachay pukllay (yanapakuq)",
     exercisePrompt: "\"Musuq atipanakuy\" nisqata ñitiy qallariy",
-    newChallenge: "🎯 Musuq atipanakuy", repeat: "🔊 Kutichiy",
+    newChallenge: "Musuq atipanakuy", repeat: "Kutichiy",
     scanPiece: "Rikuchiy (Realidad Aumentada)",
-    startCamera: "📷 Kamarata qallariy", stopCamera: "⏹ Sayachiy",
+    startCamera: "Kamarata qallariy", stopCamera: "Sayachiy",
     cameraOff: "Kamara sayasqa.", cameraOn: "Kamara kachkan. Riqsichiyta qhaway.",
     findPiece: (label) => `Maskay: ${label}`,
     sayFind: (label) => `Maskay ${label}`,
-    correct: "¡Allin! Sumaqta ruwanki 🎉",
+    correct: "¡Allin! Sumaqta ruwanki",
     almost: (label) => `Sichuslla. Maskasharqanki: ${label}`,
     sayCorrect: (say) => `¡Allin! ${say}`,
     sayWrong: (label, target) => `Chayqa ${label}. Maskayta qatiy ${target}.`,
@@ -95,9 +95,9 @@ const I18N = {
     aiTitle: "IA yuyay",
     aiHelp: "Claude backendwan. Mana kaspaqa local yuyay.",
     aiButton: "Yuyayta ruway",
-    btnExport: "⬇ Datosnin exportay",
-    btnImport: "⬆ JSON apamuy",
-    btnClear: "🗑 Llapan datasninta pichay",
+    btnExport: "Datosnin exportay",
+    btnImport: "JSON apamuy",
+    btnClear: "Llapan datasninta pichay",
   },
 };
 
@@ -114,62 +114,60 @@ const t = (key, ...args) => {
    se mantiene el nombre de la letra en español dentro de una frase
    portadora en quechua, en vez de forzar una traducción literal. */
 const CONCEPTS = [
-  // Set básico (letras, números, figuras)
-  { id: "letra-a", set: "basico", type: "letra", label: "Letra A", icon: "A",
+  // Set básico — glyph = letra/número para canvas; pictos SVG en UI
+  { id: "letra-a", set: "basico", type: "letra", label: "Letra A", glyph: "A",
     say: "Letra A, como en Araña.", label_qu: "Letra A", say_qu: "Kayqa letra A, allqu hina (allqu = perro)." },
-  { id: "letra-e", set: "basico", type: "letra", label: "Letra E", icon: "E",
+  { id: "letra-e", set: "basico", type: "letra", label: "Letra E", glyph: "E",
     say: "Letra E, como en Elefante.", label_qu: "Letra E", say_qu: "Kayqa letra E." },
-  { id: "letra-i", set: "basico", type: "letra", label: "Letra I", icon: "I",
+  { id: "letra-i", set: "basico", type: "letra", label: "Letra I", glyph: "I",
     say: "Letra I, como en Iguana.", label_qu: "Letra I", say_qu: "Kayqa letra I, inti hina (inti = sol)." },
-  { id: "letra-o", set: "basico", type: "letra", label: "Letra O", icon: "O",
+  { id: "letra-o", set: "basico", type: "letra", label: "Letra O", glyph: "O",
     say: "Letra O, como en Oso.", label_qu: "Letra O", say_qu: "Kayqa letra O." },
-  { id: "letra-u", set: "basico", type: "letra", label: "Letra U", icon: "U",
+  { id: "letra-u", set: "basico", type: "letra", label: "Letra U", glyph: "U",
     say: "Letra U, como en Uva.", label_qu: "Letra U", say_qu: "Kayqa letra U, urpi hina (urpi = paloma)." },
 
-  { id: "numero-1", set: "basico", type: "numero", label: "Número 1", icon: "1",
+  { id: "numero-1", set: "basico", type: "numero", label: "Número 1", glyph: "1",
     say: "Número uno.", label_qu: "Huk", say_qu: "Huk." },
-  { id: "numero-2", set: "basico", type: "numero", label: "Número 2", icon: "2",
+  { id: "numero-2", set: "basico", type: "numero", label: "Número 2", glyph: "2",
     say: "Número dos.", label_qu: "Iskay", say_qu: "Iskay." },
-  { id: "numero-3", set: "basico", type: "numero", label: "Número 3", icon: "3",
+  { id: "numero-3", set: "basico", type: "numero", label: "Número 3", glyph: "3",
     say: "Número tres.", label_qu: "Kimsa", say_qu: "Kimsa." },
-  { id: "numero-4", set: "basico", type: "numero", label: "Número 4", icon: "4",
+  { id: "numero-4", set: "basico", type: "numero", label: "Número 4", glyph: "4",
     say: "Número cuatro.", label_qu: "Tawa", say_qu: "Tawa." },
-  { id: "numero-5", set: "basico", type: "numero", label: "Número 5", icon: "5",
+  { id: "numero-5", set: "basico", type: "numero", label: "Número 5", glyph: "5",
     say: "Número cinco.", label_qu: "Pichqa", say_qu: "Pichqa." },
 
-  { id: "figura-circulo", set: "basico", type: "figura", label: "Círculo", icon: "⚪",
+  { id: "figura-circulo", set: "basico", type: "figura", label: "Círculo", glyph: "○",
     say: "Esta es la figura círculo.", label_qu: "Muyu", say_qu: "Kayqa muyu." },
-  { id: "figura-cuadrado", set: "basico", type: "figura", label: "Cuadrado", icon: "◻️",
+  { id: "figura-cuadrado", set: "basico", type: "figura", label: "Cuadrado", glyph: "□",
     say: "Esta es la figura cuadrado.", label_qu: "Tawa kuchu", say_qu: "Kayqa tawa kuchu (tawa kuchuyuq)." },
-  { id: "figura-triangulo", set: "basico", type: "figura", label: "Triángulo", icon: "🔺",
+  { id: "figura-triangulo", set: "basico", type: "figura", label: "Triángulo", glyph: "△",
     say: "Esta es la figura triángulo.", label_qu: "Kimsa kuchu", say_qu: "Kayqa kimsa kuchu." },
-  { id: "figura-estrella", set: "basico", type: "figura", label: "Estrella", icon: "⭐",
+  { id: "figura-estrella", set: "basico", type: "figura", label: "Estrella", glyph: "✩",
     say: "Esta es la figura estrella.", label_qu: "Ch'aska", say_qu: "Kayqa ch'aska." },
-  { id: "figura-corazon", set: "basico", type: "figura", label: "Corazón", icon: "❤️",
+  { id: "figura-corazon", set: "basico", type: "figura", label: "Corazón", glyph: "♡",
     say: "Esta es la figura corazón.", label_qu: "Sonqo", say_qu: "Kayqa sonqo." },
 
-  // Set emociones (pictogramas — discapacidad intelectual / socioemocional)
-  { id: "emocion-alegre", set: "emociones", type: "emocion", label: "Alegre", icon: "😊",
+  { id: "emocion-alegre", set: "emociones", type: "emocion", label: "Alegre", glyph: ":)",
     say: "Emoción: alegre, contento.", label_qu: "Kusisqa", say_qu: "Kayqa kusisqa." },
-  { id: "emocion-triste", set: "emociones", type: "emocion", label: "Triste", icon: "😢",
+  { id: "emocion-triste", set: "emociones", type: "emocion", label: "Triste", glyph: ":(",
     say: "Emoción: triste.", label_qu: "Llakisqa", say_qu: "Kayqa llakisqa." },
-  { id: "emocion-enojo", set: "emociones", type: "emocion", label: "Enojo", icon: "😠",
+  { id: "emocion-enojo", set: "emociones", type: "emocion", label: "Enojo", glyph: ">:(",
     say: "Emoción: enojo.", label_qu: "Phiña", say_qu: "Kayqa phiña." },
-  { id: "emocion-miedo", set: "emociones", type: "emocion", label: "Miedo", icon: "😨",
+  { id: "emocion-miedo", set: "emociones", type: "emocion", label: "Miedo", glyph: ":o",
     say: "Emoción: miedo.", label_qu: "Manchakuq", say_qu: "Kayqa manchakuq." },
-  { id: "emocion-calma", set: "emociones", type: "emocion", label: "Calma", icon: "😌",
+  { id: "emocion-calma", set: "emociones", type: "emocion", label: "Calma", glyph: "~",
     say: "Emoción: calma, tranquilo.", label_qu: "Thak", say_qu: "Kayqa thak / allin kawsay." },
 
-  // Set rutinas diarias
-  { id: "rutina-lavarse", set: "rutinas", type: "rutina", label: "Lavarse", icon: "🧼",
+  { id: "rutina-lavarse", set: "rutinas", type: "rutina", label: "Lavarse", glyph: "≈",
     say: "Rutina: lavarse las manos o la cara.", label_qu: "Maqllikuy", say_qu: "Maqllikuy (makikunata / uyata)." },
-  { id: "rutina-comer", set: "rutinas", type: "rutina", label: "Comer", icon: "🍽️",
+  { id: "rutina-comer", set: "rutinas", type: "rutina", label: "Comer", glyph: "⌂",
     say: "Rutina: comer.", label_qu: "Mikuy", say_qu: "Mikuy." },
-  { id: "rutina-dormir", set: "rutinas", type: "rutina", label: "Dormir", icon: "🛏️",
+  { id: "rutina-dormir", set: "rutinas", type: "rutina", label: "Dormir", glyph: "☾",
     say: "Rutina: dormir.", label_qu: "Puñuy", say_qu: "Puñuy." },
-  { id: "rutina-escuela", set: "rutinas", type: "rutina", label: "Ir a la escuela", icon: "🏫",
+  { id: "rutina-escuela", set: "rutinas", type: "rutina", label: "Ir a la escuela", glyph: "△",
     say: "Rutina: ir a la escuela.", label_qu: "Yachay wasi", say_qu: "Yachay wasiman riy." },
-  { id: "rutina-jugar", set: "rutinas", type: "rutina", label: "Jugar", icon: "🎲",
+  { id: "rutina-jugar", set: "rutinas", type: "rutina", label: "Jugar", glyph: "◈",
     say: "Rutina: jugar.", label_qu: "Pukllay", say_qu: "Pukllay." },
 ];
 const QR_PREFIX = "TACTILIA:";
@@ -289,6 +287,28 @@ document.querySelectorAll(".lang-btn").forEach((btn) => {
     applyI18n();
   });
 });
+
+/* ---------- 4b. Tema visual Costa / Sierra / Selva ---------- */
+const REGION_THEMES = {
+  costa: { color: "#0284c7" },
+  sierra: { color: "#0f766e" },
+  selva: { color: "#15803d" },
+};
+function applyRegion(region) {
+  const r = REGION_THEMES[region] ? region : "sierra";
+  document.body.classList.remove("theme-costa", "theme-sierra", "theme-selva");
+  document.body.classList.add("theme-" + r);
+  document.querySelectorAll(".region-btn").forEach((b) => {
+    b.classList.toggle("active", b.dataset.region === r);
+  });
+  const meta = document.getElementById("meta-theme");
+  if (meta) meta.setAttribute("content", REGION_THEMES[r].color);
+  localStorage.setItem("tactilia_region", r);
+}
+document.querySelectorAll(".region-btn").forEach((btn) => {
+  btn.addEventListener("click", () => applyRegion(btn.dataset.region));
+});
+applyRegion(localStorage.getItem("tactilia_region") || "sierra");
 
 /* ---------- 5. Navegación por pestañas ---------- */
 document.querySelectorAll(".tab-btn").forEach((btn) => {
@@ -579,19 +599,17 @@ function drawAROverlay(concept, loc) {
   ctx.closePath();
   ctx.stroke();
 
-  // burbuja flotante con el ícono + etiqueta
+  // burbuja flotante con pictograma escolar + etiqueta
   const label = conceptLabel(concept);
-  ctx.font = "bold 40px Arial";
-  const iconW = ctx.measureText(concept.icon).width;
-  ctx.font = "bold 22px Arial";
+  ctx.font = "bold 18px Segoe UI, sans-serif";
   const labelW = ctx.measureText(label).width;
-  const bubbleW = Math.max(iconW, labelW) + 40;
-  const bubbleH = 86;
+  const bubbleW = Math.max(88, labelW + 40);
+  const bubbleH = 92;
   const bx = cx - bubbleW / 2;
-  const by = cy - 140 + bob;
+  const by = cy - 150 + bob;
 
   ctx.shadowBlur = 6;
-  ctx.fillStyle = "rgba(17,24,39,0.85)";
+  ctx.fillStyle = "rgba(17,24,39,0.88)";
   roundRectPath(ctx, bx, by, bubbleW, bubbleH, 16);
   ctx.fill();
   ctx.strokeStyle = color;
@@ -599,12 +617,12 @@ function drawAROverlay(concept, loc) {
   ctx.stroke();
 
   ctx.shadowBlur = 0;
+  drawPictoOnCanvas(ctx, concept, cx, by + 36, 32);
   ctx.fillStyle = "#ffffff";
   ctx.textAlign = "center";
-  ctx.font = "bold 34px Arial";
-  ctx.fillText(concept.icon, cx, by + 38);
-  ctx.font = "600 17px Arial";
-  ctx.fillText(label, cx, by + 66);
+  ctx.textBaseline = "alphabetic";
+  ctx.font = "600 15px Segoe UI, sans-serif";
+  ctx.fillText(label, cx, by + 72);
   ctx.restore();
 }
 
@@ -623,7 +641,7 @@ function handleScan(concept, location) {
   const resultCard = document.getElementById("result-card");
   resultCard.hidden = false;
   resultCard.classList.remove("is-correct", "is-wrong");
-  document.getElementById("result-icon").textContent = concept.icon;
+  document.getElementById("result-icon").innerHTML = typeof pictoMarkup === "function" ? pictoMarkup(concept.id) : (concept.glyph || "");
   document.getElementById("result-label").textContent = conceptLabel(concept);
 
   if (currentTarget) {
@@ -675,9 +693,44 @@ function renderPieceGrid() {
     btn.className = "piece-chip" + (currentTarget && currentTarget.id === c.id ? " is-target" : "");
     btn.setAttribute("role", "listitem");
     btn.setAttribute("aria-label", conceptLabel(c));
-    btn.innerHTML = `<span class="ic" aria-hidden="true">${c.icon}</span><span class="lb">${conceptLabel(c)}</span>`;
+    btn.innerHTML =
+      `<span class="ic" aria-hidden="true">${typeof pictoMarkup === "function" ? pictoMarkup(c.id) : c.glyph}</span>` +
+      `<span class="lb">${conceptLabel(c)}</span>`;
     btn.addEventListener("click", () => handleScan(c, null));
     grid.appendChild(btn);
+  });
+}
+
+function renderPiezasCatalogo() {
+  const root = document.getElementById("piezas-catalogo");
+  if (!root) return;
+  const groups = { basico: [], emociones: [], rutinas: [] };
+  CONCEPTS.forEach((c) => {
+    if (groups[c.set]) groups[c.set].push(c);
+  });
+  const titles = {
+    basico: "Set básico (letras, números, figuras)",
+    emociones: "Set emociones",
+    rutinas: "Set rutinas diarias",
+  };
+  root.innerHTML = "";
+  Object.keys(groups).forEach((set) => {
+    const h = document.createElement("h4");
+    h.className = "catalogo-title";
+    h.textContent = titles[set];
+    root.appendChild(h);
+    const table = document.createElement("div");
+    table.className = "catalogo-table";
+    groups[set].forEach((c) => {
+      const row = document.createElement("div");
+      row.className = "catalogo-row";
+      row.innerHTML =
+        `<span class="cat-ico" aria-hidden="true">${typeof pictoMarkup === "function" ? pictoMarkup(c.id) : ""}</span>` +
+        `<span class="cat-name"><strong>${c.label}</strong><br><em>${c.label_qu}</em></span>` +
+        `<span class="cat-qr"><code>TACTILIA:${c.id}</code><br><small>${c.id}.png</small></span>`;
+      table.appendChild(row);
+    });
+    root.appendChild(table);
   });
 }
 function logAttempt(conceptId, targetId, correct) {
@@ -756,7 +809,7 @@ function renderInsights() {
     const pct = Math.round(item.acc * 100);
     const li = document.createElement("li");
     li.innerHTML =
-      `<strong>${item.concept.icon} ${conceptLabel(item.concept)}</strong>` +
+      `<strong><span class="cat-ico inline">${typeof pictoMarkup === "function" ? pictoMarkup(item.concept.id) : ""}</span> ${conceptLabel(item.concept)}</strong>` +
       ` — ${pct}% (${item.total} retos)` +
       `<div class="bar" aria-hidden="true"><span style="width:${pct}%"></span></div>`;
     list.appendChild(li);
@@ -1042,4 +1095,5 @@ document.querySelectorAll(".lang-btn").forEach((b) => {
 });
 applyI18n();
 renderPieceGrid();
+renderPiezasCatalogo();
 updateSessionUI();

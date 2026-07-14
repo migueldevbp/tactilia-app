@@ -4,13 +4,50 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>TactilIA · Makiwan Yachay — Kit educativo inclusivo con IA y RA</title>
-<meta name="theme-color" content="#0f766e">
+<meta name="theme-color" content="#0f766e" id="meta-theme">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="theme-sierra">
+
+<div class="region-scene" aria-hidden="true">
+  <!-- Costa: olas y horizonte -->
+  <svg class="scene scene-costa" viewBox="0 0 800 220" preserveAspectRatio="xMidYMax slice">
+    <rect class="sky" width="800" height="220" fill="#7ec8e3"/>
+    <circle class="sun" cx="640" cy="48" r="28" fill="#f5d76e"/>
+    <path class="wave wave-a" d="M0 130 Q100 110 200 130 T400 130 T600 130 T800 130 V220 H0 Z" fill="#2a9dbe"/>
+    <path class="wave wave-b" d="M0 155 Q120 135 240 155 T480 155 T720 155 T800 155 V220 H0 Z" fill="#1b7f9e"/>
+    <path class="sand" d="M0 185 H800 V220 H0 Z" fill="#e8c48a"/>
+  </svg>
+  <!-- Sierra: montañas andinas -->
+  <svg class="scene scene-sierra" viewBox="0 0 800 220" preserveAspectRatio="xMidYMax slice">
+    <rect class="sky" width="800" height="220" fill="#c5dff0"/>
+    <circle class="sun" cx="120" cy="40" r="22" fill="#f0c75e"/>
+    <path class="cloud c1" d="M180 50 h70 a18 18 0 0 0 0 -36 h-10 a22 22 0 0 0 -42 8 a16 16 0 0 0 -18 28 z" fill="#fff" opacity=".85"/>
+    <path class="cloud c2" d="M520 42 h60 a16 16 0 0 0 0 -32 h-8 a20 20 0 0 0 -40 8 a14 14 0 0 0 -14 24 z" fill="#fff" opacity=".8"/>
+    <path d="M0 220 L0 140 L140 70 L220 120 L320 40 L420 110 L520 55 L640 125 L740 80 L800 130 V220 Z" fill="#5b7c5a"/>
+    <path d="M0 220 L0 160 L160 95 L250 140 L360 70 L470 130 L580 85 L700 145 L800 110 V220 Z" fill="#3f5d46"/>
+    <path d="M300 78 L320 40 L340 78 Z" fill="#f4f7fa"/>
+    <path d="M500 90 L520 55 L538 90 Z" fill="#eef3f7"/>
+  </svg>
+  <!-- Selva: árboles y hojas -->
+  <svg class="scene scene-selva" viewBox="0 0 800 220" preserveAspectRatio="xMidYMax slice">
+    <rect class="sky" width="800" height="220" fill="#9fccc0"/>
+    <circle class="sun" cx="700" cy="36" r="20" fill="#ffe08a"/>
+    <ellipse cx="120" cy="150" rx="70" ry="50" fill="#1f6b3a"/>
+    <ellipse cx="220" cy="140" rx="60" ry="55" fill="#258044"/>
+    <ellipse cx="400" cy="130" rx="90" ry="65" fill="#176434"/>
+    <ellipse cx="560" cy="145" rx="75" ry="55" fill="#1f6b3a"/>
+    <ellipse cx="700" cy="150" rx="80" ry="50" fill="#258044"/>
+    <rect x="385" y="150" width="18" height="70" fill="#5c4030"/>
+    <rect x="200" y="160" width="14" height="60" fill="#5c4030"/>
+    <g class="leaf leaf-1"><ellipse cx="0" cy="0" rx="10" ry="5" fill="#3d9a4c"/></g>
+    <g class="leaf leaf-2"><ellipse cx="0" cy="0" rx="9" ry="4" fill="#62b36a"/></g>
+    <g class="leaf leaf-3"><ellipse cx="0" cy="0" rx="11" ry="5" fill="#2f8a40"/></g>
+  </svg>
+</div>
 
 <header class="topbar">
   <div class="brand-row">
@@ -19,9 +56,16 @@
       <h1>TactilIA</h1>
       <span class="brand-sub">Makiwan Yachay</span>
     </div>
-    <div class="lang-switch" role="group" aria-label="Idioma / Simi">
-      <button id="lang-es" class="lang-btn active" data-lang="es" aria-pressed="true">ES</button>
-      <button id="lang-qu" class="lang-btn" data-lang="qu" aria-pressed="false">QU</button>
+    <div class="header-controls">
+      <div class="region-switch" role="group" aria-label="Región visual Perú">
+        <button type="button" class="region-btn" data-region="costa" title="Costa">Costa</button>
+        <button type="button" class="region-btn active" data-region="sierra" title="Sierra">Sierra</button>
+        <button type="button" class="region-btn" data-region="selva" title="Selva">Selva</button>
+      </div>
+      <div class="lang-switch" role="group" aria-label="Idioma / Simi">
+        <button id="lang-es" class="lang-btn active" data-lang="es" aria-pressed="true">ES</button>
+        <button id="lang-qu" class="lang-btn" data-lang="qu" aria-pressed="false">QU</button>
+      </div>
     </div>
   </div>
   <nav class="tabs" role="tablist" aria-label="Vistas principales">
@@ -43,7 +87,7 @@
     </div>
 
     <details class="card a11y-card">
-      <summary data-i18n="a11yTitle">⚙ Accesibilidad</summary>
+      <summary data-i18n="a11yTitle">Accesibilidad</summary>
       <div class="a11y-body">
         <label class="a11y-row">
           <span data-i18n="a11yContrast">Alto contraste</span>
@@ -160,7 +204,7 @@
     <div class="card">
       <h3 data-i18n="aiTitle">Recomendación con IA</h3>
       <p class="muted" data-i18n="aiHelp">Consulta Claude vía el backend en server/ (clave solo en el servidor). Sin internet o sin backend, usa la heurística local offline.</p>
-      <button id="btn-ai-recommend" class="btn-primary" type="button" aria-describedby="ai-help">✨ <span data-i18n="aiButton">Generar recomendación</span></button>
+      <button id="btn-ai-recommend" class="btn-primary" type="button" aria-describedby="ai-help"><span data-i18n="aiButton">Generar recomendación</span></button>
       <p id="ai-help" class="muted" hidden>La recomendación se anuncia a continuación.</p>
       <div id="ai-output" class="ai-output" role="status" aria-live="polite" aria-atomic="true"></div>
     </div>
@@ -188,18 +232,24 @@
     </div>
 
     <div class="card">
-      <h3>Cómo se usa</h3>
+      <h3>Cómo se usa (paso a paso)</h3>
       <ol class="about-list">
-        <li>Imprime en 3D las piezas (letras, números, figuras; opcional: emociones y rutinas) y pega los QR de la carpeta <code>qr/output/</code>.</li>
-        <li>Pestaña <strong>Estudiante</strong>: idioma ES/QU, set temático, accesibilidad, cámara, «Nuevo reto».</li>
-        <li>El estudiante busca la pieza al tacto; la cámara confirma con RA, voz y (si acierta) partículas.</li>
-        <li>Pestaña <strong>Docente</strong>: precisión por estudiante, exportación JSON y recomendación IA (online vía <code>server/</code> o heurística offline).</li>
+        <li><strong>Preparar el kit:</strong> imprime las piezas en 3D (relieve táctil) y pega en cada una el PNG de <code>qr/output/&lt;id&gt;.png</code> que coincida con su id.</li>
+        <li><strong>Abrir la app</strong> (GitHub Pages o celular instalado). Elige idioma ES/QU y región Costa/Sierra/Selva (solo visual).</li>
+        <li><strong>Estudiante:</strong> elige set (básico / emociones / rutinas), «Nuevo reto», activa la cámara y muestra la pieza — o practica tocando la grilla sin QR.</li>
+        <li><strong>Docente:</strong> revisa precisión, áreas a reforzar y genera recomendación (IA online o heurística offline).</li>
       </ol>
     </div>
 
     <div class="card">
+      <h3>Catálogo de piezas y códigos QR</h3>
+      <p class="muted">Cada QR contiene el texto <code>TACTILIA:&lt;id&gt;</code>. El archivo a imprimir es <code>qr/output/&lt;id&gt;.png</code>.</p>
+      <div id="piezas-catalogo" class="catalogo"></div>
+    </div>
+
+    <div class="card">
       <h3>Realidad aumentada (ligera)</h3>
-      <p>Sin Three.js ni WebXR: <code>jsQR</code> entrega las 4 esquinas del QR; el canvas dibuja el video y encima el recuadro + etiqueta (y un burst al acertar). Amarillo = exploración, celeste = no es el reto, verde = correcto. Ideal para Android de gama baja y aulas rurales.</p>
+      <p>Sin Three.js ni WebXR: <code>jsQR</code> entrega las 4 esquinas del QR; el canvas dibuja el video y encima el recuadro + pictograma escolar (y un burst al acertar). Dorado = exploración, turquesa = no es el reto, verde = correcto.</p>
     </div>
 
     <div class="card">
@@ -246,6 +296,7 @@
 <div id="sr-announce" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
 
 <script src="lib/jsQR.js"></script>
+<script src="lib/pictos.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
