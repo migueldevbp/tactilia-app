@@ -116,9 +116,10 @@
 
     <div class="card">
       <h3>Recomendación con IA</h3>
-      <p class="muted">Genera una sugerencia pedagógica a partir del progreso registrado (requiere conexión y una función backend con la API de Claude — ver README/CURSOR_PROMPT).</p>
-      <button id="btn-ai-recommend" class="btn-primary">✨ Generar recomendación</button>
-      <div id="ai-output" class="ai-output"></div>
+      <p class="muted">Consulta Claude vía el backend en <code>server/</code> (clave solo en el servidor). Sin internet o sin backend, usa la heurística local offline.</p>
+      <button id="btn-ai-recommend" class="btn-primary" aria-describedby="ai-help">✨ Generar recomendación</button>
+      <p id="ai-help" class="muted" hidden>La recomendación se anuncia a continuación.</p>
+      <div id="ai-output" class="ai-output" role="status" aria-live="polite" aria-atomic="true"></div>
     </div>
 
     <div class="card">

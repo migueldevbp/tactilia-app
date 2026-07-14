@@ -443,9 +443,13 @@ function renderDashboard() {
 }
 
 /* ---------- 12. Recomendación pedagógica ----------
-   Heurística local (funciona sin internet). Para una recomendación en
-   lenguaje natural generada por Claude, conecta callClaudeAPI() a un
-   backend propio (ver CURSOR_PROMPT.md — nunca expongas la API key en el cliente). */
+   Primero intenta Claude vía backend (/server). Si no hay red, clave o
+   servidor, cae a generateLocalRecommendation() (100% offline).
+   La API key NUNCA vive en el cliente — solo en server/.env. */
+// Cambia esta URL si el backend corre en otro host (piloto local: :8787).
+const AI_API_URL =
+  localStorage.getItem("tactilia_ai_url") || "http://localhost:8787/api/recommend";
+
 function generateLocalRecommendation() {
   const byType = {};
   DATA.logs.forEach((log) => {
@@ -466,29 +470,55 @@ function generateLocalRecommendation() {
     if (!weakest || acc < weakest.acc) weakest = { type, acc };
   });
 
-  const nice = { letra: "letras", numero: "números", figura: "figuras geométricas" };
+  const nice = {
+    letra: "letras",
+    numero: "números",
+    figura: "figuras geométricas",
+    emocion: "emociones",
+    rutina: "rutinas diarias",
+  };
   return (
-    `Sugerencia: reforzar la categoría "${nice[weakest.type]}" ` +
+    `Sugerencia: reforzar la categoría "${nice[weakest.type] || weakest.type}" ` +
     `(precisión actual ${Math.round(weakest.acc * 100)}%). ` +
     `Recomendación: sesiones cortas de 5 minutos, repitiendo esas piezas antes de introducir nuevas.`
   );
 }
 
 async function callClaudeAPI(promptData) {
-  // Placeholder — implementar en un backend propio (Node/Express, Cloudflare Worker, etc.)
-  // que reciba `promptData`, llame a la API de Claude con tu API key protegida en el servidor,
-  // y devuelva texto. Ver CURSOR_PROMPT.md para el prompt de implementación sugerido.
-  throw new Error("callClaudeAPI() no está conectado a un backend todavía.");
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 20000);
+  try {
+    const res = await fetch(AI_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(promptData),
+      signal: controller.signal,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || `HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    if (!data.recommendation) throw new Error("Respuesta sin recommendation");
+    return data.recommendation;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 document.getElementById("btn-ai-recommend").addEventListener("click", async () => {
   const out = document.getElementById("ai-output");
   out.textContent = "Generando recomendación...";
+  out.setAttribute("aria-busy", "true");
   try {
     const text = await callClaudeAPI({ logs: DATA.logs });
     out.textContent = text;
   } catch (e) {
-    out.textContent = generateLocalRecommendation();
+    console.warn("IA online no disponible, usando heurística local:", e.message);
+    out.textContent =
+      "[Modo offline / sin backend] " + generateLocalRecommendation();
+  } finally {
+    out.setAttribute("aria-busy", "false");
   }
 });
 
