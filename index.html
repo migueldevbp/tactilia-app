@@ -102,6 +102,11 @@
           <input type="checkbox" id="chk-voice" checked>
         </label>
         <label class="a11y-row">
+          <span data-i18n="a11yCalm">Modo calma (autismo / TEA)</span>
+          <input type="checkbox" id="chk-calm">
+        </label>
+        <p class="muted a11y-calm-help" data-i18n="a11yCalmHelp">Menos estímulos: sin partículas, voz más lenta, pausas largas, colores suaves y retos en orden.</p>
+        <label class="a11y-row">
           <span data-i18n="a11yMotion">Menos movimiento</span>
           <input type="checkbox" id="chk-motion">
         </label>
@@ -127,12 +132,15 @@
     <div class="card set-card">
       <label for="set-select" data-i18n="setLabel">Kit / set temático</label>
       <select id="set-select" aria-describedby="set-help">
-        <option value="basico" data-i18n-option="setBasico">Letras · números · figuras</option>
+        <option value="letras" data-i18n-option="setLetras">Letras A–Z + Ñ</option>
+        <option value="numeros" data-i18n-option="setNumeros">Números 0–9</option>
+        <option value="signos" data-i18n-option="setSignos">Signos</option>
+        <option value="figuras" data-i18n-option="setFiguras">Figuras</option>
         <option value="emociones" data-i18n-option="setEmociones">Emociones</option>
         <option value="rutinas" data-i18n-option="setRutinas">Rutinas diarias</option>
         <option value="todos" data-i18n-option="setTodos">Todos los sets</option>
       </select>
-      <p id="set-help" class="muted" data-i18n="setHelp">Elige el banco de piezas para los retos (útil en discapacidad intelectual: emoción / rutina).</p>
+      <p id="set-help" class="muted" data-i18n="setHelp">Elige el banco de piezas. Para autismo: prueba Modo calma + un solo set (ej. letras).</p>
     </div>
 
     <div class="card exercise-card">
@@ -234,10 +242,10 @@
     <div class="card">
       <h3>Cómo se usa (paso a paso)</h3>
       <ol class="about-list">
-        <li><strong>Preparar el kit:</strong> imprime las piezas en 3D (relieve táctil) y pega en cada una el PNG de <code>qr/output/&lt;id&gt;.png</code> que coincida con su id.</li>
-        <li><strong>Abrir la app</strong> (GitHub Pages o celular instalado). Elige idioma ES/QU y región Costa/Sierra/Selva (solo visual).</li>
-        <li><strong>Estudiante:</strong> elige set (básico / emociones / rutinas), «Nuevo reto», activa la cámara y muestra la pieza — o practica tocando la grilla sin QR.</li>
-        <li><strong>Docente:</strong> revisa precisión, áreas a reforzar y genera recomendación (IA online o heurística offline).</li>
+        <li><strong>Preparar el kit:</strong> imprime piezas en 3D y pega el PNG de <code>qr/output/&lt;id&gt;.png</code> (hay 62: letras A–Z+Ñ, números 0–9, signos, figuras, emociones y rutinas).</li>
+        <li><strong>Abrir la app</strong>. Elige set (Letras / Números / Signos…) e idioma. Para TEA: activa <strong>Modo calma</strong> en Accesibilidad.</li>
+        <li><strong>Estudiante:</strong> «Nuevo reto», cámara con la pieza — o grilla demo. La app habla el nombre de la pieza.</li>
+        <li><strong>Docente:</strong> progreso, áreas a reforzar y recomendación.</li>
       </ol>
     </div>
 

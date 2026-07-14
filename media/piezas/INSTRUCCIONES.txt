@@ -1,32 +1,32 @@
 Fotos de las piezas 3D — TactilIA
 =================================
 
-Coloca aquí una foto por pieza, con este nombre exacto:
+Coloca aquí: media/piezas/<id>.jpg  (o .png / .webp)
 
-  media/piezas/<id>.jpg     (recomendado)
-  o .png / .webp
+El archivo QR a pegar en el modelo 3D está en:
+  qr/output/<id>.png
+Contenido del QR: TACTILIA:<id>
 
-Ejemplos:
-  letra-a.jpg
-  numero-3.jpg
-  figura-circulo.jpg
-  emocion-alegre.jpg
-  rutina-escuela.jpg
+--- LETRAS (27) ---
+letra-a … letra-z   y   letra-enie  (= Ñ)
 
-Consejos para la foto:
-  - Fondo claro y simple
-  - Pieza bien iluminada, QR legible o visible en la base
-  - Cuadrada o 4:3, mínimo ~400 px
-  - Sin filtros “IA”; luz natural de aula
+--- NÚMEROS (10) ---
+numero-0 … numero-9
 
-Si no hay foto, la app muestra el pictograma escolar automáticamente.
+--- SIGNOS (10) ---
+signo-mas  signo-menos  signo-igual  signo-por  signo-dividir
+signo-punto  signo-coma  signo-interrogacion  signo-exclamacion  signo-porcentaje
 
-Ids válidos (25):
-letra-a letra-e letra-i letra-o letra-u
-numero-1 numero-2 numero-3 numero-4 numero-5
-figura-circulo figura-cuadrado figura-triangulo figura-estrella figura-corazon
-emocion-alegre emocion-triste emocion-enojo emocion-miedo emocion-calma
-rutina-lavarse rutina-comer rutina-dormir rutina-escuela rutina-jugar
+--- FIGURAS (5) ---
+figura-circulo  figura-cuadrado  figura-triangulo  figura-estrella  figura-corazon
 
-Después de subir las fotos al repo (git add + git push),
-GitHub Pages las mostrará en el catálogo y en la grilla demo.
+--- EMOCIONES (5) ---
+emocion-alegre  emocion-triste  emocion-enojo  emocion-miedo  emocion-calma
+
+--- RUTINAS (5) ---
+rutina-lavarse  rutina-comer  rutina-dormir  rutina-escuela  rutina-jugar
+
+Total kit: 62 piezas / QR
+
+Autismo (TEA): en la app activa Accesibilidad → Modo calma
+(voz lenta, sin partículas, retos en orden, menos estímulos).

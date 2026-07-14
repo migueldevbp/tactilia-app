@@ -18,11 +18,17 @@ const I18N = {
     a11yVoice: "Voz / audio", a11yMotion: "Menos movimiento",
     activeStudent: "Estudiante activo", newStudent: "+ Nuevo",
     setLabel: "Kit / set temático",
-    setBasico: "Letras · números · figuras",
+    setLetras: "Letras A–Z + Ñ",
+    setNumeros: "Números 0–9",
+    setSignos: "Signos",
+    setFiguras: "Figuras",
     setEmociones: "Emociones",
     setRutinas: "Rutinas diarias",
     setTodos: "Todos los sets",
-    setHelp: "Elige el banco de piezas para los retos (útil en discapacidad intelectual: emoción / rutina).",
+    setHelp: "Elige el banco de piezas. Para autismo: prueba Modo calma + un solo set (ej. letras).",
+    a11yCalm: "Modo calma (autismo / TEA)",
+    a11yCalmHelp: "Menos estímulos: sin partículas, voz más lenta, pausas largas, colores suaves y retos en orden.",
+    sequenceHint: "Siguiente en orden",
     exerciseMode: "Modo ejercicio adaptativo",
     exercisePrompt: "Presiona \"Nuevo reto\" para comenzar",
     newChallenge: "Nuevo reto", repeat: "Repetir",
@@ -31,9 +37,9 @@ const I18N = {
     cameraOff: "Cámara apagada.", cameraOn: "Cámara activa. Apunta a la pieza.",
     findPiece: (label) => `Encuentra la pieza: ${label}`,
     sayFind: (label) => `Busca la pieza ${label}`,
-    correct: "¡Correcto! Muy bien",
+    correct: "Correcto. Muy bien.",
     almost: (label) => `Casi. Buscabas: ${label}`,
-    sayCorrect: (say) => `¡Correcto! ${say}`,
+    sayCorrect: (say) => `Correcto. ${say}`,
     sayWrong: (label, target) => `Esa es ${label}. Sigue buscando ${target}.`,
     freeMode: "Modo exploración libre",
     notRecognized: "Pieza no reconocida",
@@ -62,11 +68,17 @@ const I18N = {
     a11yVoice: "Rimay / uyarina", a11yMotion: "Aswanta mana kuyuchiy",
     activeStudent: "Kunan yachaqaq", newStudent: "+ Musuq",
     setLabel: "Impay kit",
-    setBasico: "Letras · yupay · rikch'akuna",
+    setLetras: "Letras A–Z + Ñ",
+    setNumeros: "Yupaykuna 0–9",
+    setSignos: "Unanchakuna",
+    setFiguras: "Rikch'akuna",
     setEmociones: "Sunquykuna",
     setRutinas: "Sapa p'unchaw",
     setTodos: "Llapan",
-    setHelp: "Akllay riqsichinakunata (emocionkuna / sapa p'unchaw).",
+    setHelp: "Akllay kit. Autismipaq: Mode calmata churay.",
+    a11yCalm: "Thak mode (autismo / TEA)",
+    a11yCalmHelp: "Aswan thak: mana partículas, rimay allin, suwa suyay.",
+    sequenceHint: "Qatiqnin ordenpi",
     exerciseMode: "Yachay pukllay (yanapakuq)",
     exercisePrompt: "\"Musuq atipanakuy\" nisqata ñitiy qallariy",
     newChallenge: "Musuq atipanakuy", repeat: "Kutichiy",
@@ -75,9 +87,9 @@ const I18N = {
     cameraOff: "Kamara sayasqa.", cameraOn: "Kamara kachkan. Riqsichiyta qhaway.",
     findPiece: (label) => `Maskay: ${label}`,
     sayFind: (label) => `Maskay ${label}`,
-    correct: "¡Allin! Sumaqta ruwanki",
+    correct: "Allin. Sumaqta ruwanki.",
     almost: (label) => `Sichuslla. Maskasharqanki: ${label}`,
-    sayCorrect: (say) => `¡Allin! ${say}`,
+    sayCorrect: (say) => `Allin. ${say}`,
     sayWrong: (label, target) => `Chayqa ${label}. Maskayta qatiy ${target}.`,
     freeMode: "Kikillanmanta rikuy",
     notRecognized: "Manam riqsisqachu",
@@ -108,44 +120,94 @@ const t = (key, ...args) => {
 };
 
 /* ---------- 1. Banco de conceptos (ES + QU) ------------------------------
-   Debe coincidir con /qr/generate_qr.py. Los números y figuras usan
-   vocabulario quechua documentado en materiales EIB; en las letras,
-   dado que el quechua tradicional usa solo tres vocales (a, i, u),
-   se mantiene el nombre de la letra en español dentro de una frase
-   portadora en quechua, en vez de forzar una traducción literal. */
+   Debe coincidir con /qr/generate_qr.py.
+   Sets: letras (A–Z + Ñ), numeros (0–9), signos, figuras, emociones, rutinas. */
+const LETTER_EXAMPLES = {
+  a: ["Araña", "allqu = perro"], b: ["Barco", ""], c: ["Casa", ""], d: ["Dado", ""],
+  e: ["Elefante", ""], f: ["Foco", ""], g: ["Gato", ""], h: ["Helado", ""],
+  i: ["Iguana", "inti = sol"], j: ["Jirafa", ""], k: ["Koala", ""], l: ["Luna", ""],
+  m: ["Mamá", ""], n: ["Nube", ""], o: ["Oso", ""], p: ["Perro", ""],
+  q: ["Queso", ""], r: ["Ratón", ""], s: ["Sol", ""], t: ["Taza", ""],
+  u: ["Uva", "urpi = paloma"], v: ["Vaca", ""], w: ["Wiña", ""], x: ["Xilófono", ""],
+  y: ["Yuca", ""], z: ["Zapato", ""],
+};
+const NUM_WORDS_ES = ["cero", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve"];
+const NUM_WORDS_QU = ["Ch'usaq", "Huk", "Iskay", "Kimsa", "Tawa", "Pichqa", "Suqta", "Qanchis", "Pusaq", "Isqun"];
+
+function buildLetterConcepts() {
+  const list = [];
+  "abcdefghijklmnopqrstuvwxyz".split("").forEach((ch) => {
+    const up = ch.toUpperCase();
+    const [exEs, tipQu] = LETTER_EXAMPLES[ch] || [up, ""];
+    list.push({
+      id: "letra-" + ch,
+      set: "letras",
+      type: "letra",
+      label: "Letra " + up,
+      glyph: up,
+      say: `Letra ${up}, como en ${exEs}.`,
+      label_qu: "Letra " + up,
+      say_qu: tipQu ? `Kayqa letra ${up}, ${tipQu}.` : `Kayqa letra ${up}.`,
+    });
+  });
+  list.push({
+    id: "letra-enie",
+    set: "letras",
+    type: "letra",
+    label: "Letra Ñ",
+    glyph: "Ñ",
+    say: "Letra eñe, como en Ñandú.",
+    label_qu: "Letra Ñ",
+    say_qu: "Kayqa letra eñe.",
+  });
+  return list;
+}
+
+function buildNumberConcepts() {
+  return NUM_WORDS_ES.map((word, n) => ({
+    id: "numero-" + n,
+    set: "numeros",
+    type: "numero",
+    label: "Número " + n,
+    glyph: String(n),
+    say: `Número ${word}.`,
+    label_qu: NUM_WORDS_QU[n],
+    say_qu: NUM_WORDS_QU[n] + ".",
+  }));
+}
+
+function buildSignConcepts() {
+  const signs = [
+    ["signo-mas", "+", "Más / sumar", "Signo más: sumar.", "Yapay", "Yapay (+)."],
+    ["signo-menos", "−", "Menos / restar", "Signo menos: restar.", "Qichuy", "Qichuy (−)."],
+    ["signo-igual", "=", "Igual", "Signo igual.", "Kikin", "Kikin (=)."],
+    ["signo-por", "×", "Por / multiplicar", "Signo por: multiplicar.", "Mirachiy", "Mirachiy (×)."],
+    ["signo-dividir", "÷", "Dividir", "Signo dividir.", "Rakiy", "Rakiy (÷)."],
+    ["signo-punto", ".", "Punto", "Signo punto.", "Ch'iqchi", "Ch'iqchi (.)."],
+    ["signo-coma", ",", "Coma", "Signo coma.", "Comma", "Comma (,)."],
+    ["signo-interrogacion", "?", "Interrogación", "Signo de interrogación.", "Tapuy", "Tapuy (?)."],
+    ["signo-exclamacion", "!", "Exclamación", "Signo de exclamación.", "Qapariy", "Qapariy (!)."],
+    ["signo-porcentaje", "%", "Porcentaje", "Signo porcentaje.", "Pachakmanta", "Pachakmanta (%)."],
+  ];
+  return signs.map(([id, glyph, label, say, label_qu, say_qu]) => ({
+    id, set: "signos", type: "signo", label, glyph, say, label_qu, say_qu,
+  }));
+}
+
 const CONCEPTS = [
-  // Set básico — glyph = letra/número para canvas; pictos SVG en UI
-  { id: "letra-a", set: "basico", type: "letra", label: "Letra A", glyph: "A",
-    say: "Letra A, como en Araña.", label_qu: "Letra A", say_qu: "Kayqa letra A, allqu hina (allqu = perro)." },
-  { id: "letra-e", set: "basico", type: "letra", label: "Letra E", glyph: "E",
-    say: "Letra E, como en Elefante.", label_qu: "Letra E", say_qu: "Kayqa letra E." },
-  { id: "letra-i", set: "basico", type: "letra", label: "Letra I", glyph: "I",
-    say: "Letra I, como en Iguana.", label_qu: "Letra I", say_qu: "Kayqa letra I, inti hina (inti = sol)." },
-  { id: "letra-o", set: "basico", type: "letra", label: "Letra O", glyph: "O",
-    say: "Letra O, como en Oso.", label_qu: "Letra O", say_qu: "Kayqa letra O." },
-  { id: "letra-u", set: "basico", type: "letra", label: "Letra U", glyph: "U",
-    say: "Letra U, como en Uva.", label_qu: "Letra U", say_qu: "Kayqa letra U, urpi hina (urpi = paloma)." },
+  ...buildLetterConcepts(),
+  ...buildNumberConcepts(),
+  ...buildSignConcepts(),
 
-  { id: "numero-1", set: "basico", type: "numero", label: "Número 1", glyph: "1",
-    say: "Número uno.", label_qu: "Huk", say_qu: "Huk." },
-  { id: "numero-2", set: "basico", type: "numero", label: "Número 2", glyph: "2",
-    say: "Número dos.", label_qu: "Iskay", say_qu: "Iskay." },
-  { id: "numero-3", set: "basico", type: "numero", label: "Número 3", glyph: "3",
-    say: "Número tres.", label_qu: "Kimsa", say_qu: "Kimsa." },
-  { id: "numero-4", set: "basico", type: "numero", label: "Número 4", glyph: "4",
-    say: "Número cuatro.", label_qu: "Tawa", say_qu: "Tawa." },
-  { id: "numero-5", set: "basico", type: "numero", label: "Número 5", glyph: "5",
-    say: "Número cinco.", label_qu: "Pichqa", say_qu: "Pichqa." },
-
-  { id: "figura-circulo", set: "basico", type: "figura", label: "Círculo", glyph: "○",
+  { id: "figura-circulo", set: "figuras", type: "figura", label: "Círculo", glyph: "○",
     say: "Esta es la figura círculo.", label_qu: "Muyu", say_qu: "Kayqa muyu." },
-  { id: "figura-cuadrado", set: "basico", type: "figura", label: "Cuadrado", glyph: "□",
+  { id: "figura-cuadrado", set: "figuras", type: "figura", label: "Cuadrado", glyph: "□",
     say: "Esta es la figura cuadrado.", label_qu: "Tawa kuchu", say_qu: "Kayqa tawa kuchu (tawa kuchuyuq)." },
-  { id: "figura-triangulo", set: "basico", type: "figura", label: "Triángulo", glyph: "△",
+  { id: "figura-triangulo", set: "figuras", type: "figura", label: "Triángulo", glyph: "△",
     say: "Esta es la figura triángulo.", label_qu: "Kimsa kuchu", say_qu: "Kayqa kimsa kuchu." },
-  { id: "figura-estrella", set: "basico", type: "figura", label: "Estrella", glyph: "✩",
+  { id: "figura-estrella", set: "figuras", type: "figura", label: "Estrella", glyph: "✩",
     say: "Esta es la figura estrella.", label_qu: "Ch'aska", say_qu: "Kayqa ch'aska." },
-  { id: "figura-corazon", set: "basico", type: "figura", label: "Corazón", glyph: "♡",
+  { id: "figura-corazon", set: "figuras", type: "figura", label: "Corazón", glyph: "♡",
     say: "Esta es la figura corazón.", label_qu: "Sonqo", say_qu: "Kayqa sonqo." },
 
   { id: "emocion-alegre", set: "emociones", type: "emocion", label: "Alegre", glyph: ":)",
@@ -175,7 +237,8 @@ const findConcept = (id) => CONCEPTS.find((c) => c.id === id);
 const conceptLabel = (c) => (LANG === "qu" ? c.label_qu : c.label);
 const conceptSay = (c) => (LANG === "qu" ? c.say_qu : c.say);
 
-let activeSet = localStorage.getItem("tactilia_set") || "basico";
+let activeSet = localStorage.getItem("tactilia_set") || "letras";
+if (activeSet === "basico") activeSet = "letras"; // migración kit antiguo
 function conceptsInActiveSet() {
   if (activeSet === "todos") return CONCEPTS;
   return CONCEPTS.filter((c) => c.set === activeSet);
@@ -204,10 +267,10 @@ if (DATA.students.length === 0) {
 function loadPrefs() {
   try {
     return JSON.parse(localStorage.getItem(PREFS_KEY)) || {
-      contrast: false, vibration: true, textSize: "normal", voice: true, reduceMotion: false,
+      contrast: false, vibration: true, textSize: "normal", voice: true, reduceMotion: false, calmMode: false,
     };
   } catch (e) {
-    return { contrast: false, vibration: true, textSize: "normal", voice: true, reduceMotion: false };
+    return { contrast: false, vibration: true, textSize: "normal", voice: true, reduceMotion: false, calmMode: false };
   }
 }
 function savePrefs(p) {
@@ -216,6 +279,7 @@ function savePrefs(p) {
 let PREFS = loadPrefs();
 if (PREFS.voice === undefined) PREFS.voice = true;
 if (PREFS.reduceMotion === undefined) PREFS.reduceMotion = false;
+if (PREFS.calmMode === undefined) PREFS.calmMode = false;
 
 /* ---------- 3. Utilidades de voz y vibración (funcionan sin internet) --- */
 function speak(text) {
@@ -223,13 +287,18 @@ function speak(text) {
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
   u.lang = "es-PE";
-  u.rate = LANG === "qu" ? 0.88 : 0.95;
+  u.rate = PREFS.calmMode ? 0.78 : (LANG === "qu" ? 0.88 : 0.95);
+  u.pitch = PREFS.calmMode ? 0.95 : 1;
   window.speechSynthesis.speak(u);
 }
 
 function shouldAnimate() {
-  if (PREFS.reduceMotion) return false;
+  if (PREFS.calmMode || PREFS.reduceMotion) return false;
   return !(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+}
+
+function scanCooldownMs() {
+  return PREFS.calmMode ? 2200 : 1200;
 }
 
 function vibrate(pattern) {
@@ -332,6 +401,7 @@ if (setSelect) {
     activeSet = setSelect.value;
     localStorage.setItem("tactilia_set", activeSet);
     currentTarget = null;
+    pickAdaptiveChallenge._seq = 0;
     applyI18n();
     renderPieceGrid();
   });
@@ -364,11 +434,13 @@ const chkContrast = document.getElementById("chk-contrast");
 const chkVibration = document.getElementById("chk-vibration");
 const chkVoice = document.getElementById("chk-voice");
 const chkMotion = document.getElementById("chk-motion");
+const chkCalm = document.getElementById("chk-calm");
 const selTextSize = document.getElementById("sel-textsize");
 
 function applyPrefs() {
   document.body.classList.toggle("contrast-mode", !!PREFS.contrast);
-  document.body.classList.toggle("reduce-motion", !!PREFS.reduceMotion);
+  document.body.classList.toggle("reduce-motion", !!PREFS.reduceMotion || !!PREFS.calmMode);
+  document.body.classList.toggle("calm-mode", !!PREFS.calmMode);
   document.body.classList.remove("text-grande", "text-xl");
   if (PREFS.textSize === "grande") document.body.classList.add("text-grande");
   if (PREFS.textSize === "xl") document.body.classList.add("text-xl");
@@ -376,12 +448,22 @@ function applyPrefs() {
   chkVibration.checked = !!PREFS.vibration;
   if (chkVoice) chkVoice.checked = PREFS.voice !== false;
   if (chkMotion) chkMotion.checked = !!PREFS.reduceMotion;
+  if (chkCalm) chkCalm.checked = !!PREFS.calmMode;
   selTextSize.value = PREFS.textSize || "normal";
 }
 chkContrast.addEventListener("change", () => { PREFS.contrast = chkContrast.checked; savePrefs(PREFS); applyPrefs(); });
 chkVibration.addEventListener("change", () => { PREFS.vibration = chkVibration.checked; savePrefs(PREFS); });
 chkVoice?.addEventListener("change", () => { PREFS.voice = chkVoice.checked; savePrefs(PREFS); });
 chkMotion?.addEventListener("change", () => { PREFS.reduceMotion = chkMotion.checked; savePrefs(PREFS); applyPrefs(); });
+chkCalm?.addEventListener("change", () => {
+  PREFS.calmMode = chkCalm.checked;
+  if (PREFS.calmMode) {
+    PREFS.reduceMotion = true;
+    PREFS.vibration = false;
+  }
+  savePrefs(PREFS);
+  applyPrefs();
+});
 selTextSize.addEventListener("change", () => { PREFS.textSize = selTextSize.value; savePrefs(PREFS); applyPrefs(); });
 applyPrefs();
 
@@ -418,15 +500,22 @@ function accuracyForConcept(conceptId, student) {
 function pickAdaptiveChallenge() {
   const pool = conceptsInActiveSet();
   if (pool.length === 0) return null;
+
+  // Modo calma: avance predecible en orden del set (ideal TEA)
+  if (PREFS.calmMode) {
+    if (!pickAdaptiveChallenge._seq) pickAdaptiveChallenge._seq = 0;
+    const i = pickAdaptiveChallenge._seq % pool.length;
+    pickAdaptiveChallenge._seq = i + 1;
+    return pool[i];
+  }
+
   const student = studentSelect.value || DATA.students[0];
   const ranked = pool.map((c) => {
     const stats = accuracyForConcept(c.id, student);
-    // prioriza baja precisión y poco practicadas; algo de azar para no repetir siempre
     const score = (1 - stats.acc) * 2 + (stats.total < 2 ? 0.8 : 0) + Math.random() * 0.35;
     return { c, score };
   });
   ranked.sort((a, b) => b.score - a.score);
-  // elige entre las 3 más necesitadas
   const top = ranked.slice(0, Math.min(3, ranked.length));
   return top[Math.floor(Math.random() * top.length)].c;
 }
@@ -563,7 +652,7 @@ function scanLoop() {
       if (concept) {
         lastCode = { concept, location: code.location, ts: now };
         drawAROverlay(concept, code.location);
-        if (now - lastReadTs > 1200) {
+        if (now - lastReadTs > scanCooldownMs()) {
           lastReadTs = now;
           handleScan(concept, code.location);
         }
@@ -745,14 +834,17 @@ function renderPieceGrid() {
 function renderPiezasCatalogo() {
   const root = document.getElementById("piezas-catalogo");
   if (!root) return;
-  const groups = { basico: [], emociones: [], rutinas: [] };
+  const groups = { letras: [], numeros: [], signos: [], figuras: [], emociones: [], rutinas: [] };
   CONCEPTS.forEach((c) => {
     if (groups[c.set]) groups[c.set].push(c);
   });
   const titles = {
-    basico: "Set básico (letras, números, figuras)",
-    emociones: "Set emociones",
-    rutinas: "Set rutinas diarias",
+    letras: "Letras A–Z + Ñ",
+    numeros: "Números 0–9",
+    signos: "Signos",
+    figuras: "Figuras",
+    emociones: "Emociones",
+    rutinas: "Rutinas diarias",
   };
   root.innerHTML = "";
   Object.keys(groups).forEach((set) => {
@@ -898,6 +990,7 @@ function generateLocalRecommendation() {
     letra: "letras",
     numero: "números",
     figura: "figuras geométricas",
+    signo: "signos",
     emocion: "emociones",
     rutina: "rutinas diarias",
   };

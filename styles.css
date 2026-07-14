@@ -243,7 +243,32 @@ button:active { transform: scale(0.98); }
 }
 .a11y-card summary::-webkit-details-marker,
 .eib-card summary::-webkit-details-marker { display: none; }
-.a11y-body { margin-top: 12px; display: flex; flex-direction: column; gap: 12px; }
+.a11y-calm-help { margin: -4px 0 4px; font-size: 12px; }
+
+body.calm-mode {
+  --page-bg: linear-gradient(180deg, #f4f6f5 0%, #eef1f0 100%);
+  --shadow: none;
+}
+body.calm-mode .region-scene { opacity: 0.22; }
+body.calm-mode .brand-dot,
+body.calm-mode .scan-frame,
+body.calm-mode .piece-visual.has-photo .piece-photo {
+  animation: none !important;
+}
+body.calm-mode .result-card.is-correct,
+body.calm-mode .result-card.is-wrong {
+  animation: none !important;
+  background: #fff;
+}
+body.calm-mode .piece-chip {
+  min-height: 92px;
+  border-width: 2px;
+}
+body.calm-mode .target-text {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+body.calm-mode .session-strip { opacity: 0.92; }
 .a11y-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 14px; }
 .a11y-row select { flex: none; width: auto; }
 
