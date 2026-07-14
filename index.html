@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>TactilIA · Makiwan Yachay — Kit educativo inclusivo con IA y RA</title>
-<meta name="theme-color" content="#2563eb">
+<meta name="theme-color" content="#0f766e">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
@@ -36,6 +36,12 @@
   <!-- VISTA ESTUDIANTE -->
   <section id="view-estudiante" class="view active" role="tabpanel" aria-labelledby="tab-estudiante">
 
+    <div class="session-strip" aria-label="Progreso de la sesión">
+      <div class="session-stat"><span class="n" id="stat-streak">0</span><span class="l" data-i18n="statStreak">Racha</span></div>
+      <div class="session-stat"><span class="n" id="stat-correct">0</span><span class="l" data-i18n="statCorrect">Aciertos</span></div>
+      <div class="session-stat"><span class="n" id="stat-accuracy">—</span><span class="l" data-i18n="statAccuracy">Precisión</span></div>
+    </div>
+
     <details class="card a11y-card">
       <summary data-i18n="a11yTitle">⚙ Accesibilidad</summary>
       <div class="a11y-body">
@@ -46,6 +52,14 @@
         <label class="a11y-row">
           <span data-i18n="a11yVibration">Vibración al acertar</span>
           <input type="checkbox" id="chk-vibration" checked>
+        </label>
+        <label class="a11y-row">
+          <span data-i18n="a11yVoice">Voz / audio</span>
+          <input type="checkbox" id="chk-voice" checked>
+        </label>
+        <label class="a11y-row">
+          <span data-i18n="a11yMotion">Menos movimiento</span>
+          <input type="checkbox" id="chk-motion">
         </label>
         <div class="a11y-row">
           <span data-i18n="a11yTextSize">Tamaño de texto</span>
@@ -100,6 +114,12 @@
       <p id="scan-status" class="status-text" data-i18n="cameraOff" role="status" aria-live="polite">Cámara apagada.</p>
     </div>
 
+    <div class="card" id="demo-card">
+      <h2 data-i18n="demoTitle">Practicar sin QR (demo)</h2>
+      <p class="muted" data-i18n="demoHelp">Toca una pieza para simular el escaneo — útil en mentoría o cuando aún no tienes el kit 3D.</p>
+      <div id="piece-grid" class="piece-grid" role="list"></div>
+    </div>
+
     <div class="card result-card" id="result-card" hidden role="status" aria-live="assertive" aria-atomic="true">
       <div id="result-icon" class="result-icon" aria-hidden="true">—</div>
       <div id="result-label" class="result-label">—</div>
@@ -111,32 +131,48 @@
   <!-- VISTA DOCENTE -->
   <section id="view-docente" class="view" role="tabpanel" aria-labelledby="tab-docente">
     <div class="card">
-      <h2>Panel del docente</h2>
-      <p class="muted">Resumen de progreso guardado localmente en el dispositivo (funciona sin internet).</p>
+      <h2 data-i18n="teacherTitle">Panel del docente</h2>
+      <p class="muted" data-i18n="teacherIntro">Resumen de progreso guardado localmente en el dispositivo (funciona sin internet).</p>
     </div>
 
     <div class="card">
-      <div id="dashboard-empty" class="muted">Aún no hay datos de práctica registrados.</div>
+      <div id="dashboard-empty" class="muted" data-i18n="dashEmpty">Aún no hay datos de práctica registrados.</div>
       <table id="dashboard-table" class="dash-table" hidden>
         <thead>
-          <tr><th>Estudiante</th><th>Intentos</th><th>Aciertos</th><th>Precisión</th><th>Última práctica</th></tr>
+          <tr>
+            <th data-i18n="colStudent">Estudiante</th>
+            <th data-i18n="colAttempts">Intentos</th>
+            <th data-i18n="colHits">Aciertos</th>
+            <th data-i18n="colAccuracy">Precisión</th>
+            <th data-i18n="colLast">Última práctica</th>
+          </tr>
         </thead>
         <tbody id="dashboard-body"></tbody>
       </table>
     </div>
 
     <div class="card">
-      <h3>Recomendación con IA</h3>
-      <p class="muted">Consulta Claude vía el backend en <code>server/</code> (clave solo en el servidor). Sin internet o sin backend, usa la heurística local offline.</p>
-      <button id="btn-ai-recommend" class="btn-primary" type="button" aria-describedby="ai-help">✨ Generar recomendación</button>
+      <h3 data-i18n="insightsTitle">Áreas a reforzar</h3>
+      <p class="muted" data-i18n="insightsHelp">Piezas con menor precisión del estudiante activo (o del grupo).</p>
+      <ul id="insight-list" class="insight-list"></ul>
+    </div>
+
+    <div class="card">
+      <h3 data-i18n="aiTitle">Recomendación con IA</h3>
+      <p class="muted" data-i18n="aiHelp">Consulta Claude vía el backend en server/ (clave solo en el servidor). Sin internet o sin backend, usa la heurística local offline.</p>
+      <button id="btn-ai-recommend" class="btn-primary" type="button" aria-describedby="ai-help">✨ <span data-i18n="aiButton">Generar recomendación</span></button>
       <p id="ai-help" class="muted" hidden>La recomendación se anuncia a continuación.</p>
       <div id="ai-output" class="ai-output" role="status" aria-live="polite" aria-atomic="true"></div>
     </div>
 
     <div class="card">
       <div class="row">
-        <button id="btn-export" class="btn-secondary" type="button">⬇ Exportar datos (JSON)</button>
-        <button id="btn-clear" class="btn-danger" type="button">🗑 Borrar todos los datos</button>
+        <button id="btn-export" class="btn-secondary" type="button" data-i18n="btnExport">⬇ Exportar datos (JSON)</button>
+        <label class="btn-secondary" style="display:inline-flex;align-items:center;cursor:pointer;margin:0;">
+          <span data-i18n="btnImport">⬆ Importar JSON</span>
+          <input type="file" id="import-file" accept="application/json,.json" hidden>
+        </label>
+        <button id="btn-clear" class="btn-danger" type="button" data-i18n="btnClear">🗑 Borrar todos los datos</button>
       </div>
     </div>
   </section>
@@ -172,7 +208,7 @@
       <p class="muted">Use el formulario de abajo (se guarda en este dispositivo) para esa revisión.</p>
     </div>
 
-    <details class="card eib-card" open>
+    <details class="card eib-card">
       <summary>Validación lingüística EIB / Quechua Pasco</summary>
       <p class="muted">Para especialista en Educación Intercultural Bilingüe o hablante nativo. Marque cada frase y anote la corrección por variedad dialectal.</p>
       <div class="eib-meta">

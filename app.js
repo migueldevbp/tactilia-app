@@ -15,6 +15,7 @@ const I18N = {
     tabEstudiante: "Estudiante", tabDocente: "Docente", tabAcerca: "Acerca de",
     a11yTitle: "⚙ Accesibilidad", a11yContrast: "Alto contraste",
     a11yVibration: "Vibración al acertar", a11yTextSize: "Tamaño de texto",
+    a11yVoice: "Voz / audio", a11yMotion: "Menos movimiento",
     activeStudent: "Estudiante activo", newStudent: "+ Nuevo",
     setLabel: "Kit / set temático",
     setBasico: "Letras · números · figuras",
@@ -22,7 +23,8 @@ const I18N = {
     setRutinas: "Rutinas diarias",
     setTodos: "Todos los sets",
     setHelp: "Elige el banco de piezas para los retos (útil en discapacidad intelectual: emoción / rutina).",
-    exerciseMode: "Modo ejercicio", exercisePrompt: "Presiona \"Nuevo reto\" para comenzar",
+    exerciseMode: "Modo ejercicio adaptativo",
+    exercisePrompt: "Presiona \"Nuevo reto\" para comenzar",
     newChallenge: "🎯 Nuevo reto", repeat: "🔊 Repetir",
     scanPiece: "Escanear pieza (Realidad Aumentada)",
     startCamera: "📷 Activar cámara", stopCamera: "⏹ Detener",
@@ -35,11 +37,29 @@ const I18N = {
     sayWrong: (label, target) => `Esa es ${label}. Sigue buscando ${target}.`,
     freeMode: "Modo exploración libre",
     notRecognized: "Pieza no reconocida",
+    demoTitle: "Practicar sin QR (demo)",
+    demoHelp: "Toca una pieza para simular el escaneo — útil en mentoría o cuando aún no tienes el kit 3D.",
+    statStreak: "Racha", statCorrect: "Aciertos", statAccuracy: "Precisión",
+    teacherTitle: "Panel del docente",
+    teacherIntro: "Resumen de progreso guardado localmente en el dispositivo (funciona sin internet).",
+    dashEmpty: "Aún no hay datos de práctica registrados.",
+    colStudent: "Estudiante", colAttempts: "Intentos", colHits: "Aciertos",
+    colAccuracy: "Precisión", colLast: "Última práctica",
+    insightsTitle: "Áreas a reforzar",
+    insightsHelp: "Piezas con menor precisión del estudiante activo (o del grupo).",
+    insightsNone: "Todavía no hay suficientes intentos para priorizar piezas.",
+    aiTitle: "Recomendación con IA",
+    aiHelp: "Consulta Claude vía el backend en server/ (clave solo en el servidor). Sin internet o sin backend, usa la heurística local offline.",
+    aiButton: "Generar recomendación",
+    btnExport: "⬇ Exportar datos (JSON)",
+    btnImport: "⬆ Importar JSON",
+    btnClear: "🗑 Borrar todos los datos",
   },
   qu: {
     tabEstudiante: "Yachaqaq", tabDocente: "Yachachiq", tabAcerca: "Kaymanta",
     a11yTitle: "⚙ Runa yanapay", a11yContrast: "Sinchi rikch'ay",
     a11yVibration: "Kuyuchiy allin kaqtin", a11yTextSize: "Qillqa hatunchay",
+    a11yVoice: "Rimay / uyarina", a11yMotion: "Aswanta mana kuyuchiy",
     activeStudent: "Kunan yachaqaq", newStudent: "+ Musuq",
     setLabel: "Impay kit",
     setBasico: "Letras · yupay · rikch'akuna",
@@ -47,7 +67,8 @@ const I18N = {
     setRutinas: "Sapa p'unchaw",
     setTodos: "Llapan",
     setHelp: "Akllay riqsichinakunata (emocionkuna / sapa p'unchaw).",
-    exerciseMode: "Yachay pukllay", exercisePrompt: "\"Musuq atipanakuy\" nisqata ñitiy qallariy",
+    exerciseMode: "Yachay pukllay (yanapakuq)",
+    exercisePrompt: "\"Musuq atipanakuy\" nisqata ñitiy qallariy",
     newChallenge: "🎯 Musuq atipanakuy", repeat: "🔊 Kutichiy",
     scanPiece: "Rikuchiy (Realidad Aumentada)",
     startCamera: "📷 Kamarata qallariy", stopCamera: "⏹ Sayachiy",
@@ -60,6 +81,23 @@ const I18N = {
     sayWrong: (label, target) => `Chayqa ${label}. Maskayta qatiy ${target}.`,
     freeMode: "Kikillanmanta rikuy",
     notRecognized: "Manam riqsisqachu",
+    demoTitle: "QR mana kaspapas yachay",
+    demoHelp: "Riqsichiyta ñitiy — demo / mentoríapaq allin.",
+    statStreak: "Qatiynin", statCorrect: "Allinkuna", statAccuracy: "Allin kay",
+    teacherTitle: "Yachachiq pañil",
+    teacherIntro: "Kay dispositivopi waqaychasqa (mana internetwanpas).",
+    dashEmpty: "Manaraqmi yachay datoskuna kanchu.",
+    colStudent: "Yachaqaq", colAttempts: "Munasqakuna", colHits: "Allinkuna",
+    colAccuracy: "Allin kay", colLast: "Qhipa yachay",
+    insightsTitle: "Kallpachanapaq",
+    insightsHelp: "Aswan pisi allin kaq riqsichinakuna.",
+    insightsNone: "Aswan pretikunayki kallanraq.",
+    aiTitle: "IA yuyay",
+    aiHelp: "Claude backendwan. Mana kaspaqa local yuyay.",
+    aiButton: "Yuyayta ruway",
+    btnExport: "⬇ Datosnin exportay",
+    btnImport: "⬆ JSON apamuy",
+    btnClear: "🗑 Llapan datasninta pichay",
   },
 };
 
@@ -167,24 +205,33 @@ if (DATA.students.length === 0) {
 
 function loadPrefs() {
   try {
-    return JSON.parse(localStorage.getItem(PREFS_KEY)) || { contrast: false, vibration: true, textSize: "normal" };
+    return JSON.parse(localStorage.getItem(PREFS_KEY)) || {
+      contrast: false, vibration: true, textSize: "normal", voice: true, reduceMotion: false,
+    };
   } catch (e) {
-    return { contrast: false, vibration: true, textSize: "normal" };
+    return { contrast: false, vibration: true, textSize: "normal", voice: true, reduceMotion: false };
   }
 }
 function savePrefs(p) {
   localStorage.setItem(PREFS_KEY, JSON.stringify(p));
 }
 let PREFS = loadPrefs();
+if (PREFS.voice === undefined) PREFS.voice = true;
+if (PREFS.reduceMotion === undefined) PREFS.reduceMotion = false;
 
 /* ---------- 3. Utilidades de voz y vibración (funcionan sin internet) --- */
 function speak(text) {
-  if (!("speechSynthesis" in window)) return;
+  if (!PREFS.voice || !("speechSynthesis" in window)) return;
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = LANG === "qu" ? "es-PE" : "es-PE"; // no todos los navegadores tienen voz "qu"; se usa motor es-PE como base fonética
-  u.rate = 0.95;
+  u.lang = "es-PE";
+  u.rate = LANG === "qu" ? 0.88 : 0.95;
   window.speechSynthesis.speak(u);
+}
+
+function shouldAnimate() {
+  if (PREFS.reduceMotion) return false;
+  return !(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 }
 
 function vibrate(pattern) {
@@ -226,6 +273,8 @@ function applyI18n() {
     ? t("findPiece", conceptLabel(currentTarget))
     : t("exercisePrompt");
   document.getElementById("scan-status").textContent = scanning ? t("cameraOn") : t("cameraOff");
+  renderPieceGrid();
+  updateSessionUI();
 }
 
 document.querySelectorAll(".lang-btn").forEach((btn) => {
@@ -264,6 +313,7 @@ if (setSelect) {
     localStorage.setItem("tactilia_set", activeSet);
     currentTarget = null;
     applyI18n();
+    renderPieceGrid();
   });
 }
 /* ---------- 6. Selector de estudiante ---------- */
@@ -292,33 +342,83 @@ document.getElementById("btn-new-student").addEventListener("click", () => {
 /* ---------- 7. Panel de accesibilidad ---------- */
 const chkContrast = document.getElementById("chk-contrast");
 const chkVibration = document.getElementById("chk-vibration");
+const chkVoice = document.getElementById("chk-voice");
+const chkMotion = document.getElementById("chk-motion");
 const selTextSize = document.getElementById("sel-textsize");
 
 function applyPrefs() {
   document.body.classList.toggle("contrast-mode", !!PREFS.contrast);
+  document.body.classList.toggle("reduce-motion", !!PREFS.reduceMotion);
   document.body.classList.remove("text-grande", "text-xl");
   if (PREFS.textSize === "grande") document.body.classList.add("text-grande");
   if (PREFS.textSize === "xl") document.body.classList.add("text-xl");
   chkContrast.checked = !!PREFS.contrast;
   chkVibration.checked = !!PREFS.vibration;
+  if (chkVoice) chkVoice.checked = PREFS.voice !== false;
+  if (chkMotion) chkMotion.checked = !!PREFS.reduceMotion;
   selTextSize.value = PREFS.textSize || "normal";
 }
 chkContrast.addEventListener("change", () => { PREFS.contrast = chkContrast.checked; savePrefs(PREFS); applyPrefs(); });
 chkVibration.addEventListener("change", () => { PREFS.vibration = chkVibration.checked; savePrefs(PREFS); });
+chkVoice?.addEventListener("change", () => { PREFS.voice = chkVoice.checked; savePrefs(PREFS); });
+chkMotion?.addEventListener("change", () => { PREFS.reduceMotion = chkMotion.checked; savePrefs(PREFS); applyPrefs(); });
 selTextSize.addEventListener("change", () => { PREFS.textSize = selTextSize.value; savePrefs(PREFS); applyPrefs(); });
 applyPrefs();
 
-/* ---------- 8. Modo ejercicio ---------- */
+/* ---------- 8. Modo ejercicio (adaptativo) ---------- */
 let currentTarget = null;
+const SESSION = { attempts: 0, correct: 0, streak: 0 };
+
+function updateSessionUI() {
+  const streakEl = document.getElementById("stat-streak");
+  const correctEl = document.getElementById("stat-correct");
+  const accEl = document.getElementById("stat-accuracy");
+  if (!streakEl) return;
+  streakEl.textContent = String(SESSION.streak);
+  correctEl.textContent = String(SESSION.correct);
+  accEl.textContent = SESSION.attempts
+    ? Math.round((SESSION.correct / SESSION.attempts) * 100) + "%"
+    : "—";
+}
+
+function accuracyForConcept(conceptId, student) {
+  let total = 0;
+  let ok = 0;
+  DATA.logs.forEach((log) => {
+    if (student && log.student !== student) return;
+    if (log.targetId !== conceptId && log.conceptId !== conceptId) return;
+    if (log.targetId == null) return; // exploración libre no cuenta como reto
+    if (log.targetId !== conceptId) return;
+    total++;
+    if (log.correct) ok++;
+  });
+  return { total, ok, acc: total ? ok / total : 0.5 };
+}
+
+function pickAdaptiveChallenge() {
+  const pool = conceptsInActiveSet();
+  if (pool.length === 0) return null;
+  const student = studentSelect.value || DATA.students[0];
+  const ranked = pool.map((c) => {
+    const stats = accuracyForConcept(c.id, student);
+    // prioriza baja precisión y poco practicadas; algo de azar para no repetir siempre
+    const score = (1 - stats.acc) * 2 + (stats.total < 2 ? 0.8 : 0) + Math.random() * 0.35;
+    return { c, score };
+  });
+  ranked.sort((a, b) => b.score - a.score);
+  // elige entre las 3 más necesitadas
+  const top = ranked.slice(0, Math.min(3, ranked.length));
+  return top[Math.floor(Math.random() * top.length)].c;
+}
 
 document.getElementById("btn-new-challenge").addEventListener("click", () => {
-  const pool = conceptsInActiveSet();
-  if (pool.length === 0) return;
-  currentTarget = pool[Math.floor(Math.random() * pool.length)];
+  currentTarget = pickAdaptiveChallenge();
+  if (!currentTarget) return;
   const msg = t("findPiece", conceptLabel(currentTarget));
   document.getElementById("exercise-target").textContent = msg;
   speak(t("sayFind", conceptLabel(currentTarget)));
   announceForScreenReader(msg);
+  renderPieceGrid();
 });
 
 document.getElementById("btn-repeat-audio").addEventListener("click", () => {
@@ -373,7 +473,8 @@ function stopScan() {
 }
 
 function spawnAchievementBurst(x, y) {
-  const colors = ["#facc15", "#22c55e", "#38bdf8", "#f472b6", "#ffffff"];
+  if (!shouldAnimate()) return;
+  const colors = ["#facc15", "#22c55e", "#2dd4bf", "#fdba74", "#ffffff"];
   for (let i = 0; i < 28; i++) {
     const angle = (Math.PI * 2 * i) / 28 + Math.random() * 0.4;
     const speed = 2.5 + Math.random() * 4;
@@ -461,9 +562,9 @@ function drawAROverlay(concept, loc) {
   const { topLeftCorner: tl, topRightCorner: tr, bottomRightCorner: br, bottomLeftCorner: bl } = loc;
   const cx = (tl.x + tr.x + br.x + bl.x) / 4;
   const cy = (tl.y + tr.y + br.y + bl.y) / 4;
-  const bob = Math.sin(Date.now() / 260) * 6;
+  const bob = shouldAnimate() ? Math.sin(Date.now() / 260) * 6 : 0;
   const isTarget = currentTarget && currentTarget.id === concept.id;
-  const color = currentTarget ? (isTarget ? "#22c55e" : "#38bdf8") : "#facc15";
+  const color = currentTarget ? (isTarget ? "#22c55e" : "#2dd4bf") : "#ca8a04";
 
   ctx.save();
   ctx.lineWidth = 4;
@@ -521,6 +622,7 @@ function roundRectPath(c, x, y, w, h, r) {
 function handleScan(concept, location) {
   const resultCard = document.getElementById("result-card");
   resultCard.hidden = false;
+  resultCard.classList.remove("is-correct", "is-wrong");
   document.getElementById("result-icon").textContent = concept.icon;
   document.getElementById("result-label").textContent = conceptLabel(concept);
 
@@ -530,27 +632,53 @@ function handleScan(concept, location) {
       ? t("correct")
       : t("almost", conceptLabel(currentTarget));
     document.getElementById("result-feedback").textContent = feedback;
+    resultCard.classList.add(correct ? "is-correct" : "is-wrong");
     speak(correct ? t("sayCorrect", conceptSay(concept)) : t("sayWrong", conceptLabel(concept), conceptLabel(currentTarget)));
     vibrate(correct ? 180 : [60, 40, 60]);
     announceForScreenReader(`${conceptLabel(concept)}. ${feedback}`);
     logAttempt(concept.id, currentTarget.id, correct);
-    if (correct && location) {
-      const { topLeftCorner: tl, topRightCorner: tr, bottomRightCorner: br, bottomLeftCorner: bl } = location;
-      spawnAchievementBurst(
-        (tl.x + tr.x + br.x + bl.x) / 4,
-        (tl.y + tr.y + br.y + bl.y) / 4
-      );
+    SESSION.attempts++;
+    if (correct) {
+      SESSION.correct++;
+      SESSION.streak++;
+      if (location) {
+        const { topLeftCorner: tl, topRightCorner: tr, bottomRightCorner: br, bottomLeftCorner: bl } = location;
+        spawnAchievementBurst(
+          (tl.x + tr.x + br.x + bl.x) / 4,
+          (tl.y + tr.y + br.y + bl.y) / 4
+        );
+      }
       currentTarget = null;
-    } else if (correct) {
-      currentTarget = null;
+      document.getElementById("exercise-target").textContent = t("exercisePrompt");
+    } else {
+      SESSION.streak = 0;
     }
+    updateSessionUI();
+    renderPieceGrid();
   } else {
     document.getElementById("result-feedback").textContent = t("freeMode");
+    resultCard.classList.add("is-correct");
     speak(conceptSay(concept));
     vibrate(90);
     announceForScreenReader(`${conceptLabel(concept)}. ${t("freeMode")}`);
     logAttempt(concept.id, null, true);
   }
+}
+
+function renderPieceGrid() {
+  const grid = document.getElementById("piece-grid");
+  if (!grid) return;
+  grid.innerHTML = "";
+  conceptsInActiveSet().forEach((c) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "piece-chip" + (currentTarget && currentTarget.id === c.id ? " is-target" : "");
+    btn.setAttribute("role", "listitem");
+    btn.setAttribute("aria-label", conceptLabel(c));
+    btn.innerHTML = `<span class="ic" aria-hidden="true">${c.icon}</span><span class="lb">${conceptLabel(c)}</span>`;
+    btn.addEventListener("click", () => handleScan(c, null));
+    grid.appendChild(btn);
+  });
 }
 function logAttempt(conceptId, targetId, correct) {
   DATA.logs.push({
@@ -587,6 +715,51 @@ function renderDashboard() {
       r.last
     ).toLocaleString("es-PE")}</td>`;
     tbody.appendChild(tr);
+  });
+
+  renderInsights();
+}
+
+function renderInsights() {
+  const list = document.getElementById("insight-list");
+  if (!list) return;
+  list.innerHTML = "";
+  const student = studentSelect.value || null;
+  const byConcept = {};
+  DATA.logs.forEach((log) => {
+    if (student && log.student !== student) return;
+    if (!log.targetId) return;
+    if (!byConcept[log.targetId]) byConcept[log.targetId] = { total: 0, correct: 0 };
+    byConcept[log.targetId].total++;
+    if (log.correct) byConcept[log.targetId].correct++;
+  });
+
+  const ranked = Object.entries(byConcept)
+    .map(([id, s]) => ({
+      id,
+      total: s.total,
+      acc: s.correct / s.total,
+      concept: findConcept(id),
+    }))
+    .filter((x) => x.concept && x.total >= 1)
+    .sort((a, b) => a.acc - b.acc || b.total - a.total)
+    .slice(0, 5);
+
+  if (ranked.length === 0) {
+    const li = document.createElement("li");
+    li.textContent = t("insightsNone");
+    list.appendChild(li);
+    return;
+  }
+
+  ranked.forEach((item) => {
+    const pct = Math.round(item.acc * 100);
+    const li = document.createElement("li");
+    li.innerHTML =
+      `<strong>${item.concept.icon} ${conceptLabel(item.concept)}</strong>` +
+      ` — ${pct}% (${item.total} retos)` +
+      `<div class="bar" aria-hidden="true"><span style="width:${pct}%"></span></div>`;
+    list.appendChild(li);
   });
 }
 
@@ -670,7 +843,7 @@ document.getElementById("btn-ai-recommend").addEventListener("click", async () =
   }
 });
 
-/* ---------- 13. Exportar / borrar datos ---------- */
+/* ---------- 13. Exportar / importar / borrar datos ---------- */
 document.getElementById("btn-export").addEventListener("click", () => {
   const blob = new Blob([JSON.stringify(DATA, null, 2)], { type: "application/json" });
   const a = document.createElement("a");
@@ -679,10 +852,34 @@ document.getElementById("btn-export").addEventListener("click", () => {
   a.click();
 });
 
+document.getElementById("import-file")?.addEventListener("change", async (e) => {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  try {
+    const text = await file.text();
+    const parsed = JSON.parse(text);
+    if (!parsed || !Array.isArray(parsed.students) || !Array.isArray(parsed.logs)) {
+      throw new Error("JSON inválido");
+    }
+    DATA = { students: parsed.students, logs: parsed.logs };
+    saveData(DATA);
+    renderStudentSelect();
+    renderDashboard();
+    toast("Datos importados");
+  } catch (err) {
+    toast("No se pudo importar el JSON");
+  }
+  e.target.value = "";
+});
+
 document.getElementById("btn-clear").addEventListener("click", () => {
   if (confirm("¿Borrar todos los datos guardados en este dispositivo?")) {
     DATA = { students: DATA.students, logs: [] };
     saveData(DATA);
+    SESSION.attempts = 0;
+    SESSION.correct = 0;
+    SESSION.streak = 0;
+    updateSessionUI();
     renderDashboard();
     toast("Datos borrados");
   }
@@ -837,10 +1034,12 @@ function wireEibPanel() {
 
 wireEibPanel();
 
-/* ---------- 16. Estado inicial de idioma ---------- */
+/* ---------- 16. Estado inicial ---------- */
 document.querySelectorAll(".lang-btn").forEach((b) => {
   const on = b.dataset.lang === LANG;
   b.classList.toggle("active", on);
   b.setAttribute("aria-pressed", on ? "true" : "false");
 });
 applyI18n();
+renderPieceGrid();
+updateSessionUI();
