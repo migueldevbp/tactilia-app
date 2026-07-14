@@ -145,13 +145,61 @@
   <section id="view-acerca" class="view" role="tabpanel" aria-labelledby="tab-acerca">
     <div class="card">
       <h2>TactilIA · Makiwan Yachay</h2>
-      <p><em>Makiwan Yachay</em> significa, en quechua, "aprendizaje con las manos". Es el nombre bilingüe del proyecto, en honor a las comunidades quechuahablantes de Pasco y de otras regiones andinas.</p>
-      <p>Kit de aprendizaje multisensorial: piezas manipulables impresas en 3D (letras, números y figuras en relieve) identificadas con un código QR, combinadas con esta app que reconoce cada pieza mediante <strong>realidad aumentada</strong> (resalta la pieza en la cámara en tiempo real), da retroalimentación auditiva inmediata en <strong>español o quechua</strong>, y adapta los retos al ritmo de cada estudiante.</p>
-      <p>Incluye sets temáticos de <strong>emociones</strong> y <strong>rutinas diarias</strong> (pictogramas) para apoyar a estudiantes con discapacidad intelectual, además del kit básico de letras, números y figuras.</p>
-      <p>Pensado para estudiantes de Educación Básica Especial y aulas rurales con conectividad limitada. La app funciona <strong>100% sin internet</strong> una vez instalada (PWA offline), incluye modo de <strong>alto contraste</strong>, texto ajustable, roles ARIA para lectores de pantalla y retroalimentación por <strong>vibración</strong>.</p>
-      <p class="muted">Nota lingüística: el quechua usa tradicionalmente un sistema de tres vocales (a, i, u). Los textos en quechua de este prototipo son una primera aproximación — use <strong>VALIDACION_QUECHUA.md</strong> para revisión con un especialista EIB o hablante nativo de Pasco antes de su uso oficial.</p>
-      <p class="muted">Proyecto para la Hackathon en Tecnologías Digitales 2026 — Minedu — Categoría A.</p>
+      <p><em>Makiwan Yachay</em> significa, en quechua, «aprendizaje con las manos». Es el nombre bilingüe del proyecto, en homenaje a las comunidades quechuahablantes de Pasco y de otras regiones andinas.</p>
+      <p>Prototipo para la <strong>Hackathon en Tecnologías Digitales 2026 (Minedu) — Categoría A</strong>: integrar tecnologías emergentes para la atención de estudiantes de Educación Básica Especial.</p>
+      <p>Kit multisensorial: piezas 3D con QR + esta PWA. Reconoce cada pieza con <strong>realidad aumentada</strong> (recuadro y etiqueta anclados al marcador), da voz en <strong>español o quechua</strong>, propone retos por set temático y muestra progreso al docente. Incluye alto contraste, texto ajustable, vibración y roles ARIA. Funciona <strong>100% offline</strong> tras la primera carga.</p>
       <p class="muted">Alineado a ODS 4 (Educación de calidad) y ODS 10 (Reducción de las desigualdades).</p>
+    </div>
+
+    <div class="card">
+      <h3>Cómo se usa</h3>
+      <ol class="about-list">
+        <li>Imprime en 3D las piezas (letras, números, figuras; opcional: emociones y rutinas) y pega los QR de la carpeta <code>qr/output/</code>.</li>
+        <li>Pestaña <strong>Estudiante</strong>: idioma ES/QU, set temático, accesibilidad, cámara, «Nuevo reto».</li>
+        <li>El estudiante busca la pieza al tacto; la cámara confirma con RA, voz y (si acierta) partículas.</li>
+        <li>Pestaña <strong>Docente</strong>: precisión por estudiante, exportación JSON y recomendación IA (online vía <code>server/</code> o heurística offline).</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h3>Realidad aumentada (ligera)</h3>
+      <p>Sin Three.js ni WebXR: <code>jsQR</code> entrega las 4 esquinas del QR; el canvas dibuja el video y encima el recuadro + etiqueta (y un burst al acertar). Amarillo = exploración, celeste = no es el reto, verde = correcto. Ideal para Android de gama baja y aulas rurales.</p>
+    </div>
+
+    <div class="card">
+      <h3>Nota lingüística (quechua)</h3>
+      <p>El quechua tiene variedades regionales y usa tradicionalmente tres vocales (<strong>a, i, u</strong>). Por eso las letras <strong>E</strong> y <strong>O</strong> se nombran en español dentro de una frase portadora en quechua. El vocabulario del piloto es una <strong>primera aproximación</strong> para Pasco; antes de uso oficial debe revisarse con especialista EIB o hablante nativo.</p>
+      <p class="muted">Use el formulario de abajo (se guarda en este dispositivo) para esa revisión.</p>
+    </div>
+
+    <details class="card eib-card" open>
+      <summary>Validación lingüística EIB / Quechua Pasco</summary>
+      <p class="muted">Para especialista en Educación Intercultural Bilingüe o hablante nativo. Marque cada frase y anote la corrección por variedad dialectal.</p>
+      <div class="eib-meta">
+        <label>Fecha <input type="date" id="eib-fecha"></label>
+        <label>Revisor <input type="text" id="eib-revisor" placeholder="Nombre" autocomplete="name"></label>
+        <label>Variedad / zona <input type="text" id="eib-variedad" placeholder="Ej. Quechua Central — Pasco"></label>
+        <label>Contacto <input type="text" id="eib-contacto" placeholder="Correo o teléfono"></label>
+      </div>
+      <fieldset class="eib-decision">
+        <legend>Decisión</legend>
+        <label><input type="radio" name="eib-decision" value="piloto"> Aprobado para piloto</label>
+        <label><input type="radio" name="eib-decision" value="con-correcciones"> Aprobado tras correcciones ✏️</label>
+        <label><input type="radio" name="eib-decision" value="no-usar"> No usar en exposición hasta nueva revisión</label>
+      </fieldset>
+      <div id="eib-checklist" class="eib-checklist"></div>
+      <label class="eib-comments-label" for="eib-comentarios">Comentarios generales</label>
+      <textarea id="eib-comentarios" rows="3" placeholder="Registro formal/informal, adecuación a EBE, pictogramas…"></textarea>
+      <div class="row">
+        <button type="button" id="btn-eib-export" class="btn-secondary">⬇ Exportar validación (JSON)</button>
+        <button type="button" id="btn-eib-clear" class="btn-danger">Borrar validación local</button>
+      </div>
+    </details>
+
+    <div class="card">
+      <h3>Despliegue e instalación</h3>
+      <p>Sitio estático en GitHub Pages (HTTPS): ideal para cámara e «Instalar app». El backend de Claude vive aparte (`server/` + variable <code>ANTHROPIC_API_KEY</code>); sin él, la recomendación sigue siendo la heurística local. Empaquetar APK con Capacitor es opcional: la PWA ya cubre el caso offline en Android.</p>
+      <p class="muted">Según las bases del evento, el código debe estar disponible para el equipo organizador.</p>
     </div>
   </section>
 

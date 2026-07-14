@@ -120,11 +120,11 @@ const CONCEPTS = [
   { id: "emocion-miedo", set: "emociones", type: "emocion", label: "Miedo", icon: "😨",
     say: "Emoción: miedo.", label_qu: "Manchakuq", say_qu: "Kayqa manchakuq." },
   { id: "emocion-calma", set: "emociones", type: "emocion", label: "Calma", icon: "😌",
-    say: "Emoción: calma, tranquilo.", label_qu: "Thak", say_qu: "Kayqa thak." },
+    say: "Emoción: calma, tranquilo.", label_qu: "Thak", say_qu: "Kayqa thak / allin kawsay." },
 
   // Set rutinas diarias
   { id: "rutina-lavarse", set: "rutinas", type: "rutina", label: "Lavarse", icon: "🧼",
-    say: "Rutina: lavarse las manos o la cara.", label_qu: "Maqllikuy", say_qu: "Maqllikuy." },
+    say: "Rutina: lavarse las manos o la cara.", label_qu: "Maqllikuy", say_qu: "Maqllikuy (makikunata / uyata)." },
   { id: "rutina-comer", set: "rutinas", type: "rutina", label: "Comer", icon: "🍽️",
     say: "Rutina: comer.", label_qu: "Mikuy", say_qu: "Mikuy." },
   { id: "rutina-dormir", set: "rutinas", type: "rutina", label: "Dormir", icon: "🛏️",
@@ -695,7 +695,149 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-/* ---------- 15. Estado inicial de idioma ---------- */
+/* ---------- 15. Validación lingüística EIB (antes VALIDACION_QUECHUA.md) --- */
+const EIB_KEY = "tactilia_eib_v1";
+
+function loadEib() {
+  try {
+    return JSON.parse(localStorage.getItem(EIB_KEY)) || { meta: {}, items: {}, decision: "", comentarios: "" };
+  } catch (e) {
+    return { meta: {}, items: {}, decision: "", comentarios: "" };
+  }
+}
+function saveEib(data) {
+  localStorage.setItem(EIB_KEY, JSON.stringify(data));
+}
+
+function collectEibPhraseRows() {
+  const rows = [];
+  rows.push({ key: "nombre", section: "Proyecto", text: "Makiwan Yachay («aprendizaje con las manos»)" });
+  Object.keys(I18N.qu).forEach((key) => {
+    const val = I18N.qu[key];
+    if (typeof val === "string") {
+      rows.push({ key: "i18n:" + key, section: "Interfaz", text: val });
+    } else if (typeof val === "function") {
+      rows.push({
+        key: "i18n:" + key,
+        section: "Interfaz",
+        text: key === "findPiece" || key === "almost"
+          ? val("{etiqueta}")
+          : key === "sayFind"
+            ? val("{etiqueta}")
+            : key === "sayCorrect"
+              ? val("{say}")
+              : key === "sayWrong"
+                ? val("{etiqueta}", "{reto}")
+                : String(val),
+      });
+    }
+  });
+  CONCEPTS.forEach((c) => {
+    rows.push({
+      key: "concept:" + c.id + ":label",
+      section: "Concepto · " + c.set,
+      text: c.label_qu + "  |  " + c.say_qu,
+    });
+  });
+  return rows;
+}
+
+function renderEibChecklist() {
+  const wrap = document.getElementById("eib-checklist");
+  if (!wrap) return;
+  const data = loadEib();
+  const meta = data.meta || {};
+  const fecha = document.getElementById("eib-fecha");
+  const revisor = document.getElementById("eib-revisor");
+  const variedad = document.getElementById("eib-variedad");
+  const contacto = document.getElementById("eib-contacto");
+  const comentarios = document.getElementById("eib-comentarios");
+  if (fecha) fecha.value = meta.fecha || "";
+  if (revisor) revisor.value = meta.revisor || "";
+  if (variedad) variedad.value = meta.variedad || "";
+  if (contacto) contacto.value = meta.contacto || "";
+  if (comentarios) comentarios.value = data.comentarios || "";
+  document.querySelectorAll('input[name="eib-decision"]').forEach((r) => {
+    r.checked = r.value === (data.decision || "");
+  });
+
+  wrap.innerHTML = "";
+  collectEibPhraseRows().forEach((row) => {
+    const saved = (data.items && data.items[row.key]) || { estado: "", nota: "" };
+    const div = document.createElement("div");
+    div.className = "eib-row";
+    div.innerHTML =
+      `<strong>${row.section} · ${row.key}</strong>` +
+      `<div class="eib-phrase">${row.text}</div>` +
+      `<div class="eib-row-controls">` +
+      `<select data-eib-key="${row.key}" data-eib-field="estado" aria-label="Estado de ${row.key}">` +
+      `<option value="">—</option>` +
+      `<option value="ok">✅ Aprobado</option>` +
+      `<option value="edit">✏️ Corregir</option>` +
+      `<option value="reject">❌ Rechazar</option>` +
+      `<option value="doubt">❓ Duda</option>` +
+      `</select>` +
+      `<input type="text" data-eib-key="${row.key}" data-eib-field="nota" placeholder="Corrección / nota dialectal" aria-label="Nota para ${row.key}">` +
+      `</div>`;
+    wrap.appendChild(div);
+    const sel = div.querySelector("select");
+    const inp = div.querySelector("input");
+    sel.value = saved.estado || "";
+    inp.value = saved.nota || "";
+  });
+}
+
+function persistEibFromDom() {
+  const data = loadEib();
+  data.meta = {
+    fecha: document.getElementById("eib-fecha")?.value || "",
+    revisor: document.getElementById("eib-revisor")?.value || "",
+    variedad: document.getElementById("eib-variedad")?.value || "",
+    contacto: document.getElementById("eib-contacto")?.value || "",
+  };
+  data.comentarios = document.getElementById("eib-comentarios")?.value || "";
+  const dec = document.querySelector('input[name="eib-decision"]:checked');
+  data.decision = dec ? dec.value : "";
+  data.items = data.items || {};
+  document.querySelectorAll("[data-eib-key]").forEach((el) => {
+    const key = el.dataset.eibKey;
+    const field = el.dataset.eibField;
+    if (!data.items[key]) data.items[key] = { estado: "", nota: "" };
+    data.items[key][field] = el.value;
+  });
+  saveEib(data);
+}
+
+function wireEibPanel() {
+  if (!document.getElementById("eib-checklist")) return;
+  renderEibChecklist();
+  const root = document.getElementById("view-acerca");
+  root.addEventListener("change", (e) => {
+    if (e.target.closest(".eib-card")) persistEibFromDom();
+  });
+  root.addEventListener("input", (e) => {
+    if (e.target.closest(".eib-card")) persistEibFromDom();
+  });
+  document.getElementById("btn-eib-export")?.addEventListener("click", () => {
+    persistEibFromDom();
+    const blob = new Blob([JSON.stringify(loadEib(), null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "tactilia_validacion_quechua.json";
+    a.click();
+    toast("Validación exportada");
+  });
+  document.getElementById("btn-eib-clear")?.addEventListener("click", () => {
+    if (!confirm("¿Borrar la validación guardada en este dispositivo?")) return;
+    localStorage.removeItem(EIB_KEY);
+    renderEibChecklist();
+    toast("Validación borrada");
+  });
+}
+
+wireEibPanel();
+
+/* ---------- 16. Estado inicial de idioma ---------- */
 document.querySelectorAll(".lang-btn").forEach((b) => {
   const on = b.dataset.lang === LANG;
   b.classList.toggle("active", on);
