@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TactilIA · Makiwan Yachay — Kit educativo inclusivo con IA y RA</title>
+<meta name="theme-color" content="#2563eb">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand-row">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <h1>TactilIA</h1>
+      <span class="brand-sub">Makiwan Yachay</span>
+    </div>
+    <div class="lang-switch" role="group" aria-label="Idioma">
+      <button id="lang-es" class="lang-btn active" data-lang="es">ES</button>
+      <button id="lang-qu" class="lang-btn" data-lang="qu">QU</button>
+    </div>
+  </div>
+  <nav class="tabs">
+    <button class="tab-btn active" data-view="estudiante" data-i18n="tabEstudiante">Estudiante</button>
+    <button class="tab-btn" data-view="docente" data-i18n="tabDocente">Docente</button>
+    <button class="tab-btn" data-view="acerca" data-i18n="tabAcerca">Acerca de</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- VISTA ESTUDIANTE -->
+  <section id="view-estudiante" class="view active">
+
+    <details class="card a11y-card">
+      <summary data-i18n="a11yTitle">⚙ Accesibilidad</summary>
+      <div class="a11y-body">
+        <label class="a11y-row">
+          <span data-i18n="a11yContrast">Alto contraste</span>
+          <input type="checkbox" id="chk-contrast">
+        </label>
+        <label class="a11y-row">
+          <span data-i18n="a11yVibration">Vibración al acertar</span>
+          <input type="checkbox" id="chk-vibration" checked>
+        </label>
+        <div class="a11y-row">
+          <span data-i18n="a11yTextSize">Tamaño de texto</span>
+          <select id="sel-textsize">
+            <option value="normal">Normal</option>
+            <option value="grande">Grande</option>
+            <option value="xl">Muy grande</option>
+          </select>
+        </div>
+      </div>
+    </details>
+
+    <div class="card profile-card">
+      <label for="student-select" data-i18n="activeStudent">Estudiante activo</label>
+      <div class="row">
+        <select id="student-select"></select>
+        <button id="btn-new-student" class="btn-secondary" title="Agregar estudiante" data-i18n="newStudent">+ Nuevo</button>
+      </div>
+    </div>
+
+    <div class="card exercise-card">
+      <h2 data-i18n="exerciseMode">Modo ejercicio</h2>
+      <p id="exercise-target" class="target-text" data-i18n="exercisePrompt">Presiona "Nuevo reto" para comenzar</p>
+      <div class="row">
+        <button id="btn-new-challenge" class="btn-primary" data-i18n="newChallenge">Nuevo reto</button>
+        <button id="btn-repeat-audio" class="btn-secondary" data-i18n="repeat">Repetir</button>
+      </div>
+    </div>
+
+    <div class="card scanner-card">
+      <h2 data-i18n="scanPiece">Escanear pieza (Realidad Aumentada)</h2>
+      <div id="scanner-wrap" class="scanner-wrap">
+        <video id="camera-view" playsinline muted></video>
+        <canvas id="camera-canvas"></canvas>
+        <div id="scan-frame" class="scan-frame"></div>
+      </div>
+      <div class="row">
+        <button id="btn-start-scan" class="btn-primary" data-i18n="startCamera">Activar cámara</button>
+        <button id="btn-stop-scan" class="btn-secondary" hidden data-i18n="stopCamera">Detener</button>
+      </div>
+      <p id="scan-status" class="status-text" data-i18n="cameraOff">Cámara apagada.</p>
+    </div>
+
+    <div class="card result-card" id="result-card" hidden>
+      <div id="result-icon" class="result-icon">—</div>
+      <div id="result-label" class="result-label">—</div>
+      <div id="result-feedback" class="result-feedback">—</div>
+    </div>
+
+  </section>
+
+  <!-- VISTA DOCENTE -->
+  <section id="view-docente" class="view">
+    <div class="card">
+      <h2>Panel del docente</h2>
+      <p class="muted">Resumen de progreso guardado localmente en el dispositivo (funciona sin internet).</p>
+    </div>
+
+    <div class="card">
+      <div id="dashboard-empty" class="muted">Aún no hay datos de práctica registrados.</div>
+      <table id="dashboard-table" class="dash-table" hidden>
+        <thead>
+          <tr><th>Estudiante</th><th>Intentos</th><th>Aciertos</th><th>Precisión</th><th>Última práctica</th></tr>
+        </thead>
+        <tbody id="dashboard-body"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Recomendación con IA</h3>
+      <p class="muted">Genera una sugerencia pedagógica a partir del progreso registrado (requiere conexión y una función backend con la API de Claude — ver README/CURSOR_PROMPT).</p>
+      <button id="btn-ai-recommend" class="btn-primary">✨ Generar recomendación</button>
+      <div id="ai-output" class="ai-output"></div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <button id="btn-export" class="btn-secondary">⬇ Exportar datos (JSON)</button>
+        <button id="btn-clear" class="btn-danger">🗑 Borrar todos los datos</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- VISTA ACERCA DE -->
+  <section id="view-acerca" class="view">
+    <div class="card">
+      <h2>TactilIA · Makiwan Yachay</h2>
+      <p><em>Makiwan Yachay</em> significa, en quechua, "aprendizaje con las manos". Es el nombre bilingüe del proyecto, en honor a las comunidades quechuahablantes de Pasco y de otras regiones andinas.</p>
+      <p>Kit de aprendizaje multisensorial: piezas manipulables impresas en 3D (letras, números y figuras en relieve) identificadas con un código QR, combinadas con esta app que reconoce cada pieza mediante <strong>realidad aumentada</strong> (resalta la pieza en la cámara en tiempo real), da retroalimentación auditiva inmediata en <strong>español o quechua</strong>, y adapta los retos al ritmo de cada estudiante.</p>
+      <p>Pensado para estudiantes de Educación Básica Especial y aulas rurales con conectividad limitada. La app funciona <strong>100% sin internet</strong> una vez instalada (PWA offline), incluye modo de <strong>alto contraste</strong>, texto ajustable y retroalimentación por <strong>vibración</strong> para estudiantes con discapacidad visual, auditiva o intelectual.</p>
+      <p class="muted">Nota lingüística: el quechua usa tradicionalmente un sistema de tres vocales (a, i, u). Los textos en quechua de este prototipo son una primera aproximación y deben ser revisados por un especialista en Educación Intercultural Bilingüe (EIB) o hablante nativo de la variedad de Pasco antes de su uso oficial.</p>
+      <p class="muted">Proyecto para la Hackathon en Tecnologías Digitales 2026 — Minedu — Categoría A.</p>
+      <p class="muted">Alineado a ODS 4 (Educación de calidad) y ODS 10 (Reducción de las desigualdades).</p>
+    </div>
+  </section>
+
+</main>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="lib/jsQR.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

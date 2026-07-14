@@ -1,0 +1,522 @@
+/* =========================================================================
+   TactilIA · Makiwan Yachay — app.js
+   Kit educativo inclusivo: piezas manipulables impresas en 3D + QR +
+   Realidad Aumentada + IA + bilingüe español/quechua.
+   100% cliente, funciona sin internet una vez instalada (PWA).
+   ========================================================================= */
+
+/* ---------- 0. Textos de interfaz (ES / QU) -----------------------------
+   Nota: el quechua incluido es una primera aproximación pensada para
+   piloto. Debe validarse con un especialista en Educación Intercultural
+   Bilingüe (EIB) o hablante nativo de la variedad de Pasco antes de un
+   uso oficial, dado que el quechua tiene variedades regionales. --------- */
+const I18N = {
+  es: {
+    tabEstudiante: "Estudiante", tabDocente: "Docente", tabAcerca: "Acerca de",
+    a11yTitle: "⚙ Accesibilidad", a11yContrast: "Alto contraste",
+    a11yVibration: "Vibración al acertar", a11yTextSize: "Tamaño de texto",
+    activeStudent: "Estudiante activo", newStudent: "+ Nuevo",
+    exerciseMode: "Modo ejercicio", exercisePrompt: "Presiona \"Nuevo reto\" para comenzar",
+    newChallenge: "🎯 Nuevo reto", repeat: "🔊 Repetir",
+    scanPiece: "Escanear pieza (Realidad Aumentada)",
+    startCamera: "📷 Activar cámara", stopCamera: "⏹ Detener",
+    cameraOff: "Cámara apagada.", cameraOn: "Cámara activa. Apunta a la pieza.",
+    findPiece: (label) => `Encuentra la pieza: ${label}`,
+    sayFind: (label) => `Busca la pieza ${label}`,
+    correct: "¡Correcto! Muy bien 🎉",
+    almost: (label) => `Casi. Buscabas: ${label}`,
+    sayCorrect: (say) => `¡Correcto! ${say}`,
+    sayWrong: (label, target) => `Esa es ${label}. Sigue buscando ${target}.`,
+    freeMode: "Modo exploración libre",
+    notRecognized: "Pieza no reconocida",
+  },
+  qu: {
+    tabEstudiante: "Yachaqaq", tabDocente: "Yachachiq", tabAcerca: "Kaymanta",
+    a11yTitle: "⚙ Runa yanapay", a11yContrast: "Sinchi rikch'ay",
+    a11yVibration: "Kuyuchiy allin kaqtin", a11yTextSize: "Qillqa hatunchay",
+    activeStudent: "Kunan yachaqaq", newStudent: "+ Musuq",
+    exerciseMode: "Yachay pukllay", exercisePrompt: "\"Musuq atipanakuy\" nisqata ñitiy qallariy",
+    newChallenge: "🎯 Musuq atipanakuy", repeat: "🔊 Kutichiy",
+    scanPiece: "Rikuchiy (Realidad Aumentada)",
+    startCamera: "📷 Kamarata qallariy", stopCamera: "⏹ Sayachiy",
+    cameraOff: "Kamara sayasqa.", cameraOn: "Kamara kachkan. Riqsichiyta qhaway.",
+    findPiece: (label) => `Maskay: ${label}`,
+    sayFind: (label) => `Maskay ${label}`,
+    correct: "¡Allin! Sumaqta ruwanki 🎉",
+    almost: (label) => `Sichuslla. Maskasharqanki: ${label}`,
+    sayCorrect: (say) => `¡Allin! ${say}`,
+    sayWrong: (label, target) => `Chayqa ${label}. Maskayta qatiy ${target}.`,
+    freeMode: "Kikillanmanta rikuy",
+    notRecognized: "Manam riqsisqachu",
+  },
+};
+
+let LANG = localStorage.getItem("tactilia_lang") || "es";
+const t = (key, ...args) => {
+  const v = I18N[LANG][key];
+  return typeof v === "function" ? v(...args) : v;
+};
+
+/* ---------- 1. Banco de conceptos (ES + QU) ------------------------------
+   Debe coincidir con /qr/generate_qr.py. Los números y figuras usan
+   vocabulario quechua documentado en materiales EIB; en las letras,
+   dado que el quechua tradicional usa solo tres vocales (a, i, u),
+   se mantiene el nombre de la letra en español dentro de una frase
+   portadora en quechua, en vez de forzar una traducción literal. */
+const CONCEPTS = [
+  { id: "letra-a", type: "letra", label: "Letra A", icon: "A",
+    say: "Letra A, como en Araña.", label_qu: "Letra A", say_qu: "Kayqa letra A, allqu hina (allqu = perro)." },
+  { id: "letra-e", type: "letra", label: "Letra E", icon: "E",
+    say: "Letra E, como en Elefante.", label_qu: "Letra E", say_qu: "Kayqa letra E." },
+  { id: "letra-i", type: "letra", label: "Letra I", icon: "I",
+    say: "Letra I, como en Iguana.", label_qu: "Letra I", say_qu: "Kayqa letra I, inti hina (inti = sol)." },
+  { id: "letra-o", type: "letra", label: "Letra O", icon: "O",
+    say: "Letra O, como en Oso.", label_qu: "Letra O", say_qu: "Kayqa letra O." },
+  { id: "letra-u", type: "letra", label: "Letra U", icon: "U",
+    say: "Letra U, como en Uva.", label_qu: "Letra U", say_qu: "Kayqa letra U, urpi hina (urpi = paloma)." },
+
+  { id: "numero-1", type: "numero", label: "Número 1", icon: "1",
+    say: "Número uno.", label_qu: "Huk", say_qu: "Huk." },
+  { id: "numero-2", type: "numero", label: "Número 2", icon: "2",
+    say: "Número dos.", label_qu: "Iskay", say_qu: "Iskay." },
+  { id: "numero-3", type: "numero", label: "Número 3", icon: "3",
+    say: "Número tres.", label_qu: "Kimsa", say_qu: "Kimsa." },
+  { id: "numero-4", type: "numero", label: "Número 4", icon: "4",
+    say: "Número cuatro.", label_qu: "Tawa", say_qu: "Tawa." },
+  { id: "numero-5", type: "numero", label: "Número 5", icon: "5",
+    say: "Número cinco.", label_qu: "Pichqa", say_qu: "Pichqa." },
+
+  { id: "figura-circulo", type: "figura", label: "Círculo", icon: "⚪",
+    say: "Esta es la figura círculo.", label_qu: "Muyu", say_qu: "Kayqa muyu." },
+  { id: "figura-cuadrado", type: "figura", label: "Cuadrado", icon: "◻️",
+    say: "Esta es la figura cuadrado.", label_qu: "Tawa kuchu", say_qu: "Kayqa tawa kuchu (tawa kuchuyuq)." },
+  { id: "figura-triangulo", type: "figura", label: "Triángulo", icon: "🔺",
+    say: "Esta es la figura triángulo.", label_qu: "Kimsa kuchu", say_qu: "Kayqa kimsa kuchu." },
+  { id: "figura-estrella", type: "figura", label: "Estrella", icon: "⭐",
+    say: "Esta es la figura estrella.", label_qu: "Ch'aska", say_qu: "Kayqa ch'aska." },
+  { id: "figura-corazon", type: "figura", label: "Corazón", icon: "❤️",
+    say: "Esta es la figura corazón.", label_qu: "Sonqo", say_qu: "Kayqa sonqo." },
+];
+const QR_PREFIX = "TACTILIA:";
+const findConcept = (id) => CONCEPTS.find((c) => c.id === id);
+const conceptLabel = (c) => (LANG === "qu" ? c.label_qu : c.label);
+const conceptSay = (c) => (LANG === "qu" ? c.say_qu : c.say);
+
+/* ---------- 2. Almacenamiento local (estudiantes + registro + prefs) ---- */
+const STORAGE_KEY = "tactilia_data_v1";
+const PREFS_KEY = "tactilia_prefs_v1";
+
+function loadData() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { students: [], logs: [] };
+  } catch (e) {
+    return { students: [], logs: [] };
+  }
+}
+function saveData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+let DATA = loadData();
+if (DATA.students.length === 0) {
+  DATA.students.push("Estudiante 1");
+  saveData(DATA);
+}
+
+function loadPrefs() {
+  try {
+    return JSON.parse(localStorage.getItem(PREFS_KEY)) || { contrast: false, vibration: true, textSize: "normal" };
+  } catch (e) {
+    return { contrast: false, vibration: true, textSize: "normal" };
+  }
+}
+function savePrefs(p) {
+  localStorage.setItem(PREFS_KEY, JSON.stringify(p));
+}
+let PREFS = loadPrefs();
+
+/* ---------- 3. Utilidades de voz y vibración (funcionan sin internet) --- */
+function speak(text) {
+  if (!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = LANG === "qu" ? "es-PE" : "es-PE"; // no todos los navegadores tienen voz "qu"; se usa motor es-PE como base fonética
+  u.rate = 0.95;
+  window.speechSynthesis.speak(u);
+}
+
+function vibrate(pattern) {
+  if (PREFS.vibration && "vibrate" in navigator) navigator.vibrate(pattern);
+}
+
+function toast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.hidden = false;
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => (el.hidden = true), 2200);
+}
+
+/* ---------- 4. Aplicar traducciones a elementos [data-i18n] -------------- */
+function applyI18n() {
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    const key = el.dataset.i18n;
+    const val = I18N[LANG][key];
+    if (typeof val === "string") el.textContent = val;
+  });
+  document.getElementById("exercise-target").textContent = currentTarget
+    ? t("findPiece", conceptLabel(currentTarget))
+    : t("exercisePrompt");
+  document.getElementById("scan-status").textContent = scanning ? t("cameraOn") : t("cameraOff");
+}
+
+document.querySelectorAll(".lang-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    LANG = btn.dataset.lang;
+    localStorage.setItem("tactilia_lang", LANG);
+    document.querySelectorAll(".lang-btn").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    applyI18n();
+  });
+});
+
+/* ---------- 5. Navegación por pestañas ---------- */
+document.querySelectorAll(".tab-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+    document.querySelectorAll(".view").forEach((v) => v.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById("view-" + btn.dataset.view).classList.add("active");
+    if (btn.dataset.view === "docente") renderDashboard();
+  });
+});
+
+/* ---------- 6. Selector de estudiante ---------- */
+const studentSelect = document.getElementById("student-select");
+function renderStudentSelect() {
+  studentSelect.innerHTML = "";
+  DATA.students.forEach((name) => {
+    const opt = document.createElement("option");
+    opt.value = name;
+    opt.textContent = name;
+    studentSelect.appendChild(opt);
+  });
+}
+renderStudentSelect();
+
+document.getElementById("btn-new-student").addEventListener("click", () => {
+  const name = prompt("Nombre del nuevo estudiante:");
+  if (name && name.trim()) {
+    DATA.students.push(name.trim());
+    saveData(DATA);
+    renderStudentSelect();
+    studentSelect.value = name.trim();
+  }
+});
+
+/* ---------- 7. Panel de accesibilidad ---------- */
+const chkContrast = document.getElementById("chk-contrast");
+const chkVibration = document.getElementById("chk-vibration");
+const selTextSize = document.getElementById("sel-textsize");
+
+function applyPrefs() {
+  document.body.classList.toggle("contrast-mode", !!PREFS.contrast);
+  document.body.classList.remove("text-grande", "text-xl");
+  if (PREFS.textSize === "grande") document.body.classList.add("text-grande");
+  if (PREFS.textSize === "xl") document.body.classList.add("text-xl");
+  chkContrast.checked = !!PREFS.contrast;
+  chkVibration.checked = !!PREFS.vibration;
+  selTextSize.value = PREFS.textSize || "normal";
+}
+chkContrast.addEventListener("change", () => { PREFS.contrast = chkContrast.checked; savePrefs(PREFS); applyPrefs(); });
+chkVibration.addEventListener("change", () => { PREFS.vibration = chkVibration.checked; savePrefs(PREFS); });
+selTextSize.addEventListener("change", () => { PREFS.textSize = selTextSize.value; savePrefs(PREFS); applyPrefs(); });
+applyPrefs();
+
+/* ---------- 8. Modo ejercicio ---------- */
+let currentTarget = null;
+
+document.getElementById("btn-new-challenge").addEventListener("click", () => {
+  currentTarget = CONCEPTS[Math.floor(Math.random() * CONCEPTS.length)];
+  document.getElementById("exercise-target").textContent = t("findPiece", conceptLabel(currentTarget));
+  speak(t("sayFind", conceptLabel(currentTarget)));
+});
+
+document.getElementById("btn-repeat-audio").addEventListener("click", () => {
+  if (currentTarget) speak(t("sayFind", conceptLabel(currentTarget)));
+  else speak(t("exercisePrompt"));
+});
+
+/* ---------- 9. Escáner de cámara + QR (jsQR) + Realidad Aumentada -------
+   El <canvas> es ahora la superficie visible: dibujamos el fotograma del
+   video y, sobre el mismo, el overlay de RA (recuadro de seguimiento +
+   etiqueta flotante animada) en el mismo espacio de coordenadas que usa
+   jsQR para las esquinas del marcador — así no hace falta transformar
+   puntos entre el video y la pantalla. */
+const video = document.getElementById("camera-view");
+const canvas = document.getElementById("camera-canvas");
+const ctx = canvas.getContext("2d", { willReadFrequently: true });
+let stream = null;
+let scanning = false;
+let lastReadTs = 0;
+let lastCode = null; // { concept, location, ts }
+
+document.getElementById("btn-start-scan").addEventListener("click", startScan);
+document.getElementById("btn-stop-scan").addEventListener("click", stopScan);
+
+async function startScan() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "environment" },
+    });
+    video.srcObject = stream;
+    await video.play();
+    scanning = true;
+    document.getElementById("btn-start-scan").hidden = true;
+    document.getElementById("btn-stop-scan").hidden = false;
+    document.getElementById("scan-status").textContent = t("cameraOn");
+    requestAnimationFrame(scanLoop);
+  } catch (err) {
+    document.getElementById("scan-status").textContent =
+      "No se pudo acceder a la cámara: " + err.message;
+  }
+}
+
+function stopScan() {
+  scanning = false;
+  lastCode = null;
+  if (stream) stream.getTracks().forEach((tr) => tr.stop());
+  document.getElementById("btn-start-scan").hidden = false;
+  document.getElementById("btn-stop-scan").hidden = true;
+  document.getElementById("scan-status").textContent = t("cameraOff");
+}
+
+function scanLoop() {
+  if (!scanning) return;
+  if (video.readyState === video.HAVE_ENOUGH_DATA) {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const code = jsQR(imageData.data, imageData.width, imageData.height);
+    const now = Date.now();
+
+    if (code && code.data.startsWith(QR_PREFIX)) {
+      const concept = findConcept(code.data.slice(QR_PREFIX.length));
+      if (concept) {
+        lastCode = { concept, location: code.location, ts: now };
+        drawAROverlay(concept, code.location);
+        if (now - lastReadTs > 1200) {
+          lastReadTs = now;
+          handleScan(concept);
+        }
+      }
+    } else if (lastCode && now - lastCode.ts < 350) {
+      // sostiene la etiqueta un instante para que no "parpadee" entre frames
+      drawAROverlay(lastCode.concept, lastCode.location);
+    }
+  }
+  requestAnimationFrame(scanLoop);
+}
+
+/* Dibuja el overlay de Realidad Aumentada: recuadro que sigue las 4
+   esquinas del QR físico + etiqueta grande flotando sobre la pieza. */
+function drawAROverlay(concept, loc) {
+  const { topLeftCorner: tl, topRightCorner: tr, bottomRightCorner: br, bottomLeftCorner: bl } = loc;
+  const cx = (tl.x + tr.x + br.x + bl.x) / 4;
+  const cy = (tl.y + tr.y + br.y + bl.y) / 4;
+  const bob = Math.sin(Date.now() / 260) * 6;
+  const isTarget = currentTarget && currentTarget.id === concept.id;
+  const color = currentTarget ? (isTarget ? "#22c55e" : "#38bdf8") : "#facc15";
+
+  ctx.save();
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = color;
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 12;
+  ctx.beginPath();
+  ctx.moveTo(tl.x, tl.y);
+  ctx.lineTo(tr.x, tr.y);
+  ctx.lineTo(br.x, br.y);
+  ctx.lineTo(bl.x, bl.y);
+  ctx.closePath();
+  ctx.stroke();
+
+  // burbuja flotante con el ícono + etiqueta
+  const label = conceptLabel(concept);
+  ctx.font = "bold 40px Arial";
+  const iconW = ctx.measureText(concept.icon).width;
+  ctx.font = "bold 22px Arial";
+  const labelW = ctx.measureText(label).width;
+  const bubbleW = Math.max(iconW, labelW) + 40;
+  const bubbleH = 86;
+  const bx = cx - bubbleW / 2;
+  const by = cy - 140 + bob;
+
+  ctx.shadowBlur = 6;
+  ctx.fillStyle = "rgba(17,24,39,0.85)";
+  roundRectPath(ctx, bx, by, bubbleW, bubbleH, 16);
+  ctx.fill();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "center";
+  ctx.font = "bold 34px Arial";
+  ctx.fillText(concept.icon, cx, by + 38);
+  ctx.font = "600 17px Arial";
+  ctx.fillText(label, cx, by + 66);
+  ctx.restore();
+}
+
+function roundRectPath(c, x, y, w, h, r) {
+  c.beginPath();
+  c.moveTo(x + r, y);
+  c.arcTo(x + w, y, x + w, y + h, r);
+  c.arcTo(x + w, y + h, x, y + h, r);
+  c.arcTo(x, y + h, x, y, r);
+  c.arcTo(x, y, x + w, y, r);
+  c.closePath();
+}
+
+/* ---------- 10. Manejo de una pieza escaneada ---------- */
+function handleScan(concept) {
+  const resultCard = document.getElementById("result-card");
+  resultCard.hidden = false;
+  document.getElementById("result-icon").textContent = concept.icon;
+  document.getElementById("result-label").textContent = conceptLabel(concept);
+
+  if (currentTarget) {
+    const correct = concept.id === currentTarget.id;
+    document.getElementById("result-feedback").textContent = correct
+      ? t("correct")
+      : t("almost", conceptLabel(currentTarget));
+    speak(correct ? t("sayCorrect", conceptSay(concept)) : t("sayWrong", conceptLabel(concept), conceptLabel(currentTarget)));
+    vibrate(correct ? 180 : [60, 40, 60]);
+    logAttempt(concept.id, currentTarget.id, correct);
+    if (correct) currentTarget = null;
+  } else {
+    document.getElementById("result-feedback").textContent = t("freeMode");
+    speak(conceptSay(concept));
+    vibrate(90);
+    logAttempt(concept.id, null, true);
+  }
+}
+
+function logAttempt(conceptId, targetId, correct) {
+  DATA.logs.push({
+    student: studentSelect.value || DATA.students[0],
+    conceptId,
+    targetId,
+    correct,
+    ts: new Date().toISOString(),
+  });
+  saveData(DATA);
+}
+
+/* ---------- 11. Panel del docente ---------- */
+function renderDashboard() {
+  const rows = {};
+  DATA.logs.forEach((log) => {
+    if (!rows[log.student]) rows[log.student] = { attempts: 0, correct: 0, last: log.ts };
+    rows[log.student].attempts++;
+    if (log.correct) rows[log.student].correct++;
+    if (log.ts > rows[log.student].last) rows[log.student].last = log.ts;
+  });
+
+  const names = Object.keys(rows);
+  document.getElementById("dashboard-empty").hidden = names.length > 0;
+  document.getElementById("dashboard-table").hidden = names.length === 0;
+
+  const tbody = document.getElementById("dashboard-body");
+  tbody.innerHTML = "";
+  names.forEach((name) => {
+    const r = rows[name];
+    const pct = r.attempts ? Math.round((r.correct / r.attempts) * 100) : 0;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${name}</td><td>${r.attempts}</td><td>${r.correct}</td><td>${pct}%</td><td>${new Date(
+      r.last
+    ).toLocaleString("es-PE")}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+/* ---------- 12. Recomendación pedagógica ----------
+   Heurística local (funciona sin internet). Para una recomendación en
+   lenguaje natural generada por Claude, conecta callClaudeAPI() a un
+   backend propio (ver CURSOR_PROMPT.md — nunca expongas la API key en el cliente). */
+function generateLocalRecommendation() {
+  const byType = {};
+  DATA.logs.forEach((log) => {
+    const concept = findConcept(log.conceptId);
+    if (!concept) return;
+    byType[concept.type] = byType[concept.type] || { total: 0, correct: 0 };
+    byType[concept.type].total++;
+    if (log.correct) byType[concept.type].correct++;
+  });
+
+  if (Object.keys(byType).length === 0) {
+    return "Aún no hay práctica registrada. Pide al estudiante que explore algunas piezas primero.";
+  }
+
+  let weakest = null;
+  Object.entries(byType).forEach(([type, s]) => {
+    const acc = s.correct / s.total;
+    if (!weakest || acc < weakest.acc) weakest = { type, acc };
+  });
+
+  const nice = { letra: "letras", numero: "números", figura: "figuras geométricas" };
+  return (
+    `Sugerencia: reforzar la categoría "${nice[weakest.type]}" ` +
+    `(precisión actual ${Math.round(weakest.acc * 100)}%). ` +
+    `Recomendación: sesiones cortas de 5 minutos, repitiendo esas piezas antes de introducir nuevas.`
+  );
+}
+
+async function callClaudeAPI(promptData) {
+  // Placeholder — implementar en un backend propio (Node/Express, Cloudflare Worker, etc.)
+  // que reciba `promptData`, llame a la API de Claude con tu API key protegida en el servidor,
+  // y devuelva texto. Ver CURSOR_PROMPT.md para el prompt de implementación sugerido.
+  throw new Error("callClaudeAPI() no está conectado a un backend todavía.");
+}
+
+document.getElementById("btn-ai-recommend").addEventListener("click", async () => {
+  const out = document.getElementById("ai-output");
+  out.textContent = "Generando recomendación...";
+  try {
+    const text = await callClaudeAPI({ logs: DATA.logs });
+    out.textContent = text;
+  } catch (e) {
+    out.textContent = generateLocalRecommendation();
+  }
+});
+
+/* ---------- 13. Exportar / borrar datos ---------- */
+document.getElementById("btn-export").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(DATA, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "tactilia_progreso.json";
+  a.click();
+});
+
+document.getElementById("btn-clear").addEventListener("click", () => {
+  if (confirm("¿Borrar todos los datos guardados en este dispositivo?")) {
+    DATA = { students: DATA.students, logs: [] };
+    saveData(DATA);
+    renderDashboard();
+    toast("Datos borrados");
+  }
+});
+
+/* ---------- 14. Registro del Service Worker (instalable / offline) ---------- */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("service-worker.js").catch(() => {});
+  });
+}
+
+/* ---------- 15. Estado inicial de idioma ---------- */
+document.querySelectorAll(".lang-btn").forEach((b) => b.classList.toggle("active", b.dataset.lang === LANG));
+applyI18n();
