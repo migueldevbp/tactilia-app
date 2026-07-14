@@ -328,7 +328,22 @@ function applyI18n() {
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     const key = el.dataset.i18n;
     const val = I18N[LANG][key];
-    if (typeof val === "string") el.textContent = val;
+    if (typeof val !== "string") return;
+    if (el.hasAttribute("data-icon") || el.querySelector(":scope > .ui-ico")) {
+      let textEl = el.querySelector(":scope > [data-i18n-text]");
+      if (!textEl) {
+        textEl = document.createElement("span");
+        textEl.setAttribute("data-i18n-text", "");
+        el.appendChild(textEl);
+      }
+      // limpia nodos de texto sueltos
+      [...el.childNodes].forEach((n) => {
+        if (n.nodeType === 3) n.remove();
+      });
+      textEl.textContent = val;
+    } else {
+      el.textContent = val;
+    }
   });
   document.querySelectorAll("[data-i18n-option]").forEach((el) => {
     const key = el.dataset.i18nOption;
@@ -342,6 +357,7 @@ function applyI18n() {
   document.getElementById("scan-status").textContent = scanning ? t("cameraOn") : t("cameraOff");
   renderPieceGrid();
   updateSessionUI();
+  if (typeof decorateButtonsWithIcons === "function") decorateButtonsWithIcons();
 }
 
 document.querySelectorAll(".lang-btn").forEach((btn) => {
@@ -373,11 +389,51 @@ function applyRegion(region) {
   const meta = document.getElementById("meta-theme");
   if (meta) meta.setAttribute("content", REGION_THEMES[r].color);
   localStorage.setItem("tactilia_region", r);
+  document.querySelectorAll(".scene-photo").forEach((img) => {
+    img.classList.toggle("is-active", img.classList.contains("scene-photo-" + r));
+  });
 }
 document.querySelectorAll(".region-btn").forEach((btn) => {
   btn.addEventListener("click", () => applyRegion(btn.dataset.region));
 });
+
+/** Carga PNG del usuario en media/decor/ y los anima. */
+function loadDecorPhotos() {
+  document.querySelectorAll("[data-decor]").forEach((img) => {
+    const name = img.getAttribute("data-decor");
+    const candidates = [
+      `media/decor/${name}.png`,
+      `media/decor/${name}.jpg`,
+      `media/decor/${name}.webp`,
+    ];
+    let i = 0;
+    const tryNext = () => {
+      if (i >= candidates.length) return;
+      const probe = new Image();
+      probe.onload = () => {
+        img.src = candidates[i];
+        img.hidden = false;
+        img.classList.add("decor-ready");
+        if (img.classList.contains("scene-photo")) {
+          document.body.classList.add("has-decor-photo");
+        }
+        if (name === "chakana") {
+          const mark = document.querySelector(".brand-mark");
+          if (mark) mark.hidden = true;
+        }
+      };
+      probe.onerror = () => {
+        i += 1;
+        tryNext();
+      };
+      probe.src = candidates[i];
+    };
+    tryNext();
+  });
+}
+
 applyRegion(localStorage.getItem("tactilia_region") || "sierra");
+loadDecorPhotos();
 
 /* ---------- 5. Navegación por pestañas ---------- */
 document.querySelectorAll(".tab-btn").forEach((btn) => {
@@ -1240,3 +1296,10 @@ applyI18n();
 renderPieceGrid();
 renderPiezasCatalogo();
 updateSessionUI();
+if (typeof decorateButtonsWithIcons === "function") {
+  decorateButtonsWithIcons();
+  document.querySelectorAll("[data-static-icon]").forEach((el) => {
+    const name = el.getAttribute("data-static-icon");
+    if (typeof uiIcon === "function") el.innerHTML = uiIcon(name);
+  });
+}

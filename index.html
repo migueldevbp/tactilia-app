@@ -12,8 +12,14 @@
 </head>
 <body class="theme-sierra">
 
+<div class="peru-band" aria-hidden="true"></div>
+<div class="tocapu-strip" aria-hidden="true"></div>
+
 <div class="region-scene" aria-hidden="true">
-  <!-- Costa: olas y horizonte -->
+  <img class="scene-photo scene-photo-costa" data-decor="costa" alt="" hidden>
+  <img class="scene-photo scene-photo-sierra" data-decor="sierra" alt="" hidden>
+  <img class="scene-photo scene-photo-selva" data-decor="selva" alt="" hidden>
+  <!-- Fallback SVG si no hay PNG del usuario -->
   <svg class="scene scene-costa" viewBox="0 0 800 220" preserveAspectRatio="xMidYMax slice">
     <rect class="sky" width="800" height="220" fill="#7ec8e3"/>
     <circle class="sun" cx="640" cy="48" r="28" fill="#f5d76e"/>
@@ -21,7 +27,6 @@
     <path class="wave wave-b" d="M0 155 Q120 135 240 155 T480 155 T720 155 T800 155 V220 H0 Z" fill="#1b7f9e"/>
     <path class="sand" d="M0 185 H800 V220 H0 Z" fill="#e8c48a"/>
   </svg>
-  <!-- Sierra: montañas andinas -->
   <svg class="scene scene-sierra" viewBox="0 0 800 220" preserveAspectRatio="xMidYMax slice">
     <rect class="sky" width="800" height="220" fill="#c5dff0"/>
     <circle class="sun" cx="120" cy="40" r="22" fill="#f0c75e"/>
@@ -32,7 +37,6 @@
     <path d="M300 78 L320 40 L340 78 Z" fill="#f4f7fa"/>
     <path d="M500 90 L520 55 L538 90 Z" fill="#eef3f7"/>
   </svg>
-  <!-- Selva: árboles y hojas -->
   <svg class="scene scene-selva" viewBox="0 0 800 220" preserveAspectRatio="xMidYMax slice">
     <rect class="sky" width="800" height="220" fill="#9fccc0"/>
     <circle class="sun" cx="700" cy="36" r="20" fill="#ffe08a"/>
@@ -52,9 +56,14 @@
 <header class="topbar">
   <div class="brand-row">
     <div class="brand">
-      <span class="brand-dot" aria-hidden="true"></span>
-      <h1>TactilIA</h1>
-      <span class="brand-sub">Makiwan Yachay</span>
+      <img class="brand-chakana" data-decor="chakana" alt="" hidden>
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="28" height="28"><rect x="2" y="2" width="28" height="28" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 6 V26 M6 16 H26 M10 10 H22 V22 H10 Z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+      </span>
+      <div class="brand-text">
+        <h1>TactilIA</h1>
+        <span class="brand-sub">Makiwan Yachay · Perú</span>
+      </div>
     </div>
     <div class="header-controls">
       <div class="region-switch" role="group" aria-label="Región visual Perú">
@@ -69,11 +78,13 @@
     </div>
   </div>
   <nav class="tabs" role="tablist" aria-label="Vistas principales">
-    <button class="tab-btn active" role="tab" aria-selected="true" data-view="estudiante" data-i18n="tabEstudiante" id="tab-estudiante" aria-controls="view-estudiante">Estudiante</button>
-    <button class="tab-btn" role="tab" aria-selected="false" data-view="docente" data-i18n="tabDocente" id="tab-docente" aria-controls="view-docente">Docente</button>
-    <button class="tab-btn" role="tab" aria-selected="false" data-view="acerca" data-i18n="tabAcerca" id="tab-acerca" aria-controls="view-acerca">Acerca de</button>
+    <button class="tab-btn active" role="tab" aria-selected="true" data-view="estudiante" data-i18n="tabEstudiante" data-icon="student" id="tab-estudiante" aria-controls="view-estudiante">Estudiante</button>
+    <button class="tab-btn" role="tab" aria-selected="false" data-view="docente" data-i18n="tabDocente" data-icon="teacher" id="tab-docente" aria-controls="view-docente">Docente</button>
+    <button class="tab-btn" role="tab" aria-selected="false" data-view="acerca" data-i18n="tabAcerca" data-icon="about" id="tab-acerca" aria-controls="view-acerca">Acerca de</button>
   </nav>
 </header>
+
+<img class="banner-photo" data-decor="banner" alt="" hidden>
 
 <main>
 
@@ -87,7 +98,7 @@
     </div>
 
     <details class="card a11y-card">
-      <summary data-i18n="a11yTitle">Accesibilidad</summary>
+      <summary><span class="ui-ico" data-static-icon="a11y" aria-hidden="true"></span><span data-i18n="a11yTitle">Accesibilidad</span></summary>
       <div class="a11y-body">
         <label class="a11y-row">
           <span data-i18n="a11yContrast">Alto contraste</span>
@@ -147,8 +158,8 @@
       <h2 data-i18n="exerciseMode">Modo ejercicio</h2>
       <p id="exercise-target" class="target-text" data-i18n="exercisePrompt" role="status" aria-live="polite">Presiona "Nuevo reto" para comenzar</p>
       <div class="row">
-        <button id="btn-new-challenge" class="btn-primary" type="button" data-i18n="newChallenge">Nuevo reto</button>
-        <button id="btn-repeat-audio" class="btn-secondary" type="button" data-i18n="repeat">Repetir</button>
+        <button id="btn-new-challenge" class="btn-primary" type="button" data-i18n="newChallenge" data-icon="challenge">Nuevo reto</button>
+        <button id="btn-repeat-audio" class="btn-secondary" type="button" data-i18n="repeat" data-icon="repeat">Repetir</button>
       </div>
     </div>
 
@@ -160,14 +171,14 @@
         <div id="scan-frame" class="scan-frame" aria-hidden="true"></div>
       </div>
       <div class="row">
-        <button id="btn-start-scan" class="btn-primary" type="button" data-i18n="startCamera">Activar cámara</button>
-        <button id="btn-stop-scan" class="btn-secondary" type="button" hidden data-i18n="stopCamera">Detener</button>
+        <button id="btn-start-scan" class="btn-primary" type="button" data-i18n="startCamera" data-icon="camera">Activar cámara</button>
+        <button id="btn-stop-scan" class="btn-secondary" type="button" hidden data-i18n="stopCamera" data-icon="stop">Detener</button>
       </div>
       <p id="scan-status" class="status-text" data-i18n="cameraOff" role="status" aria-live="polite">Cámara apagada.</p>
     </div>
 
     <div class="card" id="demo-card">
-      <h2 data-i18n="demoTitle">Practicar sin QR (demo)</h2>
+      <h2><span class="ui-ico" data-static-icon="hand" aria-hidden="true"></span> <span data-i18n="demoTitle">Practicar sin QR (demo)</span></h2>
       <p class="muted" data-i18n="demoHelp">Toca una pieza para simular el escaneo — útil en mentoría o cuando aún no tienes el kit 3D.</p>
       <div id="piece-grid" class="piece-grid" role="list"></div>
     </div>
@@ -212,19 +223,19 @@
     <div class="card">
       <h3 data-i18n="aiTitle">Recomendación con IA</h3>
       <p class="muted" data-i18n="aiHelp">Consulta Claude vía el backend en server/ (clave solo en el servidor). Sin internet o sin backend, usa la heurística local offline.</p>
-      <button id="btn-ai-recommend" class="btn-primary" type="button" aria-describedby="ai-help"><span data-i18n="aiButton">Generar recomendación</span></button>
+      <button id="btn-ai-recommend" class="btn-primary" type="button" aria-describedby="ai-help" data-icon="spark"><span data-i18n="aiButton">Generar recomendación</span></button>
       <p id="ai-help" class="muted" hidden>La recomendación se anuncia a continuación.</p>
       <div id="ai-output" class="ai-output" role="status" aria-live="polite" aria-atomic="true"></div>
     </div>
 
     <div class="card">
       <div class="row">
-        <button id="btn-export" class="btn-secondary" type="button" data-i18n="btnExport">⬇ Exportar datos (JSON)</button>
-        <label class="btn-secondary" style="display:inline-flex;align-items:center;cursor:pointer;margin:0;">
-          <span data-i18n="btnImport">⬆ Importar JSON</span>
+        <button id="btn-export" class="btn-secondary" type="button" data-i18n="btnExport" data-icon="download">Exportar datos (JSON)</button>
+        <label class="btn-secondary btn-file" style="display:inline-flex;align-items:center;cursor:pointer;margin:0;" data-icon="upload">
+          <span data-i18n="btnImport">Importar JSON</span>
           <input type="file" id="import-file" accept="application/json,.json" hidden>
         </label>
-        <button id="btn-clear" class="btn-danger" type="button" data-i18n="btnClear">🗑 Borrar todos los datos</button>
+        <button id="btn-clear" class="btn-danger" type="button" data-i18n="btnClear" data-icon="trash">Borrar todos los datos</button>
       </div>
     </div>
   </section>
@@ -252,7 +263,7 @@
     <div class="card">
       <h3>Catálogo de piezas y códigos QR</h3>
       <p class="muted">Cada QR contiene el texto <code>TACTILIA:&lt;id&gt;</code>. Archivo a imprimir: <code>qr/output/&lt;id&gt;.png</code>.</p>
-      <p class="muted">Fotos reales (opcional): guarda <code>media/piezas/&lt;id&gt;.jpg</code> (ver <code>media/piezas/INSTRUCCIONES.txt</code>). Si no hay foto, se usa el pictograma.</p>
+      <p class="muted">Fotos de atmósfera peruana (animadas): coloca PNG en <code>media/decor/</code> — <code>costa.png</code>, <code>sierra.png</code>, <code>selva.png</code>, opcional <code>chakana.png</code> y <code>banner.png</code>. Ver <code>media/decor/INSTRUCCIONES.txt</code>.</p>
       <div id="piezas-catalogo" class="catalogo"></div>
     </div>
 
@@ -286,7 +297,7 @@
       <label class="eib-comments-label" for="eib-comentarios">Comentarios generales</label>
       <textarea id="eib-comentarios" rows="3" placeholder="Registro formal/informal, adecuación a EBE, pictogramas…"></textarea>
       <div class="row">
-        <button type="button" id="btn-eib-export" class="btn-secondary">⬇ Exportar validación (JSON)</button>
+        <button type="button" id="btn-eib-export" class="btn-secondary" data-icon="download">Exportar validación (JSON)</button>
         <button type="button" id="btn-eib-clear" class="btn-danger">Borrar validación local</button>
       </div>
     </details>
@@ -306,6 +317,7 @@
 
 <script src="lib/jsQR.js"></script>
 <script src="lib/pictos.js"></script>
+<script src="lib/ui-icons.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

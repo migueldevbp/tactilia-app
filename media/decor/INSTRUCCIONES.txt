@@ -1,0 +1,15 @@
+Coloca aquí tus PNG para la atmósfera peruana animada
+=====================================================
+
+Nombres exactos (recomendado PNG transparente o con fondo suave):
+
+  costa.png     — playa / lomas / mar (tema Costa)
+  sierra.png    — Andes / nevados / Pasco (tema Sierra)
+  selva.png     — Amazonía / vegetación (tema Selva)
+  chakana.png   — opcional: cruz andina / tocapu
+  banner.png    — opcional: franja decorativa bajo el encabezado
+
+La app los carga sola. Si faltan, usa ilustración SVG local.
+Animación: leve flotación / pan (respeta Modo calma).
+
+Consejo: 800–1600 px de ancho, peso < 400 KB cada una.
