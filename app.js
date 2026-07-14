@@ -641,7 +641,8 @@ function handleScan(concept, location) {
   const resultCard = document.getElementById("result-card");
   resultCard.hidden = false;
   resultCard.classList.remove("is-correct", "is-wrong");
-  document.getElementById("result-icon").innerHTML = typeof pictoMarkup === "function" ? pictoMarkup(concept.id) : (concept.glyph || "");
+  const resultIcon = document.getElementById("result-icon");
+  fillPieceVisual(resultIcon, concept.id);
   document.getElementById("result-label").textContent = conceptLabel(concept);
 
   if (currentTarget) {
@@ -683,6 +684,40 @@ function handleScan(concept, location) {
   }
 }
 
+function fillPieceVisual(el, conceptId) {
+  if (!el) return;
+  el.classList.add("piece-visual");
+  el.replaceChildren();
+  const img = document.createElement("img");
+  img.className = "piece-photo";
+  img.alt = "";
+  img.loading = "lazy";
+  img.decoding = "async";
+  const candidates = [
+    `media/piezas/${conceptId}.jpg`,
+    `media/piezas/${conceptId}.jpeg`,
+    `media/piezas/${conceptId}.png`,
+    `media/piezas/${conceptId}.webp`,
+  ];
+  let i = 0;
+  const showPicto = () => {
+    el.classList.remove("has-photo");
+    el.classList.add("is-picto");
+    el.innerHTML = typeof pictoMarkup === "function" ? pictoMarkup(conceptId) : "";
+  };
+  img.onerror = () => {
+    i += 1;
+    if (i < candidates.length) img.src = candidates[i];
+    else showPicto();
+  };
+  img.onload = () => {
+    el.classList.add("has-photo");
+    el.classList.remove("is-picto");
+  };
+  img.src = candidates[0];
+  el.appendChild(img);
+}
+
 function renderPieceGrid() {
   const grid = document.getElementById("piece-grid");
   if (!grid) return;
@@ -693,9 +728,15 @@ function renderPieceGrid() {
     btn.className = "piece-chip" + (currentTarget && currentTarget.id === c.id ? " is-target" : "");
     btn.setAttribute("role", "listitem");
     btn.setAttribute("aria-label", conceptLabel(c));
-    btn.innerHTML =
-      `<span class="ic" aria-hidden="true">${typeof pictoMarkup === "function" ? pictoMarkup(c.id) : c.glyph}</span>` +
-      `<span class="lb">${conceptLabel(c)}</span>`;
+    const ic = document.createElement("span");
+    ic.className = "ic";
+    ic.setAttribute("aria-hidden", "true");
+    fillPieceVisual(ic, c.id);
+    const lb = document.createElement("span");
+    lb.className = "lb";
+    lb.textContent = conceptLabel(c);
+    btn.appendChild(ic);
+    btn.appendChild(lb);
     btn.addEventListener("click", () => handleScan(c, null));
     grid.appendChild(btn);
   });
@@ -724,10 +765,19 @@ function renderPiezasCatalogo() {
     groups[set].forEach((c) => {
       const row = document.createElement("div");
       row.className = "catalogo-row";
-      row.innerHTML =
-        `<span class="cat-ico" aria-hidden="true">${typeof pictoMarkup === "function" ? pictoMarkup(c.id) : ""}</span>` +
-        `<span class="cat-name"><strong>${c.label}</strong><br><em>${c.label_qu}</em></span>` +
-        `<span class="cat-qr"><code>TACTILIA:${c.id}</code><br><small>${c.id}.png</small></span>`;
+      const ico = document.createElement("span");
+      ico.className = "cat-ico";
+      ico.setAttribute("aria-hidden", "true");
+      fillPieceVisual(ico, c.id);
+      const name = document.createElement("span");
+      name.className = "cat-name";
+      name.innerHTML = `<strong>${c.label}</strong><br><em>${c.label_qu}</em>`;
+      const qr = document.createElement("span");
+      qr.className = "cat-qr";
+      qr.innerHTML = `<code>TACTILIA:${c.id}</code><br><small>${c.id}.png · foto: ${c.id}.jpg</small>`;
+      row.appendChild(ico);
+      row.appendChild(name);
+      row.appendChild(qr);
       table.appendChild(row);
     });
     root.appendChild(table);
