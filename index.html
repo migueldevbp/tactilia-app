@@ -48,6 +48,7 @@
       </div>
     </div>
     <div class="header-controls">
+      <button id="btn-install" class="btn-install" type="button" hidden data-i18n="installApp">Instalar app</button>
       <div class="lang-switch" role="group" aria-label="Idioma / Simi">
         <button id="lang-es" class="lang-btn active" data-lang="es" aria-pressed="true">ES</button>
         <button id="lang-qu" class="lang-btn" data-lang="qu" aria-pressed="false">QU</button>
@@ -74,6 +75,29 @@
       <div class="session-stat"><span class="n" id="stat-accuracy">—</span><span class="l" data-i18n="statAccuracy">Precisión</span></div>
     </div>
 
+    <div id="guide-card" class="card guide-card">
+      <div class="guide-head">
+        <h2 data-i18n="guideTitle">Cómo empezar (3 pasos)</h2>
+        <button type="button" id="btn-guide-hide" class="btn-secondary btn-tiny" data-i18n="guideHide">Ocultar</button>
+      </div>
+      <ol class="guide-steps">
+        <li data-i18n="guideStep1">Elige perfil inclusivo (TEA, baja visión…) o ajusta Accesibilidad.</li>
+        <li data-i18n="guideStep2">Pulsa «Nuevo reto» y escucha la pieza.</li>
+        <li data-i18n="guideStep3">Activa la cámara con el QR — o toca la grilla demo sin kit.</li>
+      </ol>
+    </div>
+
+    <div class="card profile-presets-card">
+      <h2 data-i18n="profilesTitle">Perfil inclusivo rápido</h2>
+      <p class="muted" data-i18n="profilesHelp">Un toque configura varias opciones de apoyo a la vez.</p>
+      <div class="profile-presets" role="group" aria-label="Perfiles inclusivos">
+        <button type="button" class="profile-btn" data-profile="tea" data-i18n="profileTea">TEA / calma</button>
+        <button type="button" class="profile-btn" data-profile="vision" data-i18n="profileVision">Baja visión</button>
+        <button type="button" class="profile-btn" data-profile="motor" data-i18n="profileMotor">Motricidad</button>
+        <button type="button" class="profile-btn" data-profile="default" data-i18n="profileDefault">Estándar</button>
+      </div>
+    </div>
+
     <details class="card a11y-card">
       <summary><span class="ui-ico" data-static-icon="a11y" aria-hidden="true"></span><span data-i18n="a11yTitle">Accesibilidad</span></summary>
       <div class="a11y-body">
@@ -94,6 +118,14 @@
           <input type="checkbox" id="chk-calm">
         </label>
         <p class="muted a11y-calm-help" data-i18n="a11yCalmHelp">Menos estímulos: sin partículas, voz más lenta, pausas largas, colores suaves y retos en orden.</p>
+        <label class="a11y-row">
+          <span data-i18n="a11yPictos">Solo pictogramas (sin texto)</span>
+          <input type="checkbox" id="chk-pictos">
+        </label>
+        <label class="a11y-row">
+          <span data-i18n="a11yExtraTime">Más tiempo / ritmo lento</span>
+          <input type="checkbox" id="chk-extratime">
+        </label>
         <label class="a11y-row">
           <span data-i18n="a11yMotion">Menos movimiento</span>
           <input type="checkbox" id="chk-motion">
@@ -134,6 +166,11 @@
     <div class="card exercise-card">
       <h2 data-i18n="exerciseMode">Modo ejercicio</h2>
       <p id="exercise-target" class="target-text" data-i18n="exercisePrompt" role="status" aria-live="polite">Presiona "Nuevo reto" para comenzar</p>
+      <div id="pace-bar" class="pace-bar" hidden>
+        <div id="pace-fill" class="pace-fill"></div>
+        <span id="pace-label" class="pace-label" data-i18n="paceLabel">Tómate tu tiempo</span>
+      </div>
+      <div id="target-picto" class="target-picto" hidden aria-hidden="true"></div>
       <div class="row">
         <button id="btn-new-challenge" class="btn-primary" type="button" data-i18n="newChallenge" data-icon="challenge">Nuevo reto</button>
         <button id="btn-repeat-audio" class="btn-secondary" type="button" data-i18n="repeat" data-icon="repeat">Repetir</button>
@@ -208,6 +245,7 @@
     <div class="card">
       <div class="row">
         <button id="btn-export" class="btn-secondary" type="button" data-i18n="btnExport" data-icon="download">Exportar datos (JSON)</button>
+        <button id="btn-export-csv" class="btn-secondary" type="button" data-i18n="btnExportCsv" data-icon="download">Exportar informe (CSV)</button>
         <label class="btn-secondary btn-file" style="display:inline-flex;align-items:center;cursor:pointer;margin:0;" data-icon="upload">
           <span data-i18n="btnImport">Importar JSON</span>
           <input type="file" id="import-file" accept="application/json,.json" hidden>
@@ -279,15 +317,27 @@
       </div>
     </details>
 
+    <div class="card install-card">
+      <h3 data-i18n="installTitle">Instalar en el celular (sin tienda)</h3>
+      <p data-i18n="installIntro">TactilIA es una PWA: se instala como app y funciona offline tras la primera visita.</p>
+      <button id="btn-install-about" class="btn-primary" type="button" data-i18n="installApp">Instalar app</button>
+      <ol class="about-list">
+        <li><strong>Android (Chrome):</strong> menú ⋮ → <em>Instalar app</em> / <em>Añadir a pantalla de inicio</em>, o el botón de arriba.</li>
+        <li><strong>iPhone (Safari):</strong> botón Compartir → <em>Añadir a pantalla de inicio</em> → Añadir.</li>
+      </ol>
+      <p class="muted" data-i18n="installNativeNote">También hay paquetes nativos (APK Android y proyecto iOS) en la carpeta <code>native/dist/</code> del repositorio.</p>
+    </div>
+
     <div class="card">
-      <h3>Despliegue e instalación</h3>
-      <p>Sitio estático en GitHub Pages (HTTPS): ideal para cámara e «Instalar app». El backend de Claude vive aparte (`server/` + variable <code>ANTHROPIC_API_KEY</code>); sin él, la recomendación sigue siendo la heurística local. Empaquetar APK con Capacitor es opcional: la PWA ya cubre el caso offline en Android.</p>
+      <h3>Despliegue</h3>
+      <p>Sitio en GitHub Pages (HTTPS). Backend Claude opcional: <code>server/</code> + <code>ANTHROPIC_API_KEY</code>. Sin él, usa heurística local offline.</p>
       <p class="muted">Según las bases del evento, el código debe estar disponible para el equipo organizador.</p>
     </div>
   </section>
 
 </main>
 
+<div id="reward-flash" class="reward-flash" hidden aria-hidden="true"></div>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
 <div id="sr-announce" class="sr-only" aria-live="assertive" aria-atomic="true"></div>

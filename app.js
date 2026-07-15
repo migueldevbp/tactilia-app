@@ -16,6 +16,26 @@ const I18N = {
     a11yTitle: "Accesibilidad", a11yContrast: "Alto contraste",
     a11yVibration: "Vibración al acertar", a11yTextSize: "Tamaño de texto",
     a11yVoice: "Voz / audio", a11yMotion: "Menos movimiento",
+    a11yPictos: "Solo pictogramas (sin texto)",
+    a11yExtraTime: "Más tiempo / ritmo lento",
+    guideTitle: "Cómo empezar (3 pasos)",
+    guideHide: "Ocultar",
+    guideStep1: "Elige perfil inclusivo (TEA, baja visión…) o ajusta Accesibilidad.",
+    guideStep2: "Pulsa «Nuevo reto» y escucha la pieza.",
+    guideStep3: "Activa la cámara con el QR — o toca la grilla demo sin kit.",
+    profilesTitle: "Perfil inclusivo rápido",
+    profilesHelp: "Un toque configura varias opciones de apoyo a la vez.",
+    profileTea: "TEA / calma",
+    profileVision: "Baja visión",
+    profileMotor: "Motricidad",
+    profileDefault: "Estándar",
+    installApp: "Instalar app",
+    installTitle: "Instalar en el celular (sin tienda)",
+    installIntro: "TactilIA es una PWA: se instala como app y funciona offline tras la primera visita.",
+    installNativeNote: "También hay paquetes nativos (APK Android y proyecto iOS) en native/dist/ del repositorio.",
+    installHintIos: "En iPhone: Safari → Compartir → Añadir a pantalla de inicio.",
+    installHintAndroid: "En Android: Chrome → Instalar app / Añadir a pantalla de inicio.",
+    paceLabel: "Tómate tu tiempo",
     activeStudent: "Estudiante activo", newStudent: "+ Nuevo",
     setLabel: "Kit / set temático",
     setLetras: "Letras A–Z + Ñ",
@@ -58,6 +78,7 @@ const I18N = {
     aiHelp: "Consulta Claude vía el backend en server/ (clave solo en el servidor). Sin internet o sin backend, usa la heurística local offline.",
     aiButton: "Generar recomendación",
     btnExport: "Exportar datos (JSON)",
+    btnExportCsv: "Exportar informe (CSV)",
     btnImport: "Importar JSON",
     btnClear: "Borrar todos los datos",
   },
@@ -66,6 +87,26 @@ const I18N = {
     a11yTitle: "Runa yanapay", a11yContrast: "Sinchi rikch'ay",
     a11yVibration: "Kuyuchiy allin kaqtin", a11yTextSize: "Qillqa hatunchay",
     a11yVoice: "Rimay / uyarina", a11yMotion: "Aswanta mana kuyuchiy",
+    a11yPictos: "Pictogramakunalla",
+    a11yExtraTime: "Aswan pacha",
+    guideTitle: "Imaynata qallariy (3)",
+    guideHide: "Pakay",
+    guideStep1: "Perfil inclusivota akllay.",
+    guideStep2: "«Musuq atipanakuy» ñitiy.",
+    guideStep3: "Kamarata icha grilla demota.",
+    profilesTitle: "Perfil yanapakuq",
+    profilesHelp: "Huk ñitiywan yanapaykuna.",
+    profileTea: "TEA / thak",
+    profileVision: "Mana allin rikuq",
+    profileMotor: "Makiykuna",
+    profileDefault: "Sapaq",
+    installApp: "App churay",
+    installTitle: "Celularpi app churay",
+    installIntro: "PWA: offlinellamanta llamkan.",
+    installNativeNote: "APK / iOS: native/dist/.",
+    installHintIos: "iPhone: Safari → Compartir → Añadir.",
+    installHintAndroid: "Android: Chrome → Instalar app.",
+    paceLabel: "Pacharaykiwan",
     activeStudent: "Kunan yachaqaq", newStudent: "+ Musuq",
     setLabel: "Impay kit",
     setLetras: "Letras A–Z + Ñ",
@@ -108,6 +149,7 @@ const I18N = {
     aiHelp: "Claude backendwan. Mana kaspaqa local yuyay.",
     aiButton: "Yuyayta ruway",
     btnExport: "Datosnin exportay",
+    btnExportCsv: "CSV informe",
     btnImport: "JSON apamuy",
     btnClear: "Llapan datasninta pichay",
   },
@@ -264,22 +306,32 @@ if (DATA.students.length === 0) {
   saveData(DATA);
 }
 
+function defaultPrefs() {
+  return {
+    contrast: false,
+    vibration: true,
+    textSize: "normal",
+    voice: true,
+    reduceMotion: false,
+    calmMode: false,
+    pictosOnly: false,
+    extraTime: false,
+    profile: "default",
+  };
+}
 function loadPrefs() {
   try {
-    return JSON.parse(localStorage.getItem(PREFS_KEY)) || {
-      contrast: false, vibration: true, textSize: "normal", voice: true, reduceMotion: false, calmMode: false,
-    };
+    return { ...defaultPrefs(), ...(JSON.parse(localStorage.getItem(PREFS_KEY)) || {}) };
   } catch (e) {
-    return { contrast: false, vibration: true, textSize: "normal", voice: true, reduceMotion: false, calmMode: false };
+    return defaultPrefs();
   }
 }
 function savePrefs(p) {
   localStorage.setItem(PREFS_KEY, JSON.stringify(p));
 }
 let PREFS = loadPrefs();
-if (PREFS.voice === undefined) PREFS.voice = true;
-if (PREFS.reduceMotion === undefined) PREFS.reduceMotion = false;
-if (PREFS.calmMode === undefined) PREFS.calmMode = false;
+let currentTarget = null;
+const SESSION = { attempts: 0, correct: 0, streak: 0 };
 
 /* ---------- 3. Utilidades de voz y vibración (funcionan sin internet) --- */
 function speak(text) {
@@ -298,7 +350,48 @@ function shouldAnimate() {
 }
 
 function scanCooldownMs() {
-  return PREFS.calmMode ? 2200 : 1200;
+  if (PREFS.extraTime || PREFS.calmMode) return 3200;
+  return 1200;
+}
+
+function flashReward(ok) {
+  const el = document.getElementById("reward-flash");
+  if (!el) return;
+  el.hidden = false;
+  el.classList.toggle("is-ok", !!ok);
+  el.classList.toggle("is-bad", !ok);
+  el.classList.add("is-on");
+  setTimeout(() => {
+    el.classList.remove("is-on");
+    el.hidden = true;
+  }, PREFS.extraTime || PREFS.calmMode ? 900 : 520);
+}
+
+function updatePaceBar(active) {
+  const bar = document.getElementById("pace-bar");
+  const fill = document.getElementById("pace-fill");
+  if (!bar || !fill) return;
+  const show = active && (PREFS.extraTime || PREFS.calmMode);
+  bar.hidden = !show;
+  if (!show) return;
+  fill.style.animation = "none";
+  void fill.offsetWidth;
+  fill.style.animation = `pace-drain ${PREFS.extraTime ? 12 : 8}s linear forwards`;
+}
+
+function updateTargetPicto() {
+  const box = document.getElementById("target-picto");
+  const targetText = document.getElementById("exercise-target");
+  if (!box) return;
+  if (currentTarget && PREFS.pictosOnly) {
+    box.hidden = false;
+    box.innerHTML = typeof pictoMarkup === "function" ? pictoMarkup(currentTarget.id) : "";
+    if (targetText) targetText.classList.add("sr-visual-hide");
+  } else {
+    box.hidden = true;
+    box.innerHTML = "";
+    if (targetText) targetText.classList.remove("sr-visual-hide");
+  }
 }
 
 function vibrate(pattern) {
@@ -379,9 +472,9 @@ function loadDecorPhotos() {
   document.querySelectorAll("[data-decor]").forEach((img) => {
     const name = img.getAttribute("data-decor");
     const candidates = [
+      new URL(`media/decor/${name}.webp`, base).href,
       new URL(`media/decor/${name}.png`, base).href,
       new URL(`media/decor/${name}.jpg`, base).href,
-      new URL(`media/decor/${name}.webp`, base).href,
     ];
     let i = 0;
     const tryNext = () => {
@@ -405,13 +498,56 @@ function loadDecorPhotos() {
         i += 1;
         tryNext();
       };
-      probe.src = url + (url.includes("?") ? "&" : "?") + "v=11";
+      probe.src = url + (url.includes("?") ? "&" : "?") + "v=12";
     };
     tryNext();
   });
 }
 
 loadDecorPhotos();
+
+/* ---------- Instalación PWA ---------- */
+let deferredInstall = null;
+const btnInstall = document.getElementById("btn-install");
+const btnInstallAbout = document.getElementById("btn-install-about");
+
+function isIos() {
+  return /iphone|ipad|ipod/i.test(navigator.userAgent);
+}
+function isStandalone() {
+  return window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+}
+function syncInstallButtons() {
+  const show = !isStandalone() && (!!deferredInstall || isIos());
+  [btnInstall, btnInstallAbout].forEach((b) => {
+    if (b) b.hidden = isStandalone();
+  });
+  if (btnInstall && !deferredInstall && isIos()) btnInstall.hidden = false;
+}
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredInstall = e;
+  syncInstallButtons();
+});
+window.addEventListener("appinstalled", () => {
+  deferredInstall = null;
+  syncInstallButtons();
+  toast(t("installApp") + " ✓");
+});
+async function promptInstall() {
+  if (deferredInstall) {
+    deferredInstall.prompt();
+    await deferredInstall.userChoice.catch(() => {});
+    deferredInstall = null;
+    syncInstallButtons();
+    return;
+  }
+  if (isIos()) toast(t("installHintIos"));
+  else toast(t("installHintAndroid"));
+}
+btnInstall?.addEventListener("click", promptInstall);
+btnInstallAbout?.addEventListener("click", promptInstall);
+syncInstallButtons();
 
 /* ---------- 5. Navegación por pestañas ---------- */
 document.querySelectorAll(".tab-btn").forEach((btn) => {
@@ -463,48 +599,129 @@ document.getElementById("btn-new-student").addEventListener("click", () => {
   }
 });
 
-/* ---------- 7. Panel de accesibilidad ---------- */
+/* ---------- 7. Panel de accesibilidad + perfiles ---------- */
 const chkContrast = document.getElementById("chk-contrast");
 const chkVibration = document.getElementById("chk-vibration");
 const chkVoice = document.getElementById("chk-voice");
 const chkMotion = document.getElementById("chk-motion");
 const chkCalm = document.getElementById("chk-calm");
+const chkPictos = document.getElementById("chk-pictos");
+const chkExtraTime = document.getElementById("chk-extratime");
 const selTextSize = document.getElementById("sel-textsize");
+
+const A11Y_PROFILES = {
+  tea: {
+    profile: "tea",
+    calmMode: true,
+    reduceMotion: true,
+    vibration: false,
+    voice: true,
+    pictosOnly: false,
+    extraTime: true,
+    contrast: false,
+    textSize: "grande",
+  },
+  vision: {
+    profile: "vision",
+    calmMode: false,
+    reduceMotion: true,
+    vibration: true,
+    voice: true,
+    pictosOnly: true,
+    extraTime: true,
+    contrast: true,
+    textSize: "xl",
+  },
+  motor: {
+    profile: "motor",
+    calmMode: false,
+    reduceMotion: true,
+    vibration: true,
+    voice: true,
+    pictosOnly: false,
+    extraTime: true,
+    contrast: false,
+    textSize: "grande",
+  },
+  default: {
+    profile: "default",
+    calmMode: false,
+    reduceMotion: false,
+    vibration: true,
+    voice: true,
+    pictosOnly: false,
+    extraTime: false,
+    contrast: false,
+    textSize: "normal",
+  },
+};
 
 function applyPrefs() {
   document.body.classList.toggle("contrast-mode", !!PREFS.contrast);
   document.body.classList.toggle("reduce-motion", !!PREFS.reduceMotion || !!PREFS.calmMode);
   document.body.classList.toggle("calm-mode", !!PREFS.calmMode);
+  document.body.classList.toggle("pictos-only", !!PREFS.pictosOnly);
+  document.body.classList.toggle("extra-time", !!PREFS.extraTime);
   document.body.classList.remove("text-grande", "text-xl");
   if (PREFS.textSize === "grande") document.body.classList.add("text-grande");
   if (PREFS.textSize === "xl") document.body.classList.add("text-xl");
-  chkContrast.checked = !!PREFS.contrast;
-  chkVibration.checked = !!PREFS.vibration;
+  if (chkContrast) chkContrast.checked = !!PREFS.contrast;
+  if (chkVibration) chkVibration.checked = !!PREFS.vibration;
   if (chkVoice) chkVoice.checked = PREFS.voice !== false;
   if (chkMotion) chkMotion.checked = !!PREFS.reduceMotion;
   if (chkCalm) chkCalm.checked = !!PREFS.calmMode;
-  selTextSize.value = PREFS.textSize || "normal";
+  if (chkPictos) chkPictos.checked = !!PREFS.pictosOnly;
+  if (chkExtraTime) chkExtraTime.checked = !!PREFS.extraTime;
+  if (selTextSize) selTextSize.value = PREFS.textSize || "normal";
+  document.querySelectorAll(".profile-btn").forEach((b) => {
+    b.classList.toggle("active", b.dataset.profile === (PREFS.profile || "default"));
+  });
+  updateTargetPicto();
+  renderPieceGrid();
 }
-chkContrast.addEventListener("change", () => { PREFS.contrast = chkContrast.checked; savePrefs(PREFS); applyPrefs(); });
-chkVibration.addEventListener("change", () => { PREFS.vibration = chkVibration.checked; savePrefs(PREFS); });
-chkVoice?.addEventListener("change", () => { PREFS.voice = chkVoice.checked; savePrefs(PREFS); });
-chkMotion?.addEventListener("change", () => { PREFS.reduceMotion = chkMotion.checked; savePrefs(PREFS); applyPrefs(); });
+function applyProfile(id) {
+  const p = A11Y_PROFILES[id] || A11Y_PROFILES.default;
+  PREFS = { ...PREFS, ...p };
+  savePrefs(PREFS);
+  applyPrefs();
+  const labels = { tea: "profileTea", vision: "profileVision", motor: "profileMotor", default: "profileDefault" };
+  toast(t("profilesTitle") + ": " + t(labels[id] || "profileDefault"));
+}
+document.querySelectorAll(".profile-btn").forEach((btn) => {
+  btn.addEventListener("click", () => applyProfile(btn.dataset.profile));
+});
+chkContrast?.addEventListener("change", () => { PREFS.contrast = chkContrast.checked; PREFS.profile = "custom"; savePrefs(PREFS); applyPrefs(); });
+chkVibration?.addEventListener("change", () => { PREFS.vibration = chkVibration.checked; PREFS.profile = "custom"; savePrefs(PREFS); });
+chkVoice?.addEventListener("change", () => { PREFS.voice = chkVoice.checked; PREFS.profile = "custom"; savePrefs(PREFS); });
+chkMotion?.addEventListener("change", () => { PREFS.reduceMotion = chkMotion.checked; PREFS.profile = "custom"; savePrefs(PREFS); applyPrefs(); });
 chkCalm?.addEventListener("change", () => {
   PREFS.calmMode = chkCalm.checked;
+  PREFS.profile = "custom";
   if (PREFS.calmMode) {
     PREFS.reduceMotion = true;
     PREFS.vibration = false;
+    PREFS.extraTime = true;
   }
   savePrefs(PREFS);
   applyPrefs();
 });
-selTextSize.addEventListener("change", () => { PREFS.textSize = selTextSize.value; savePrefs(PREFS); applyPrefs(); });
+chkPictos?.addEventListener("change", () => { PREFS.pictosOnly = chkPictos.checked; PREFS.profile = "custom"; savePrefs(PREFS); applyPrefs(); });
+chkExtraTime?.addEventListener("change", () => { PREFS.extraTime = chkExtraTime.checked; PREFS.profile = "custom"; savePrefs(PREFS); applyPrefs(); });
+selTextSize?.addEventListener("change", () => { PREFS.textSize = selTextSize.value; PREFS.profile = "custom"; savePrefs(PREFS); applyPrefs(); });
+
+document.getElementById("btn-guide-hide")?.addEventListener("click", () => {
+  localStorage.setItem("tactilia_guide_hidden", "1");
+  const g = document.getElementById("guide-card");
+  if (g) g.hidden = true;
+});
+if (localStorage.getItem("tactilia_guide_hidden") === "1") {
+  const g = document.getElementById("guide-card");
+  if (g) g.hidden = true;
+}
+
 applyPrefs();
 
 /* ---------- 8. Modo ejercicio (adaptativo) ---------- */
-let currentTarget = null;
-const SESSION = { attempts: 0, correct: 0, streak: 0 };
-
 function updateSessionUI() {
   const streakEl = document.getElementById("stat-streak");
   const correctEl = document.getElementById("stat-correct");
@@ -561,6 +778,8 @@ document.getElementById("btn-new-challenge").addEventListener("click", () => {
   document.getElementById("exercise-target").textContent = msg;
   speak(t("sayFind", conceptLabel(currentTarget)));
   announceForScreenReader(msg);
+  updateTargetPicto();
+  updatePaceBar(true);
   renderPieceGrid();
 });
 
@@ -740,12 +959,15 @@ function drawAROverlay(concept, loc) {
   ctx.stroke();
 
   ctx.shadowBlur = 0;
-  drawPictoOnCanvas(ctx, concept, cx, by + 36, 32);
-  ctx.fillStyle = "#ffffff";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "alphabetic";
-  ctx.font = "600 15px Segoe UI, sans-serif";
-  ctx.fillText(label, cx, by + 72);
+  const pictoSize = PREFS.pictosOnly ? 44 : 32;
+  drawPictoOnCanvas(ctx, concept, cx, by + (PREFS.pictosOnly ? 40 : 36), pictoSize);
+  if (!PREFS.pictosOnly) {
+    ctx.fillStyle = "#ffffff";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "alphabetic";
+    ctx.font = "600 15px Segoe UI, sans-serif";
+    ctx.fillText(label, cx, by + 72);
+  }
   ctx.restore();
 }
 
@@ -776,7 +998,8 @@ function handleScan(concept, location) {
     document.getElementById("result-feedback").textContent = feedback;
     resultCard.classList.add(correct ? "is-correct" : "is-wrong");
     speak(correct ? t("sayCorrect", conceptSay(concept)) : t("sayWrong", conceptLabel(concept), conceptLabel(currentTarget)));
-    vibrate(correct ? 180 : [60, 40, 60]);
+    vibrate(correct ? (PREFS.extraTime ? [120, 80, 180] : 180) : [60, 40, 60]);
+    flashReward(correct);
     announceForScreenReader(`${conceptLabel(concept)}. ${feedback}`);
     logAttempt(concept.id, currentTarget.id, correct);
     SESSION.attempts++;
@@ -792,8 +1015,11 @@ function handleScan(concept, location) {
       }
       currentTarget = null;
       document.getElementById("exercise-target").textContent = t("exercisePrompt");
+      updateTargetPicto();
+      updatePaceBar(false);
     } else {
       SESSION.streak = 0;
+      updatePaceBar(true);
     }
     updateSessionUI();
     renderPieceGrid();
@@ -802,6 +1028,7 @@ function handleScan(concept, location) {
     resultCard.classList.add("is-correct");
     speak(conceptSay(concept));
     vibrate(90);
+    flashReward(true);
     announceForScreenReader(`${conceptLabel(concept)}. ${t("freeMode")}`);
     logAttempt(concept.id, null, true);
   }
@@ -855,11 +1082,15 @@ function renderPieceGrid() {
     ic.className = "ic";
     ic.setAttribute("aria-hidden", "true");
     fillPieceVisual(ic, c.id);
-    const lb = document.createElement("span");
-    lb.className = "lb";
-    lb.textContent = conceptLabel(c);
-    btn.appendChild(ic);
-    btn.appendChild(lb);
+    if (!PREFS.pictosOnly) {
+      const lb = document.createElement("span");
+      lb.className = "lb";
+      lb.textContent = conceptLabel(c);
+      btn.appendChild(ic);
+      btn.appendChild(lb);
+    } else {
+      btn.appendChild(ic);
+    }
     btn.addEventListener("click", () => handleScan(c, null));
     grid.appendChild(btn);
   });
@@ -1080,6 +1311,31 @@ document.getElementById("btn-export").addEventListener("click", () => {
   a.href = URL.createObjectURL(blob);
   a.download = "tactilia_progreso.json";
   a.click();
+});
+
+document.getElementById("btn-export-csv")?.addEventListener("click", () => {
+  const header = ["estudiante", "intentos", "aciertos", "precision_pct", "ultima_practica"];
+  const by = {};
+  DATA.logs.forEach((log) => {
+    const s = log.student || "—";
+    by[s] = by[s] || { attempts: 0, hits: 0, last: "" };
+    by[s].attempts++;
+    if (log.correct) by[s].hits++;
+    if (log.ts && (!by[s].last || log.ts > by[s].last)) by[s].last = log.ts;
+  });
+  const lines = [header.join(",")];
+  Object.keys(by).sort().forEach((name) => {
+    const r = by[name];
+    const pct = r.attempts ? Math.round((r.hits / r.attempts) * 100) : 0;
+    const safe = String(name).replaceAll('"', '""');
+    lines.push(`"${safe}",${r.attempts},${r.hits},${pct},${r.last || ""}`);
+  });
+  const blob = new Blob(["\uFEFF" + lines.join("\n")], { type: "text/csv;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "tactilia_informe.csv";
+  a.click();
+  toast(t("btnExportCsv"));
 });
 
 document.getElementById("import-file")?.addEventListener("change", async (e) => {
