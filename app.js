@@ -73,9 +73,11 @@ const I18N = {
     exerciseMode: "Modo ejercicio",
     modeLearn: "1. Aprender",
     modeChallenge: "2. Reto",
-    modeLearnHelp: "Activa la cámara, apunta al QR y la app te dice qué es y su braille (también debajo de la pieza).",
+    modeLearnHelp: "Pulsa «Iniciar aprendizaje», apunta al QR y la app te dice qué es y su braille (también debajo de la pieza).",
     modeChallengeHelp: "Pulsa «Nuevo reto» y encuentra la pieza que pide la app.",
-    learnPrompt: "Modo aprender: apunta la cámara al QR de la pieza. Te diré qué es y el braille.",
+    learnPrompt: "Pulsa «Iniciar aprendizaje» y apunta la cámara al QR. Te diré qué es y el braille.",
+    startLearning: "Iniciar aprendizaje",
+    learnStarted: "Aprendizaje activo. Apunta al QR de la pieza.",
     learnFeedback: (label) => `Esto es: ${label}. Mira y toca también el braille debajo de la pieza.`,
     exercisePrompt: "Presiona \"Nuevo reto\" para comenzar",
     newChallenge: "Nuevo reto", repeat: "Repetir",
@@ -177,9 +179,11 @@ const I18N = {
     exerciseMode: "Yachay pukllay",
     modeLearn: "1. Yachay",
     modeChallenge: "2. Atipanakuy",
-    modeLearnHelp: "Kamarawan QR-ta qhaway; sutinta willasunki braillewan.",
+    modeLearnHelp: "«Yachayta qallariy» ñitiy, QR-ta qhaway.",
     modeChallengeHelp: "«Musuq atipanakuy» ñitiy.",
-    learnPrompt: "Yachay: QR-ta qhaway. Sutinta rimasaq.",
+    learnPrompt: "«Yachayta qallariy» ñitiy. QR-ta qhawaspa yachanki.",
+    startLearning: "Yachayta qallariy",
+    learnStarted: "Yachay kachkan. QR-ta qhaway.",
     learnFeedback: (label) => `Kayqa: ${label}. Braillepis uraypi kachkan.`,
     exercisePrompt: "\"Musuq atipanakuy\" nisqata ñitiy qallariy",
     newChallenge: "Musuq atipanakuy", repeat: "Kutichiy",
@@ -814,15 +818,31 @@ function syncPlayModeUI() {
   if (help) help.textContent = mode === "learn" ? t("modeLearnHelp") : t("modeChallengeHelp");
   const target = document.getElementById("exercise-target");
   const actions = document.getElementById("challenge-actions");
+  if (actions) actions.hidden = false;
+
+  const primary = document.getElementById("btn-new-challenge");
+  if (primary) {
+    const key = mode === "learn" ? "startLearning" : "newChallenge";
+    primary.setAttribute("data-i18n", key);
+    let textEl = primary.querySelector("[data-i18n-text]");
+    if (!textEl) {
+      const ico = primary.querySelector(".ui-ico");
+      primary.innerHTML = "";
+      if (ico) primary.appendChild(ico);
+      textEl = document.createElement("span");
+      textEl.setAttribute("data-i18n-text", "");
+      primary.appendChild(textEl);
+    }
+    textEl.textContent = t(key);
+  }
+
   if (mode === "learn") {
     currentTarget = null;
     if (target) target.textContent = t("learnPrompt");
-    if (actions) actions.hidden = true;
     updateTargetPicto();
     updatePaceBar(false);
-  } else {
-    if (actions) actions.hidden = false;
-    if (target && !currentTarget) target.textContent = t("exercisePrompt");
+  } else if (target && !currentTarget) {
+    target.textContent = t("exercisePrompt");
   }
   renderPieceGrid();
 }
@@ -835,6 +855,33 @@ function setPlayMode(mode) {
 
 document.getElementById("mode-learn")?.addEventListener("click", () => setPlayMode("learn"));
 document.getElementById("mode-challenge")?.addEventListener("click", () => setPlayMode("challenge"));
+
+async function startLearningSession() {
+  setPlayMode("learn");
+  const target = document.getElementById("exercise-target");
+  if (target) target.textContent = t("learnStarted");
+  speak(t("learnStarted"));
+  announceForScreenReader(t("learnStarted"));
+  document.getElementById("scanner-wrap")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  if (!scanning) {
+    await startScan();
+  }
+  toast(t("startLearning"));
+}
+
+function startChallengeSession() {
+  setPlayMode("challenge");
+  currentTarget = pickAdaptiveChallenge();
+  if (!currentTarget) return;
+  const msg = t("findPiece", conceptLabel(currentTarget));
+  document.getElementById("exercise-target").textContent = msg;
+  speak(t("sayFind", conceptLabel(currentTarget)));
+  announceForScreenReader(msg);
+  updateTargetPicto();
+  updatePaceBar(true);
+  renderPieceGrid();
+  document.getElementById("scanner-wrap")?.scrollIntoView({ behavior: "smooth", block: "center" });
+}
 
 function applyProfile(id) {
   const p = A11Y_PROFILES[id] || A11Y_PROFILES.default;
@@ -929,16 +976,11 @@ function pickAdaptiveChallenge() {
 }
 
 document.getElementById("btn-new-challenge").addEventListener("click", () => {
-  setPlayMode("challenge");
-  currentTarget = pickAdaptiveChallenge();
-  if (!currentTarget) return;
-  const msg = t("findPiece", conceptLabel(currentTarget));
-  document.getElementById("exercise-target").textContent = msg;
-  speak(t("sayFind", conceptLabel(currentTarget)));
-  announceForScreenReader(msg);
-  updateTargetPicto();
-  updatePaceBar(true);
-  renderPieceGrid();
+  if ((PREFS.playMode || "learn") === "learn") {
+    startLearningSession();
+  } else {
+    startChallengeSession();
+  }
 });
 
 document.getElementById("btn-repeat-audio").addEventListener("click", () => {
@@ -1714,7 +1756,7 @@ document.getElementById("btn-clear").addEventListener("click", () => {
 /* ---------- 14. Registro del Service Worker (instalable / offline) ---------- */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("service-worker.js?v=16").then((reg) => {
+    navigator.serviceWorker.register("service-worker.js?v=17").then((reg) => {
       reg.update().catch(() => {});
       if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
     }).catch(() => {});
