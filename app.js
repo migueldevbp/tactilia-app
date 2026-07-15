@@ -77,7 +77,10 @@ const I18N = {
     startCamera: "Activar cámara", stopCamera: "Detener",
     flipCamera: "Girar a frontal",
     flipCameraBack: "Girar a trasera",
+    flipCameraShort: "Frontal",
+    flipCameraShortBack: "Trasera",
     cameraFront: "Cámara frontal activa. Apunta a la pieza.",
+    cameraSwitchFail: "No se pudo cambiar a esa cámara en este dispositivo.",
     cameraOff: "Cámara apagada.", cameraOn: "Cámara activa. Apunta a la pieza.",
     findPiece: (label) => `Encuentra la pieza: ${label}`,
     sayFind: (label) => `Busca la pieza ${label}`,
@@ -172,7 +175,10 @@ const I18N = {
     startCamera: "Kamarata qallariy", stopCamera: "Sayachiy",
     flipCamera: "Ñawpaq kamara",
     flipCameraBack: "Qipa kamara",
+    flipCameraShort: "Ñawpaq",
+    flipCameraShortBack: "Qipa",
     cameraFront: "Ñawpaq kamara kachkan.",
+    cameraSwitchFail: "Manam kay kamarata tukuyta atinichu.",
     cameraOff: "Kamara sayasqa.", cameraOn: "Kamara kachkan. Riqsichiyta qhaway.",
     findPiece: (label) => `Maskay: ${label}`,
     sayFind: (label) => `Maskay ${label}`,
@@ -912,24 +918,38 @@ let particles = []; // burst de celebración al acertar (canvas 2D, sin three.js
 document.getElementById("btn-start-scan").addEventListener("click", () => startScan());
 document.getElementById("btn-stop-scan").addEventListener("click", stopScan);
 document.getElementById("btn-flip-camera")?.addEventListener("click", flipCamera);
+document.getElementById("btn-flip-camera-row")?.addEventListener("click", flipCamera);
+
+function setFlipVisible(on) {
+  ["btn-flip-camera", "btn-flip-camera-row"].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.hidden = !on;
+  });
+}
 
 function updateFlipButtonLabel() {
-  const btn = document.getElementById("btn-flip-camera");
-  if (!btn) return;
-  const text = cameraFacing === "environment" ? t("flipCamera") : t("flipCameraBack");
-  const textEl = btn.querySelector("[data-i18n-text]");
-  if (textEl) textEl.textContent = text;
-  else {
-    // conservar icono si existe
-    const ico = btn.querySelector(".ui-ico");
-    btn.textContent = "";
-    if (ico) btn.appendChild(ico);
-    const span = document.createElement("span");
-    span.setAttribute("data-i18n-text", "");
-    span.textContent = text;
-    btn.appendChild(span);
+  const long = cameraFacing === "environment" ? t("flipCamera") : t("flipCameraBack");
+  const short = cameraFacing === "environment" ? t("flipCameraShort") : t("flipCameraShortBack");
+  const row = document.getElementById("btn-flip-camera-row");
+  if (row) {
+    const textEl = row.querySelector("[data-i18n-text]");
+    if (textEl) textEl.textContent = long;
+    else {
+      const ico = row.querySelector(".ui-ico");
+      row.textContent = "";
+      if (ico) row.appendChild(ico);
+      const span = document.createElement("span");
+      span.setAttribute("data-i18n-text", "");
+      span.textContent = long;
+      row.appendChild(span);
+    }
   }
-  btn.setAttribute("data-i18n", cameraFacing === "environment" ? "flipCamera" : "flipCameraBack");
+  const overlay = document.getElementById("btn-flip-camera");
+  if (overlay) {
+    const label = overlay.querySelector("[data-i18n]");
+    if (label) label.textContent = short;
+    overlay.setAttribute("aria-label", long);
+  }
 }
 
 function stopCameraTracks() {
@@ -937,43 +957,100 @@ function stopCameraTracks() {
     stream.getTracks().forEach((tr) => tr.stop());
     stream = null;
   }
-  video.srcObject = null;
+  if (video) video.srcObject = null;
+}
+
+/** Elige deviceId por etiqueta (mejor en Android TWA/WebView). */
+async function resolveCameraConstraints(facing) {
+  let devices = [];
+  try {
+    devices = await navigator.mediaDevices.enumerateDevices();
+  } catch (_) {}
+  const cams = devices.filter((d) => d.kind === "videoinput" && d.deviceId);
+  if (cams.length) {
+    const frontRe = /front|user|selfie|facial|frontal|delantera/i;
+    const backRe = /back|rear|environment|trasera|posterior|world/i;
+    let chosen = null;
+    if (facing === "user") {
+      chosen = cams.find((d) => frontRe.test(d.label)) || (cams.length > 1 ? cams[cams.length - 1] : cams[0]);
+    } else {
+      chosen = cams.find((d) => backRe.test(d.label)) || cams[0];
+    }
+    if (chosen && chosen.deviceId) {
+      return {
+        video: {
+          deviceId: { exact: chosen.deviceId },
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
+      };
+    }
+  }
+  return {
+    video: {
+      facingMode: { ideal: facing },
+      width: { ideal: 1280 },
+      height: { ideal: 720 },
+    },
+  };
+}
+
+async function openCameraStream(facing) {
+  const primary = await resolveCameraConstraints(facing);
+  try {
+    return await navigator.mediaDevices.getUserMedia(primary);
+  } catch (e1) {
+    // Fallback estricto / laxo para Android
+    try {
+      return await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { exact: facing } },
+      });
+    } catch (e2) {
+      return await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: facing },
+      });
+    }
+  }
 }
 
 async function startScan(facing) {
   try {
     if (facing) cameraFacing = facing;
     stopCameraTracks();
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: { ideal: cameraFacing },
-        width: { ideal: 1280 },
-        height: { ideal: 720 },
-      },
-    });
+    // Primera vez: pedir permiso genérico para poder leer etiquetas de cámara
+    if (!scanning && !facing) {
+      try {
+        const warm = await navigator.mediaDevices.getUserMedia({ video: true });
+        warm.getTracks().forEach((tr) => tr.stop());
+      } catch (_) {}
+    }
+    stream = await openCameraStream(cameraFacing);
     video.srcObject = stream;
     await video.play();
     scanning = true;
     document.getElementById("btn-start-scan").hidden = true;
     document.getElementById("btn-stop-scan").hidden = false;
-    const flipBtn = document.getElementById("btn-flip-camera");
-    if (flipBtn) flipBtn.hidden = false;
+    setFlipVisible(true);
     updateFlipButtonLabel();
     document.body.classList.toggle("camera-front", cameraFacing === "user");
+    document.getElementById("scanner-wrap")?.classList.add("is-scanning");
     document.getElementById("scan-status").textContent =
       cameraFacing === "user" ? t("cameraFront") : t("cameraOn");
     requestAnimationFrame(scanLoop);
   } catch (err) {
-    // Si falla la frontal, intentar trasera y avisar
-    if (cameraFacing === "user") {
-      cameraFacing = "environment";
-      try {
-        return await startScan("environment");
-      } catch (e2) {
-        document.getElementById("scan-status").textContent =
-          "No se pudo acceder a la cámara: " + (e2.message || err.message);
-        return;
+    if (facing === "user" || cameraFacing === "user") {
+      document.getElementById("scan-status").textContent = t("cameraSwitchFail");
+      toast(t("cameraSwitchFail"));
+      if (facing === "user") {
+        cameraFacing = "environment";
+        try {
+          return await startScan("environment");
+        } catch (e2) {
+          document.getElementById("scan-status").textContent =
+            "No se pudo acceder a la cámara: " + (e2.message || err.message);
+        }
       }
+      return;
     }
     document.getElementById("scan-status").textContent =
       "No se pudo acceder a la cámara: " + err.message;
@@ -981,7 +1058,11 @@ async function startScan(facing) {
 }
 
 async function flipCamera() {
-  if (!scanning) return;
+  if (!scanning && !stream) {
+    // permitir activar ya en frontal
+    await startScan(cameraFacing === "environment" ? "user" : "environment");
+    return;
+  }
   const next = cameraFacing === "environment" ? "user" : "environment";
   document.getElementById("scan-status").textContent = "Cambiando cámara…";
   await startScan(next);
@@ -994,10 +1075,10 @@ function stopScan() {
   stopCameraTracks();
   cameraFacing = "environment";
   document.body.classList.remove("camera-front");
+  document.getElementById("scanner-wrap")?.classList.remove("is-scanning");
   document.getElementById("btn-start-scan").hidden = false;
   document.getElementById("btn-stop-scan").hidden = true;
-  const flipBtn = document.getElementById("btn-flip-camera");
-  if (flipBtn) flipBtn.hidden = true;
+  setFlipVisible(false);
   updateFlipButtonLabel();
   document.getElementById("scan-status").textContent = t("cameraOff");
 }
@@ -1542,9 +1623,13 @@ document.getElementById("btn-clear").addEventListener("click", () => {
 /* ---------- 14. Registro del Service Worker (instalable / offline) ---------- */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("service-worker.js").then((reg) => {
+    navigator.serviceWorker.register("service-worker.js?v=15").then((reg) => {
       reg.update().catch(() => {});
+      if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
     }).catch(() => {});
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      /* nueva versión SW lista; una sola recarga suave si hace falta */
+    });
   });
 }
 

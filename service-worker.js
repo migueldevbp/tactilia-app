@@ -2,7 +2,7 @@
    Cachea todos los archivos de la app para que funcione 100% offline
    después de la primera visita (requisito clave para aulas rurales sin internet). */
 
-const CACHE_NAME = "tactilia-cache-v14";
+const CACHE_NAME = "tactilia-cache-v15";
 const ASSETS = [
   "./",
   "./index.html",
@@ -74,4 +74,8 @@ self.addEventListener("fetch", (event) => {
       );
     })
   );
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") self.skipWaiting();
 });
