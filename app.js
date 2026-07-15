@@ -373,31 +373,7 @@ document.querySelectorAll(".lang-btn").forEach((btn) => {
   });
 });
 
-/* ---------- 4b. Tema visual Costa / Sierra / Selva ---------- */
-const REGION_THEMES = {
-  costa: { color: "#0284c7" },
-  sierra: { color: "#0f766e" },
-  selva: { color: "#15803d" },
-};
-function applyRegion(region) {
-  const r = REGION_THEMES[region] ? region : "sierra";
-  document.body.classList.remove("theme-costa", "theme-sierra", "theme-selva");
-  document.body.classList.add("theme-" + r);
-  document.querySelectorAll(".region-btn").forEach((b) => {
-    b.classList.toggle("active", b.dataset.region === r);
-  });
-  const meta = document.getElementById("meta-theme");
-  if (meta) meta.setAttribute("content", REGION_THEMES[r].color);
-  localStorage.setItem("tactilia_region", r);
-  document.querySelectorAll(".scene-photo").forEach((img) => {
-    img.classList.toggle("is-active", img.classList.contains("scene-photo-" + r));
-  });
-}
-document.querySelectorAll(".region-btn").forEach((btn) => {
-  btn.addEventListener("click", () => applyRegion(btn.dataset.region));
-});
-
-/** Carga PNG del usuario en media/decor/ y los anima. */
+/** Carga ilustraciones de media/decor/ (costados + banner + chakana). */
 function loadDecorPhotos() {
   const base = new URL(".", location.href).href;
   document.querySelectorAll("[data-decor]").forEach((img) => {
@@ -417,8 +393,8 @@ function loadDecorPhotos() {
         img.removeAttribute("hidden");
         img.src = probe.src;
         img.classList.add("decor-ready");
-        if (img.classList.contains("scene-photo")) {
-          document.body.classList.add("has-decor-photo");
+        if (img.classList.contains("side-sticker")) {
+          document.body.classList.add("has-side-decor");
         }
         if (name === "chakana") {
           const mark = document.querySelector(".brand-mark");
@@ -429,14 +405,12 @@ function loadDecorPhotos() {
         i += 1;
         tryNext();
       };
-      /* cache-bust suave: fuerza re-chequeo tras subir fotos nuevas */
-      probe.src = url + (url.includes("?") ? "&" : "?") + "v=9";
+      probe.src = url + (url.includes("?") ? "&" : "?") + "v=10";
     };
     tryNext();
   });
 }
 
-applyRegion(localStorage.getItem("tactilia_region") || "sierra");
 loadDecorPhotos();
 
 /* ---------- 5. Navegación por pestañas ---------- */

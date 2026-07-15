@@ -1,7 +1,7 @@
 /* TactilIA · esencia peruana */
 :root {
-  --teal: #0f766e;
-  --teal-dark: #115e59;
+  --teal: #9a3412;
+  --teal-dark: #7c2d12;
   --gold: #c9a227;
   --peru-red: #c8102e;
   --green: #15803d;
@@ -13,6 +13,7 @@
   --border: #e0d4c2;
   --radius: 14px;
   --shadow: 0 8px 24px rgba(100, 60, 20, 0.08);
+  --page-bg: linear-gradient(180deg, #f7f1e6 0%, #efe6d4 40%, #e8ddd0 100%);
 }
 
 * { box-sizing: border-box; }
@@ -45,26 +46,35 @@ body {
   opacity: 0.92;
 }
 
-.region-scene {
-  position: fixed; inset: 15px 0 auto 0; height: min(42vh, 320px); z-index: 0;
-  pointer-events: none; overflow: hidden;
-  mask-image: linear-gradient(180deg, #000 55%, transparent 100%);
-  -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent 100%);
+/* Costa / Sierra / Selva — pegatinas animadas a los costados */
+.side-rail {
+  position: fixed; top: 72px; bottom: 24px; width: min(168px, 16vw);
+  z-index: 0; pointer-events: none;
+  display: flex; flex-direction: column; justify-content: space-around; align-items: center;
+  gap: 18px; padding: 8px 0;
 }
-.region-scene .scene { display: none; width: 100%; height: 100%; opacity: 0.55; }
-body.theme-costa .scene-costa,
-body.theme-sierra .scene-sierra,
-body.theme-selva .scene-selva { display: block; }
+.side-rail-left { left: 6px; }
+.side-rail-right { right: 6px; }
 
-.scene-photo {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover; object-position: center top; display: none; opacity: 0;
-  animation: decor-pan 22s ease-in-out infinite alternate;
+.side-sticker {
+  width: 100%; max-width: 160px; height: auto; display: none;
+  object-fit: contain;
+  /* quita el negro del fondo de las ilustraciones */
+  mix-blend-mode: lighten;
+  filter: drop-shadow(0 10px 18px rgba(60, 30, 10, 0.22));
+  opacity: 0;
+  transform-origin: center;
 }
-.scene-photo.is-active.decor-ready { display: block; opacity: 0.88; }
-body.has-decor-photo.theme-costa .scene-costa,
-body.has-decor-photo.theme-sierra .scene-sierra,
-body.has-decor-photo.theme-selva .scene-selva { display: none; }
+.side-sticker.decor-ready {
+  display: block;
+  opacity: 0.92;
+}
+.side-rail-left .sticker-a.decor-ready { animation: side-float-a 7s ease-in-out infinite; }
+.side-rail-left .sticker-b.decor-ready { animation: side-float-b 8.5s ease-in-out infinite; }
+.side-rail-right .sticker-c.decor-ready {
+  max-width: 168px;
+  animation: side-float-c 7.8s ease-in-out infinite;
+}
 
 .banner-photo {
   display: block; width: min(720px, calc(100% - 32px)); margin: 12px auto 0;
@@ -78,31 +88,6 @@ body.has-decor-photo.theme-selva .scene-selva { display: none; }
   animation: decor-float 4.5s ease-in-out infinite;
 }
 .brand-chakana[hidden] { display: none !important; }
-
-body.theme-costa {
-  --teal: #0369a1; --teal-dark: #0c4a6e; --gold: #d4a017; --bg: #e8f2f7;
-  --border: #c5dce8; --page-bg: linear-gradient(180deg, #d9eef8 0%, #eef6fa 50%, #f7fafc 100%);
-  --card: #ffffff;
-}
-body.theme-sierra {
-  --teal: #9a3412; --teal-dark: #7c2d12; --gold: #c9a227; --bg: #f3efe6;
-  --border: #e0d4c2; --page-bg: linear-gradient(180deg, #f7f1e6 0%, #efe6d4 40%, #e8ddd0 100%);
-  --card: #fffdf8;
-}
-body.theme-selva {
-  --teal: #166534; --teal-dark: #14532d; --gold: #a16207; --bg: #eef7ee;
-  --border: #c9e4c9; --page-bg: linear-gradient(180deg, #d9f0d8 0%, #eef7ee 45%, #f4faf2 100%);
-  --card: #ffffff;
-}
-
-.sun { animation: sun-bob 6s ease-in-out infinite; }
-.wave-a { animation: wave-shift 5s ease-in-out infinite; }
-.wave-b { animation: wave-shift 7s ease-in-out infinite reverse; }
-.cloud.c1 { animation: cloud-drift 18s linear infinite; }
-.cloud.c2 { animation: cloud-drift 26s linear infinite reverse; }
-.leaf-1 { animation: leaf-fall 9s linear infinite; transform: translate(120px, -10px); }
-.leaf-2 { animation: leaf-fall 12s linear infinite 2s; transform: translate(360px, -20px); }
-.leaf-3 { animation: leaf-fall 10s linear infinite 4s; transform: translate(580px, -5px); }
 
 header, main, .banner-photo { position: relative; z-index: 1; }
 
@@ -118,9 +103,7 @@ header, main, .banner-photo { position: relative; z-index: 1; }
 .brand-text h1 { font-size: 22px; margin: 0; letter-spacing: 0.4px; font-weight: 800; }
 .brand-sub { display: block; font-size: 11px; color: rgba(255,255,255,0.88); font-style: italic; margin-top: 1px; }
 .header-controls { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-.region-switch { display: flex; gap: 3px; background: rgba(255,255,255,0.12); border-radius: 10px; padding: 3px; }
-.region-btn { background: transparent; color: white; border: none; padding: 5px 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
-.region-btn.active { background: rgba(255,255,255,0.95); color: var(--teal-dark); }
+
 .lang-switch { display: flex; gap: 4px; background: rgba(255,255,255,0.15); border-radius: 10px; padding: 3px; }
 .lang-btn { background: transparent; color: white; border: none; padding: 6px 10px; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; }
 .lang-btn.active { background: white; color: var(--teal-dark); }
@@ -137,6 +120,18 @@ button .ui-ico, .btn-file .ui-ico, summary .ui-ico { margin-right: 2px; }
 button, .btn-file { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
 
 main { max-width: 640px; margin: 0 auto; padding: 16px; }
+@media (min-width: 980px) {
+  main, .banner-photo { max-width: min(680px, calc(100% - 340px)); }
+}
+@media (max-width: 979px) {
+  .side-rail { width: 72px; opacity: 0.55; }
+  .side-rail-left { left: 0; }
+  .side-rail-right { right: 0; }
+  .side-sticker { max-width: 72px; }
+}
+@media (max-width: 640px) {
+  .side-rail { display: none; }
+}
 .view { display: none; animation: fade-in 0.28s ease; }
 .view.active { display: block; }
 
@@ -205,8 +200,8 @@ body.text-grande main { zoom: 1.18; }
 body.text-xl main { zoom: 1.35; }
 
 body.calm-mode { --page-bg: linear-gradient(180deg, #f4f6f5 0%, #eef1f0 100%); --shadow: none; }
-body.calm-mode .region-scene, body.calm-mode .tocapu-strip { opacity: 0.18; }
-body.calm-mode .banner-photo, body.calm-mode .scene-photo, body.calm-mode .brand-chakana,
+body.calm-mode .side-rail, body.calm-mode .tocapu-strip { opacity: 0.2; }
+body.calm-mode .banner-photo, body.calm-mode .side-sticker, body.calm-mode .brand-chakana,
 body.calm-mode .scan-frame, body.calm-mode .piece-visual.has-photo .piece-photo,
 body.calm-mode .result-card.is-correct, body.calm-mode .result-card.is-wrong { animation: none !important; }
 
@@ -294,22 +289,24 @@ body.calm-mode .result-card.is-correct, body.calm-mode .result-card.is-wrong { a
 @keyframes fade-in { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:none} }
 @keyframes celebrate { 0%{transform:scale(.96)} 50%{transform:scale(1.02)} 100%{transform:scale(1)} }
 @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
-@keyframes sun-bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(4px)} }
-@keyframes wave-shift { 0%,100%{transform:translateX(0)} 50%{transform:translateX(-18px)} }
-@keyframes cloud-drift { from{transform:translateX(0)} to{transform:translateX(40px)} }
-@keyframes leaf-fall {
-  0%{transform:translate(120px,-20px) rotate(0);opacity:0}
-  10%{opacity:1}
-  100%{transform:translate(160px,160px) rotate(120deg);opacity:.2}
-}
 @keyframes photo-soft { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-2px) scale(1.02)} }
 @keyframes decor-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
-@keyframes decor-pan { from{transform:scale(1.06) translateX(-1.5%)} to{transform:scale(1.1) translateX(1.5%)} }
+@keyframes side-float-a {
+  0%,100%{transform:translateY(0) rotate(-2deg) scale(1)}
+  50%{transform:translateY(-14px) rotate(2deg) scale(1.04)}
+}
+@keyframes side-float-b {
+  0%,100%{transform:translateY(0) rotate(2deg) scale(1)}
+  50%{transform:translateY(12px) rotate(-2deg) scale(1.03)}
+}
+@keyframes side-float-c {
+  0%,100%{transform:translateY(0) rotate(1.5deg) scale(1)}
+  50%{transform:translateY(-16px) rotate(-2.5deg) scale(1.05)}
+}
 
 @media (prefers-reduced-motion: reduce) {
   .scan-frame, .view, .result-card.is-correct, .result-card.is-wrong,
-  .sun, .wave-a, .wave-b, .cloud, .leaf-1, .leaf-2, .leaf-3,
-  .piece-visual.has-photo .piece-photo, .banner-photo, .scene-photo, .brand-chakana {
+  .piece-visual.has-photo .piece-photo, .banner-photo, .side-sticker, .brand-chakana {
     animation: none !important;
   }
 }
@@ -317,14 +314,7 @@ body.reduce-motion .scan-frame,
 body.reduce-motion .view,
 body.reduce-motion .result-card.is-correct,
 body.reduce-motion .result-card.is-wrong,
-body.reduce-motion .sun,
-body.reduce-motion .wave-a,
-body.reduce-motion .wave-b,
-body.reduce-motion .cloud,
-body.reduce-motion .leaf-1,
-body.reduce-motion .leaf-2,
-body.reduce-motion .leaf-3,
 body.reduce-motion .piece-visual.has-photo .piece-photo,
 body.reduce-motion .banner-photo,
-body.reduce-motion .scene-photo,
+body.reduce-motion .side-sticker,
 body.reduce-motion .brand-chakana { animation: none !important; }
