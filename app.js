@@ -75,6 +75,9 @@ const I18N = {
     newChallenge: "Nuevo reto", repeat: "Repetir",
     scanPiece: "Escanear pieza (Realidad Aumentada)",
     startCamera: "Activar cámara", stopCamera: "Detener",
+    flipCamera: "Girar a frontal",
+    flipCameraBack: "Girar a trasera",
+    cameraFront: "Cámara frontal activa. Apunta a la pieza.",
     cameraOff: "Cámara apagada.", cameraOn: "Cámara activa. Apunta a la pieza.",
     findPiece: (label) => `Encuentra la pieza: ${label}`,
     sayFind: (label) => `Busca la pieza ${label}`,
@@ -167,6 +170,9 @@ const I18N = {
     newChallenge: "Musuq atipanakuy", repeat: "Kutichiy",
     scanPiece: "Rikuchiy (Realidad Aumentada)",
     startCamera: "Kamarata qallariy", stopCamera: "Sayachiy",
+    flipCamera: "Ñawpaq kamara",
+    flipCameraBack: "Qipa kamara",
+    cameraFront: "Ñawpaq kamara kachkan.",
     cameraOff: "Kamara sayasqa.", cameraOn: "Kamara kachkan. Riqsichiyta qhaway.",
     findPiece: (label) => `Maskay: ${label}`,
     sayFind: (label) => `Maskay ${label}`,
@@ -898,38 +904,101 @@ const canvas = document.getElementById("camera-canvas");
 const ctx = canvas.getContext("2d", { willReadFrequently: true });
 let stream = null;
 let scanning = false;
+let cameraFacing = "environment"; // environment = trasera, user = frontal
 let lastReadTs = 0;
 let lastCode = null; // { concept, location, ts }
 let particles = []; // burst de celebración al acertar (canvas 2D, sin three.js)
 
-document.getElementById("btn-start-scan").addEventListener("click", startScan);
+document.getElementById("btn-start-scan").addEventListener("click", () => startScan());
 document.getElementById("btn-stop-scan").addEventListener("click", stopScan);
+document.getElementById("btn-flip-camera")?.addEventListener("click", flipCamera);
 
-async function startScan() {
+function updateFlipButtonLabel() {
+  const btn = document.getElementById("btn-flip-camera");
+  if (!btn) return;
+  const text = cameraFacing === "environment" ? t("flipCamera") : t("flipCameraBack");
+  const textEl = btn.querySelector("[data-i18n-text]");
+  if (textEl) textEl.textContent = text;
+  else {
+    // conservar icono si existe
+    const ico = btn.querySelector(".ui-ico");
+    btn.textContent = "";
+    if (ico) btn.appendChild(ico);
+    const span = document.createElement("span");
+    span.setAttribute("data-i18n-text", "");
+    span.textContent = text;
+    btn.appendChild(span);
+  }
+  btn.setAttribute("data-i18n", cameraFacing === "environment" ? "flipCamera" : "flipCameraBack");
+}
+
+function stopCameraTracks() {
+  if (stream) {
+    stream.getTracks().forEach((tr) => tr.stop());
+    stream = null;
+  }
+  video.srcObject = null;
+}
+
+async function startScan(facing) {
   try {
+    if (facing) cameraFacing = facing;
+    stopCameraTracks();
     stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: "environment" },
+      video: {
+        facingMode: { ideal: cameraFacing },
+        width: { ideal: 1280 },
+        height: { ideal: 720 },
+      },
     });
     video.srcObject = stream;
     await video.play();
     scanning = true;
     document.getElementById("btn-start-scan").hidden = true;
     document.getElementById("btn-stop-scan").hidden = false;
-    document.getElementById("scan-status").textContent = t("cameraOn");
+    const flipBtn = document.getElementById("btn-flip-camera");
+    if (flipBtn) flipBtn.hidden = false;
+    updateFlipButtonLabel();
+    document.body.classList.toggle("camera-front", cameraFacing === "user");
+    document.getElementById("scan-status").textContent =
+      cameraFacing === "user" ? t("cameraFront") : t("cameraOn");
     requestAnimationFrame(scanLoop);
   } catch (err) {
+    // Si falla la frontal, intentar trasera y avisar
+    if (cameraFacing === "user") {
+      cameraFacing = "environment";
+      try {
+        return await startScan("environment");
+      } catch (e2) {
+        document.getElementById("scan-status").textContent =
+          "No se pudo acceder a la cámara: " + (e2.message || err.message);
+        return;
+      }
+    }
     document.getElementById("scan-status").textContent =
       "No se pudo acceder a la cámara: " + err.message;
   }
+}
+
+async function flipCamera() {
+  if (!scanning) return;
+  const next = cameraFacing === "environment" ? "user" : "environment";
+  document.getElementById("scan-status").textContent = "Cambiando cámara…";
+  await startScan(next);
 }
 
 function stopScan() {
   scanning = false;
   lastCode = null;
   particles = [];
-  if (stream) stream.getTracks().forEach((tr) => tr.stop());
+  stopCameraTracks();
+  cameraFacing = "environment";
+  document.body.classList.remove("camera-front");
   document.getElementById("btn-start-scan").hidden = false;
   document.getElementById("btn-stop-scan").hidden = true;
+  const flipBtn = document.getElementById("btn-flip-camera");
+  if (flipBtn) flipBtn.hidden = true;
+  updateFlipButtonLabel();
   document.getElementById("scan-status").textContent = t("cameraOff");
 }
 
