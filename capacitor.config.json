@@ -1,0 +1,8 @@
+{
+  "appId": "pe.edu.pasco.tactilia",
+  "appName": "TactilIA",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}

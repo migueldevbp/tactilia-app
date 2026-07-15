@@ -1,4 +1,11 @@
 node_modules/
+www/
 .DS_Store
 *.log
 .env
+server/.env
+native/dist/ios-build/
+native/dist/android-package/signing.keystore
+native/dist/android-package/signing-key-info.txt
+native/dist/tactilia-android.zip
+native/dist/android-package/
