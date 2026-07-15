@@ -399,20 +399,23 @@ document.querySelectorAll(".region-btn").forEach((btn) => {
 
 /** Carga PNG del usuario en media/decor/ y los anima. */
 function loadDecorPhotos() {
+  const base = new URL(".", location.href).href;
   document.querySelectorAll("[data-decor]").forEach((img) => {
     const name = img.getAttribute("data-decor");
     const candidates = [
-      `media/decor/${name}.png`,
-      `media/decor/${name}.jpg`,
-      `media/decor/${name}.webp`,
+      new URL(`media/decor/${name}.png`, base).href,
+      new URL(`media/decor/${name}.jpg`, base).href,
+      new URL(`media/decor/${name}.webp`, base).href,
     ];
     let i = 0;
     const tryNext = () => {
       if (i >= candidates.length) return;
+      const url = candidates[i];
       const probe = new Image();
+      probe.decoding = "async";
       probe.onload = () => {
-        img.src = candidates[i];
-        img.hidden = false;
+        img.removeAttribute("hidden");
+        img.src = probe.src;
         img.classList.add("decor-ready");
         if (img.classList.contains("scene-photo")) {
           document.body.classList.add("has-decor-photo");
@@ -426,7 +429,8 @@ function loadDecorPhotos() {
         i += 1;
         tryNext();
       };
-      probe.src = candidates[i];
+      /* cache-bust suave: fuerza re-chequeo tras subir fotos nuevas */
+      probe.src = url + (url.includes("?") ? "&" : "?") + "v=9";
     };
     tryNext();
   });
@@ -1140,7 +1144,9 @@ document.getElementById("btn-clear").addEventListener("click", () => {
 /* ---------- 14. Registro del Service Worker (instalable / offline) ---------- */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("service-worker.js").catch(() => {});
+    navigator.serviceWorker.register("service-worker.js").then((reg) => {
+      reg.update().catch(() => {});
+    }).catch(() => {});
   });
 }
 
