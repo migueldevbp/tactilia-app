@@ -7,13 +7,12 @@
   --green: #15803d;
   --red: #b91c1c;
   --bg: #f3efe6;
-  --card: #fffdf8;
+  --card: rgba(255, 252, 245, 0.82);
   --ink: #1c1917;
   --muted: #57534e;
-  --border: #e0d4c2;
+  --border: rgba(180, 140, 90, 0.35);
   --radius: 14px;
-  --shadow: 0 8px 24px rgba(100, 60, 20, 0.08);
-  --page-bg: linear-gradient(180deg, #f7f1e6 0%, #efe6d4 40%, #e8ddd0 100%);
+  --shadow: 0 10px 28px rgba(80, 40, 10, 0.12);
 }
 
 * { box-sizing: border-box; }
@@ -24,61 +23,99 @@ body {
   font-family: "Segoe UI", "Trebuchet MS", system-ui, sans-serif;
   color: var(--ink);
   padding-bottom: 48px;
-  background: var(--page-bg, linear-gradient(180deg, #f7f1e6 0%, var(--bg) 45%, #ebe4d6 100%));
   min-height: 100vh;
   position: relative;
+  /* Fondo base con manchas de Costa / Sierra / Selva (no color plano) */
+  background-color: #e8d9c0;
+  background-image:
+    radial-gradient(ellipse 55% 70% at 0% 25%, rgba(56, 189, 248, 0.45), transparent 60%),
+    radial-gradient(ellipse 50% 65% at 100% 30%, rgba(34, 197, 94, 0.4), transparent 58%),
+    radial-gradient(ellipse 70% 50% at 50% 100%, rgba(234, 179, 8, 0.35), transparent 55%),
+    radial-gradient(ellipse 40% 40% at 70% 10%, rgba(185, 28, 28, 0.12), transparent 50%),
+    linear-gradient(165deg, #f3e6cf 0%, #e5d4b5 40%, #d9c7a4 100%);
+  background-attachment: fixed;
 }
 
 .peru-band {
-  position: sticky; top: 0; z-index: 20; height: 5px;
+  position: sticky; top: 0; z-index: 20; height: 4px;
   background: linear-gradient(90deg, var(--peru-red) 0 33%, #fff 33% 66%, var(--peru-red) 66% 100%);
 }
-.tocapu-strip {
-  position: sticky; top: 5px; z-index: 19; height: 10px;
-  background-color: #1c1917;
-  background-image:
-    linear-gradient(45deg, var(--gold) 25%, transparent 25%),
-    linear-gradient(-45deg, var(--gold) 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, var(--peru-red) 75%),
-    linear-gradient(-45deg, transparent 75%, var(--peru-red) 75%);
-  background-size: 12px 12px;
-  background-position: 0 0, 0 6px, 6px -6px, -6px 0;
-  opacity: 0.92;
+
+/* Capas gráficas a pantalla completa */
+.atmosphere {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+}
+.atm-wash {
+  position: absolute; top: -4%; bottom: -4%; overflow: hidden;
+}
+.atm-left {
+  left: -2%; width: 42%;
+  mask-image: linear-gradient(90deg, #000 35%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, #000 35%, transparent 100%);
+}
+.atm-right {
+  right: -2%; width: 42%;
+  mask-image: linear-gradient(270deg, #000 35%, transparent 100%);
+  -webkit-mask-image: linear-gradient(270deg, #000 35%, transparent 100%);
+}
+.atm-center {
+  left: 18%; right: 18%; width: auto; top: -8%; height: 55%;
+  mask-image: radial-gradient(ellipse 70% 80% at 50% 30%, #000 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 80% at 50% 30%, #000 20%, transparent 75%);
+  opacity: 0.85;
+}
+.atm-img {
+  width: 100%; height: 100%; object-fit: cover; object-position: center;
+  display: none; opacity: 0;
+  mix-blend-mode: soft-light;
+  filter: saturate(1.15) contrast(1.05);
+}
+.atm-img.decor-ready {
+  display: block;
+  opacity: 0.75;
+}
+.atm-left .atm-img.decor-ready { animation: atm-drift-a 28s ease-in-out infinite alternate; }
+.atm-center .atm-img.decor-ready { animation: atm-drift-b 34s ease-in-out infinite alternate; opacity: 0.45; }
+.atm-right .atm-img.decor-ready { animation: atm-drift-c 30s ease-in-out infinite alternate; }
+.atm-veil {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 48% 70% at 50% 42%, rgba(255, 250, 240, 0.78) 0%, rgba(255, 250, 240, 0.28) 55%, transparent 78%),
+    linear-gradient(180deg, rgba(255, 244, 220, 0.25) 0%, rgba(232, 210, 175, 0.15) 100%);
 }
 
-/* Costa / Sierra / Selva — pegatinas animadas a los costados */
+/* Pegatinas flotantes sobre el fondo gráfico */
 .side-rail {
-  position: fixed; top: 72px; bottom: 24px; width: min(168px, 16vw);
-  z-index: 0; pointer-events: none;
+  position: fixed; top: 64px; bottom: 16px; width: min(190px, 18vw);
+  z-index: 1; pointer-events: none;
   display: flex; flex-direction: column; justify-content: space-around; align-items: center;
-  gap: 18px; padding: 8px 0;
+  gap: 12px; padding: 8px 0;
 }
-.side-rail-left { left: 6px; }
-.side-rail-right { right: 6px; }
+.side-rail-left { left: 10px; }
+.side-rail-right { right: 10px; }
 
 .side-sticker {
-  width: 100%; max-width: 160px; height: auto; display: none;
+  width: 100%; max-width: 180px; height: auto; display: none;
   object-fit: contain;
-  /* quita el negro del fondo de las ilustraciones */
   mix-blend-mode: lighten;
-  filter: drop-shadow(0 10px 18px rgba(60, 30, 10, 0.22));
+  filter: drop-shadow(0 12px 20px rgba(60, 30, 10, 0.28));
   opacity: 0;
   transform-origin: center;
 }
 .side-sticker.decor-ready {
   display: block;
-  opacity: 0.92;
+  opacity: 0.95;
 }
 .side-rail-left .sticker-a.decor-ready { animation: side-float-a 7s ease-in-out infinite; }
 .side-rail-left .sticker-b.decor-ready { animation: side-float-b 8.5s ease-in-out infinite; }
 .side-rail-right .sticker-c.decor-ready {
-  max-width: 168px;
+  max-width: 188px;
   animation: side-float-c 7.8s ease-in-out infinite;
 }
 
 .banner-photo {
   display: block; width: min(720px, calc(100% - 32px)); margin: 12px auto 0;
-  border-radius: 12px; max-height: 160px; object-fit: cover; position: relative; z-index: 1;
+  border-radius: 12px; max-height: 160px; object-fit: cover; position: relative; z-index: 2;
   box-shadow: var(--shadow); animation: decor-float 5s ease-in-out infinite; border: 2px solid var(--gold);
 }
 .banner-photo[hidden] { display: none !important; }
@@ -89,12 +126,15 @@ body {
 }
 .brand-chakana[hidden] { display: none !important; }
 
-header, main, .banner-photo { position: relative; z-index: 1; }
+header, main, .banner-photo { position: relative; z-index: 2; }
 
 .topbar {
-  background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal) 60%, var(--gold) 160%);
+  background:
+    linear-gradient(120deg, rgba(201, 162, 39, 0.35) 0%, transparent 42%),
+    linear-gradient(200deg, rgba(20, 83, 45, 0.25) 0%, transparent 40%),
+    linear-gradient(135deg, #6b2410 0%, #9a3412 48%, #b45309 100%);
   color: white; padding: 12px 16px; display: flex; flex-direction: column; gap: 10px;
-  position: sticky; top: 15px; z-index: 10;
+  position: sticky; top: 4px; z-index: 10;
   box-shadow: 0 4px 18px rgba(0,0,0,0.18); border-bottom: 3px solid var(--gold);
 }
 .brand-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
@@ -136,7 +176,10 @@ main { max-width: 640px; margin: 0 auto; padding: 16px; }
 .view.active { display: block; }
 
 .card {
-  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  background:
+    linear-gradient(145deg, rgba(255, 252, 245, 0.92) 0%, rgba(255, 244, 220, 0.78) 100%);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border); border-radius: var(--radius);
   padding: 18px; margin-bottom: 16px; box-shadow: var(--shadow); border-top: 3px solid var(--gold);
 }
 .card h2 { margin-top: 0; font-size: 17px; display: flex; align-items: center; gap: 8px; }
@@ -157,7 +200,9 @@ button:active { transform: scale(0.98); }
 
 .session-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
 .session-stat {
-  background: rgba(255,253,248,0.92); border: 1px solid var(--border); border-radius: 14px;
+  background: linear-gradient(160deg, rgba(255,252,245,0.9), rgba(245,230,200,0.75));
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border); border-radius: 14px;
   padding: 10px 8px; text-align: center; box-shadow: var(--shadow);
 }
 .session-stat .n { display: block; font-size: 22px; font-weight: 800; color: var(--teal-dark); }
@@ -199,10 +244,16 @@ body.contrast-mode .tab-btn.active { background: #fff; color: #000; }
 body.text-grande main { zoom: 1.18; }
 body.text-xl main { zoom: 1.35; }
 
-body.calm-mode { --page-bg: linear-gradient(180deg, #f4f6f5 0%, #eef1f0 100%); --shadow: none; }
-body.calm-mode .side-rail, body.calm-mode .tocapu-strip { opacity: 0.2; }
+body.calm-mode {
+  background-image:
+    radial-gradient(ellipse 60% 50% at 20% 30%, rgba(180, 210, 200, 0.35), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 40%, rgba(200, 210, 190, 0.3), transparent 60%),
+    linear-gradient(180deg, #f0f2f0 0%, #e8ebe8 100%);
+  --shadow: none;
+}
+body.calm-mode .atmosphere, body.calm-mode .side-rail { opacity: 0.22; }
 body.calm-mode .banner-photo, body.calm-mode .side-sticker, body.calm-mode .brand-chakana,
-body.calm-mode .scan-frame, body.calm-mode .piece-visual.has-photo .piece-photo,
+body.calm-mode .atm-img, body.calm-mode .scan-frame, body.calm-mode .piece-visual.has-photo .piece-photo,
 body.calm-mode .result-card.is-correct, body.calm-mode .result-card.is-wrong { animation: none !important; }
 
 .status-text { color: var(--muted); font-size: 14px; text-align: center; }
@@ -303,10 +354,22 @@ body.calm-mode .result-card.is-correct, body.calm-mode .result-card.is-wrong { a
   0%,100%{transform:translateY(0) rotate(1.5deg) scale(1)}
   50%{transform:translateY(-16px) rotate(-2.5deg) scale(1.05)}
 }
+@keyframes atm-drift-a {
+  from { transform: scale(1.08) translate(-2%, 1%); }
+  to { transform: scale(1.16) translate(2%, -2%); }
+}
+@keyframes atm-drift-b {
+  from { transform: scale(1.1) translate(0, 0); }
+  to { transform: scale(1.18) translate(0, 3%); }
+}
+@keyframes atm-drift-c {
+  from { transform: scale(1.08) translate(2%, -1%); }
+  to { transform: scale(1.15) translate(-2%, 2%); }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .scan-frame, .view, .result-card.is-correct, .result-card.is-wrong,
-  .piece-visual.has-photo .piece-photo, .banner-photo, .side-sticker, .brand-chakana {
+  .piece-visual.has-photo .piece-photo, .banner-photo, .side-sticker, .brand-chakana, .atm-img {
     animation: none !important;
   }
 }
@@ -317,4 +380,5 @@ body.reduce-motion .result-card.is-wrong,
 body.reduce-motion .piece-visual.has-photo .piece-photo,
 body.reduce-motion .banner-photo,
 body.reduce-motion .side-sticker,
-body.reduce-motion .brand-chakana { animation: none !important; }
+body.reduce-motion .brand-chakana,
+body.reduce-motion .atm-img { animation: none !important; }

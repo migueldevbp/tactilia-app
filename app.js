@@ -405,7 +405,7 @@ function loadDecorPhotos() {
         i += 1;
         tryNext();
       };
-      probe.src = url + (url.includes("?") ? "&" : "?") + "v=10";
+      probe.src = url + (url.includes("?") ? "&" : "?") + "v=11";
     };
     tryNext();
   });
