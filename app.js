@@ -70,7 +70,13 @@ const I18N = {
     a11yCalm: "Modo calma (autismo / TEA)",
     a11yCalmHelp: "Menos estímulos: sin partículas, voz más lenta, pausas largas, colores suaves y retos en orden.",
     sequenceHint: "Siguiente en orden",
-    exerciseMode: "Modo ejercicio adaptativo",
+    exerciseMode: "Modo ejercicio",
+    modeLearn: "1. Aprender",
+    modeChallenge: "2. Reto",
+    modeLearnHelp: "Activa la cámara, apunta al QR y la app te dice qué es y su braille (también debajo de la pieza).",
+    modeChallengeHelp: "Pulsa «Nuevo reto» y encuentra la pieza que pide la app.",
+    learnPrompt: "Modo aprender: apunta la cámara al QR de la pieza. Te diré qué es y el braille.",
+    learnFeedback: (label) => `Esto es: ${label}. Mira y toca también el braille debajo de la pieza.`,
     exercisePrompt: "Presiona \"Nuevo reto\" para comenzar",
     newChallenge: "Nuevo reto", repeat: "Repetir",
     scanPiece: "Escanear pieza (Realidad Aumentada)",
@@ -168,7 +174,13 @@ const I18N = {
     a11yCalm: "Thak mode (autismo / TEA)",
     a11yCalmHelp: "Aswan thak: mana partículas, rimay allin, suwa suyay.",
     sequenceHint: "Qatiqnin ordenpi",
-    exerciseMode: "Yachay pukllay (yanapakuq)",
+    exerciseMode: "Yachay pukllay",
+    modeLearn: "1. Yachay",
+    modeChallenge: "2. Atipanakuy",
+    modeLearnHelp: "Kamarawan QR-ta qhaway; sutinta willasunki braillewan.",
+    modeChallengeHelp: "«Musuq atipanakuy» ñitiy.",
+    learnPrompt: "Yachay: QR-ta qhaway. Sutinta rimasaq.",
+    learnFeedback: (label) => `Kayqa: ${label}. Braillepis uraypi kachkan.`,
     exercisePrompt: "\"Musuq atipanakuy\" nisqata ñitiy qallariy",
     newChallenge: "Musuq atipanakuy", repeat: "Kutichiy",
     scanPiece: "Rikuchiy (Realidad Aumentada)",
@@ -371,6 +383,7 @@ function defaultPrefs() {
     pictosOnly: false,
     extraTime: false,
     profile: "default",
+    playMode: "learn",
   };
 }
 function loadPrefs() {
@@ -789,7 +802,40 @@ function applyPrefs() {
   });
   updateTargetPicto();
   renderPieceGrid();
+  syncPlayModeUI();
 }
+
+function syncPlayModeUI() {
+  const mode = PREFS.playMode || "learn";
+  document.querySelectorAll(".play-mode-btn").forEach((b) => {
+    b.classList.toggle("active", b.dataset.mode === mode);
+  });
+  const help = document.getElementById("play-mode-help");
+  if (help) help.textContent = mode === "learn" ? t("modeLearnHelp") : t("modeChallengeHelp");
+  const target = document.getElementById("exercise-target");
+  const actions = document.getElementById("challenge-actions");
+  if (mode === "learn") {
+    currentTarget = null;
+    if (target) target.textContent = t("learnPrompt");
+    if (actions) actions.hidden = true;
+    updateTargetPicto();
+    updatePaceBar(false);
+  } else {
+    if (actions) actions.hidden = false;
+    if (target && !currentTarget) target.textContent = t("exercisePrompt");
+  }
+  renderPieceGrid();
+}
+
+function setPlayMode(mode) {
+  PREFS.playMode = mode === "challenge" ? "challenge" : "learn";
+  savePrefs(PREFS);
+  syncPlayModeUI();
+}
+
+document.getElementById("mode-learn")?.addEventListener("click", () => setPlayMode("learn"));
+document.getElementById("mode-challenge")?.addEventListener("click", () => setPlayMode("challenge"));
+
 function applyProfile(id) {
   const p = A11Y_PROFILES[id] || A11Y_PROFILES.default;
   PREFS = { ...PREFS, ...p };
@@ -883,6 +929,7 @@ function pickAdaptiveChallenge() {
 }
 
 document.getElementById("btn-new-challenge").addEventListener("click", () => {
+  setPlayMode("challenge");
   currentTarget = pickAdaptiveChallenge();
   if (!currentTarget) return;
   const msg = t("findPiece", conceptLabel(currentTarget));
@@ -1190,14 +1237,16 @@ function drawAROverlay(concept, loc) {
   ctx.closePath();
   ctx.stroke();
 
-  // burbuja flotante con pictograma escolar + etiqueta
+  // burbuja flotante con pictograma + etiqueta + braille
   const label = conceptLabel(concept);
+  const brInfo = typeof brailleForConcept === "function" ? brailleForConcept(concept) : null;
+  const brText = brInfo ? brInfo.cells : "";
   ctx.font = "bold 18px Segoe UI, sans-serif";
   const labelW = ctx.measureText(label).width;
-  const bubbleW = Math.max(88, labelW + 40);
-  const bubbleH = 92;
+  const bubbleW = Math.max(100, labelW + 48, brText ? 120 : 0);
+  const bubbleH = brText ? 118 : 92;
   const bx = cx - bubbleW / 2;
-  const by = cy - 150 + bob;
+  const by = cy - 165 + bob;
 
   ctx.shadowBlur = 6;
   ctx.fillStyle = "rgba(17,24,39,0.88)";
@@ -1217,6 +1266,12 @@ function drawAROverlay(concept, loc) {
     ctx.font = "600 15px Segoe UI, sans-serif";
     ctx.fillText(label, cx, by + 72);
   }
+  if (brText) {
+    ctx.fillStyle = "#facc15";
+    ctx.font = "700 26px Segoe UI Symbol, Apple Symbols, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(brText, cx, by + (PREFS.pictosOnly ? 88 : 104));
+  }
   ctx.restore();
 }
 
@@ -1231,13 +1286,54 @@ function roundRectPath(c, x, y, w, h, r) {
 }
 
 /* ---------- 10. Manejo de una pieza escaneada ---------- */
-function handleScan(concept, location) {
+function showBrailleResult(concept) {
+  const el = document.getElementById("result-braille");
+  if (!el) return;
+  const info = typeof brailleForConcept === "function" ? brailleForConcept(concept) : null;
+  if (!info) {
+    el.hidden = true;
+    el.innerHTML = "";
+    return;
+  }
+  el.hidden = false;
+  el.innerHTML =
+    `<span class="braille-cells" aria-hidden="true">${info.cells}</span>` +
+    `<span class="braille-caption">Braille · tócalo también en la pieza</span>`;
+}
+
+function teachScan(concept) {
   const resultCard = document.getElementById("result-card");
   resultCard.hidden = false;
-  resultCard.classList.remove("is-correct", "is-wrong");
+  resultCard.classList.remove("is-wrong");
+  resultCard.classList.add("is-correct", "is-learn");
+  fillPieceVisual(document.getElementById("result-icon"), concept.id);
+  document.getElementById("result-label").textContent = conceptLabel(concept);
+  showBrailleResult(concept);
+  const feedback = t("learnFeedback", conceptLabel(concept));
+  document.getElementById("result-feedback").textContent = feedback;
+  const brSpeak = typeof brailleSpoken === "function" ? brailleSpoken(concept) : "";
+  const say = `${conceptSay(concept)} ${brSpeak}`.trim();
+  speak(say);
+  vibrate(90);
+  flashReward(true);
+  announceForScreenReader(`${conceptLabel(concept)}. ${feedback}. ${brSpeak}`);
+  logAttempt(concept.id, null, true);
+}
+
+function handleScan(concept, location) {
+  if ((PREFS.playMode || "learn") === "learn") {
+    currentTarget = null;
+    teachScan(concept);
+    return;
+  }
+
+  const resultCard = document.getElementById("result-card");
+  resultCard.hidden = false;
+  resultCard.classList.remove("is-correct", "is-wrong", "is-learn");
   const resultIcon = document.getElementById("result-icon");
   fillPieceVisual(resultIcon, concept.id);
   document.getElementById("result-label").textContent = conceptLabel(concept);
+  showBrailleResult(concept);
 
   if (currentTarget) {
     const correct = concept.id === currentTarget.id;
@@ -1246,7 +1342,8 @@ function handleScan(concept, location) {
       : t("almost", conceptLabel(currentTarget));
     document.getElementById("result-feedback").textContent = feedback;
     resultCard.classList.add(correct ? "is-correct" : "is-wrong");
-    speak(correct ? t("sayCorrect", conceptSay(concept)) : t("sayWrong", conceptLabel(concept), conceptLabel(currentTarget)));
+    const brHint = correct && typeof brailleSpoken === "function" ? " " + brailleSpoken(concept) : "";
+    speak(correct ? t("sayCorrect", conceptSay(concept)) + brHint : t("sayWrong", conceptLabel(concept), conceptLabel(currentTarget)));
     vibrate(correct ? (PREFS.extraTime ? [120, 80, 180] : 180) : [60, 40, 60]);
     flashReward(correct);
     announceForScreenReader(`${conceptLabel(concept)}. ${feedback}`);
@@ -1273,13 +1370,7 @@ function handleScan(concept, location) {
     updateSessionUI();
     renderPieceGrid();
   } else {
-    document.getElementById("result-feedback").textContent = t("freeMode");
-    resultCard.classList.add("is-correct");
-    speak(conceptSay(concept));
-    vibrate(90);
-    flashReward(true);
-    announceForScreenReader(`${conceptLabel(concept)}. ${t("freeMode")}`);
-    logAttempt(concept.id, null, true);
+    teachScan(concept);
   }
 }
 
@@ -1623,7 +1714,7 @@ document.getElementById("btn-clear").addEventListener("click", () => {
 /* ---------- 14. Registro del Service Worker (instalable / offline) ---------- */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("service-worker.js?v=15").then((reg) => {
+    navigator.serviceWorker.register("service-worker.js?v=16").then((reg) => {
       reg.update().catch(() => {});
       if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
     }).catch(() => {});
