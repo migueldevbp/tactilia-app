@@ -30,11 +30,32 @@ const I18N = {
     profileMotor: "Motricidad",
     profileDefault: "Estándar",
     installApp: "Instalar app",
-    installTitle: "Instalar en el celular (sin tienda)",
-    installIntro: "TactilIA es una PWA: se instala como app y funciona offline tras la primera visita.",
-    installNativeNote: "También hay paquetes nativos (APK Android y proyecto iOS) en native/dist/ del repositorio.",
+    installTitle: "Instalar en el celular",
+    installIntro: "Elige tu sistema. Cada botón abre solo la opción de esa plataforma.",
+    installNativeNote: "Paquetes en native/dist/ del repositorio.",
     installHintIos: "En iPhone: Safari → Compartir → Añadir a pantalla de inicio.",
-    installHintAndroid: "En Android: Chrome → Instalar app / Añadir a pantalla de inicio.",
+    installHintAndroid: "En Android: descarga el APK o usa Instalar app en Chrome.",
+    installChoose: "¿En qué dispositivo instalas?",
+    installChooseHelp: "Elige Android o iPhone. Verás solo esa opción.",
+    installAndroid: "Android",
+    installAndroidSub: "Descargar APK · instalar en el celular",
+    installIos: "iPhone / iPad",
+    installIosSub: "Añadir a pantalla de inicio · Safari",
+    installAndroidPanelTitle: "Instalar en Android",
+    installIosPanelTitle: "Instalar en iPhone / iPad",
+    installAndroidStep1: "Pulsa «Descargar APK».",
+    installAndroidStep2: "Abre el archivo y permite instalar apps de esta fuente.",
+    installAndroidStep3: "Opcional: en Chrome también puedes «Instalar app» (PWA).",
+    installIosStep1: "Abre esta página en Safari (no Chrome).",
+    installIosStep2: "Toca Compartir (cuadrado con flecha).",
+    installIosStep3: "Elige «Añadir a pantalla de inicio» → Añadir.",
+    installIosNote: "Apple no permite instalar un APK/IPA al escanear. Para Mac/Xcode: zip en native/dist/.",
+    installDownloadApk: "Descargar APK",
+    installPwaChrome: "Instalar PWA (Chrome)",
+    installDownloadIos: "Descargar proyecto Xcode (.zip)",
+    installClose: "Cerrar",
+    installSuggestAndroid: "Detectamos Android — puedes usar la opción Android.",
+    installSuggestIos: "Detectamos iPhone — usa la opción iPhone / iPad.",
     paceLabel: "Tómate tu tiempo",
     activeStudent: "Estudiante activo", newStudent: "+ Nuevo",
     setLabel: "Kit / set temático",
@@ -102,10 +123,31 @@ const I18N = {
     profileDefault: "Sapaq",
     installApp: "App churay",
     installTitle: "Celularpi app churay",
-    installIntro: "PWA: offlinellamanta llamkan.",
-    installNativeNote: "APK / iOS: native/dist/.",
+    installIntro: "Android icha iPhone akllay.",
+    installNativeNote: "Paketekuna: native/dist/.",
     installHintIos: "iPhone: Safari → Compartir → Añadir.",
-    installHintAndroid: "Android: Chrome → Instalar app.",
+    installHintAndroid: "Android: APK chaskiy.",
+    installChoose: "Mayqin dispositivopi?",
+    installChooseHelp: "Android icha iPhone akllay.",
+    installAndroid: "Android",
+    installAndroidSub: "APK chaskiy",
+    installIos: "iPhone / iPad",
+    installIosSub: "Pantallaman yapay · Safari",
+    installAndroidPanelTitle: "Androidpi churay",
+    installIosPanelTitle: "iPhonepi churay",
+    installAndroidStep1: "«APK chaskiy» ñitiy.",
+    installAndroidStep2: "Archivota kichay churaypaq.",
+    installAndroidStep3: "Chrome: app churaypas.",
+    installIosStep1: "Safariwan kichay.",
+    installIosStep2: "Compartir ñitiy.",
+    installIosStep3: "«Añadir a pantalla de inicio».",
+    installIosNote: "Apple mana APKta saqin.",
+    installDownloadApk: "APK chaskiy",
+    installPwaChrome: "PWA churay (Chrome)",
+    installDownloadIos: "Xcode zip chaskiy",
+    installClose: "Wichqay",
+    installSuggestAndroid: "Android kasqan.",
+    installSuggestIos: "iPhone kasqan.",
     paceLabel: "Pacharaykiwan",
     activeStudent: "Kunan yachaqaq", newStudent: "+ Musuq",
     setLabel: "Impay kit",
@@ -506,48 +548,105 @@ function loadDecorPhotos() {
 
 loadDecorPhotos();
 
-/* ---------- Instalación PWA ---------- */
+/* ---------- Instalación: Android / iOS por separado ---------- */
 let deferredInstall = null;
-const btnInstall = document.getElementById("btn-install");
-const btnInstallAbout = document.getElementById("btn-install-about");
+const APK_HREF = "native/dist/TactilIA.apk";
+const IOS_ZIP_HREF = "native/dist/TactilIA-iOS-Xcode.zip";
 
 function isIos() {
-  return /iphone|ipad|ipod/i.test(navigator.userAgent);
+  return /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
+function isAndroid() {
+  return /android/i.test(navigator.userAgent);
 }
 function isStandalone() {
   return window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
 }
-function syncInstallButtons() {
-  const show = !isStandalone() && (!!deferredInstall || isIos());
-  [btnInstall, btnInstallAbout].forEach((b) => {
-    if (b) b.hidden = isStandalone();
-  });
-  if (btnInstall && !deferredInstall && isIos()) btnInstall.hidden = false;
+
+function openInstallDialog() {
+  const dlg = document.getElementById("install-dialog");
+  if (!dlg) return;
+  applyI18n();
+  if (typeof dlg.showModal === "function") dlg.showModal();
+  else dlg.setAttribute("open", "");
+  if (isAndroid()) toast(t("installSuggestAndroid"));
+  else if (isIos()) toast(t("installSuggestIos"));
 }
-window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault();
-  deferredInstall = e;
-  syncInstallButtons();
-});
-window.addEventListener("appinstalled", () => {
-  deferredInstall = null;
-  syncInstallButtons();
-  toast(t("installApp") + " ✓");
-});
-async function promptInstall() {
+
+function goInstallTab() {
+  const tab = document.querySelector('.tab-btn[data-view="acerca"]');
+  if (tab) tab.click();
+  const card = document.querySelector(".install-card");
+  if (card) card.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function showInstallPlatform(platform) {
+  const panA = document.getElementById("install-panel-android");
+  const panI = document.getElementById("install-panel-ios");
+  const pickA = document.getElementById("btn-pick-android");
+  const pickI = document.getElementById("btn-pick-ios");
+  if (panA) panA.hidden = platform !== "android";
+  if (panI) panI.hidden = platform !== "ios";
+  pickA?.classList.toggle("active", platform === "android");
+  pickI?.classList.toggle("active", platform === "ios");
+  goInstallTab();
+  const dlg = document.getElementById("install-dialog");
+  if (dlg?.open) dlg.close();
+  if (platform === "android" && panA) panA.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  if (platform === "ios" && panI) panI.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+async function promptPwaInstall() {
   if (deferredInstall) {
     deferredInstall.prompt();
     await deferredInstall.userChoice.catch(() => {});
     deferredInstall = null;
-    syncInstallButtons();
     return;
   }
-  if (isIos()) toast(t("installHintIos"));
-  else toast(t("installHintAndroid"));
+  toast(t("installHintAndroid"));
 }
-btnInstall?.addEventListener("click", promptInstall);
-btnInstallAbout?.addEventListener("click", promptInstall);
-syncInstallButtons();
+
+document.getElementById("btn-install")?.addEventListener("click", openInstallDialog);
+document.getElementById("dlg-pick-android")?.addEventListener("click", () => showInstallPlatform("android"));
+document.getElementById("dlg-pick-ios")?.addEventListener("click", () => showInstallPlatform("ios"));
+document.getElementById("btn-pick-android")?.addEventListener("click", () => showInstallPlatform("android"));
+document.getElementById("btn-pick-ios")?.addEventListener("click", () => showInstallPlatform("ios"));
+document.getElementById("btn-pwa-android")?.addEventListener("click", promptPwaInstall);
+
+const linkApk = document.getElementById("link-apk");
+if (linkApk) linkApk.href = new URL(APK_HREF, location.href).href;
+const linkIos = document.getElementById("link-ios-xcode");
+if (linkIos) linkIos.href = new URL(IOS_ZIP_HREF, location.href).href;
+
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredInstall = e;
+});
+window.addEventListener("appinstalled", () => {
+  deferredInstall = null;
+  toast(t("installApp") + " ✓");
+});
+
+/* Deep-link: ?install=android | ?install=ios | #install-android */
+(function bootInstallDeepLink() {
+  const q = new URLSearchParams(location.search).get("install");
+  const hash = (location.hash || "").replace(/^#/, "");
+  const want = (q || hash || "").toLowerCase();
+  if (want === "android" || want === "install-android") {
+    setTimeout(() => showInstallPlatform("android"), 400);
+  } else if (want === "ios" || want === "iphone" || want === "install-ios") {
+    setTimeout(() => showInstallPlatform("ios"), 400);
+  } else if (!isStandalone()) {
+    /* sugerir panel al entrar desde celular, sin forzar */
+    if (isAndroid()) setTimeout(() => {
+      document.getElementById("btn-pick-android")?.classList.add("suggested");
+    }, 600);
+    if (isIos()) setTimeout(() => {
+      document.getElementById("btn-pick-ios")?.classList.add("suggested");
+    }, 600);
+  }
+})();
 
 /* ---------- 5. Navegación por pestañas ---------- */
 document.querySelectorAll(".tab-btn").forEach((btn) => {

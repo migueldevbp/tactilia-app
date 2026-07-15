@@ -48,7 +48,7 @@
       </div>
     </div>
     <div class="header-controls">
-      <button id="btn-install" class="btn-install" type="button" hidden data-i18n="installApp">Instalar app</button>
+      <button id="btn-install" class="btn-install" type="button" data-i18n="installApp">Instalar app</button>
       <div class="lang-switch" role="group" aria-label="Idioma / Simi">
         <button id="lang-es" class="lang-btn active" data-lang="es" aria-pressed="true">ES</button>
         <button id="lang-qu" class="lang-btn" data-lang="qu" aria-pressed="false">QU</button>
@@ -318,14 +318,42 @@
     </details>
 
     <div class="card install-card">
-      <h3 data-i18n="installTitle">Instalar en el celular (sin tienda)</h3>
-      <p data-i18n="installIntro">TactilIA es una PWA: se instala como app y funciona offline tras la primera visita.</p>
-      <button id="btn-install-about" class="btn-primary" type="button" data-i18n="installApp">Instalar app</button>
-      <ol class="about-list">
-        <li><strong>Android (Chrome):</strong> menú ⋮ → <em>Instalar app</em> / <em>Añadir a pantalla de inicio</em>, o el botón de arriba.</li>
-        <li><strong>iPhone (Safari):</strong> botón Compartir → <em>Añadir a pantalla de inicio</em> → Añadir.</li>
-      </ol>
-      <p class="muted" data-i18n="installNativeNote">También hay paquetes nativos (APK Android y proyecto iOS) en la carpeta <code>native/dist/</code> del repositorio.</p>
+      <h3 data-i18n="installTitle">Instalar en el celular</h3>
+      <p data-i18n="installIntro">Elige tu sistema. Cada botón abre solo la opción de esa plataforma.</p>
+      <div class="install-pick" role="group" aria-label="Elegir plataforma">
+        <button type="button" class="install-pick-btn" id="btn-pick-android" data-install="android">
+          <span class="install-pick-title" data-i18n="installAndroid">Android</span>
+          <span class="install-pick-sub" data-i18n="installAndroidSub">Descargar APK · instalar en el celular</span>
+        </button>
+        <button type="button" class="install-pick-btn" id="btn-pick-ios" data-install="ios">
+          <span class="install-pick-title" data-i18n="installIos">iPhone / iPad</span>
+          <span class="install-pick-sub" data-i18n="installIosSub">Añadir a pantalla de inicio · Safari</span>
+        </button>
+      </div>
+      <div id="install-panel-android" class="install-panel" hidden>
+        <h4 data-i18n="installAndroidPanelTitle">Instalar en Android</h4>
+        <ol class="about-list">
+          <li data-i18n="installAndroidStep1">Pulsa «Descargar APK».</li>
+          <li data-i18n="installAndroidStep2">Abre el archivo y permite instalar apps de esta fuente.</li>
+          <li data-i18n="installAndroidStep3">Opcional: en Chrome también puedes «Instalar app» (PWA).</li>
+        </ol>
+        <div class="row">
+          <a id="link-apk" class="btn-primary" href="native/dist/TactilIA.apk" download="TactilIA.apk" data-i18n="installDownloadApk">Descargar APK</a>
+          <button type="button" id="btn-pwa-android" class="btn-secondary" data-i18n="installPwaChrome">Instalar PWA (Chrome)</button>
+        </div>
+      </div>
+      <div id="install-panel-ios" class="install-panel" hidden>
+        <h4 data-i18n="installIosPanelTitle">Instalar en iPhone / iPad</h4>
+        <ol class="about-list">
+          <li data-i18n="installIosStep1">Abre esta página en <strong>Safari</strong> (no Chrome).</li>
+          <li data-i18n="installIosStep2">Toca Compartir (cuadrado con flecha).</li>
+          <li data-i18n="installIosStep3">Elige «Añadir a pantalla de inicio» → Añadir.</li>
+        </ol>
+        <p class="muted" data-i18n="installIosNote">Apple no permite instalar un APK/IPA al escanear. Para desarrollo en Mac: proyecto Xcode en native/dist/.</p>
+        <div class="row">
+          <a id="link-ios-xcode" class="btn-secondary" href="native/dist/TactilIA-iOS-Xcode.zip" download data-i18n="installDownloadIos">Descargar proyecto Xcode (.zip)</a>
+        </div>
+      </div>
     </div>
 
     <div class="card">
@@ -339,6 +367,24 @@
 
 <div id="reward-flash" class="reward-flash" hidden aria-hidden="true"></div>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<dialog id="install-dialog" class="install-dialog" aria-labelledby="install-dialog-title">
+  <form method="dialog" class="install-dialog-inner">
+    <h2 id="install-dialog-title" data-i18n="installChoose">¿En qué dispositivo instalas?</h2>
+    <p class="muted" data-i18n="installChooseHelp">Elige Android o iPhone. Verás solo esa opción.</p>
+    <div class="install-pick">
+      <button type="button" class="install-pick-btn" id="dlg-pick-android" data-install="android">
+        <span class="install-pick-title" data-i18n="installAndroid">Android</span>
+        <span class="install-pick-sub" data-i18n="installAndroidSub">Descargar APK · instalar en el celular</span>
+      </button>
+      <button type="button" class="install-pick-btn" id="dlg-pick-ios" data-install="ios">
+        <span class="install-pick-title" data-i18n="installIos">iPhone / iPad</span>
+        <span class="install-pick-sub" data-i18n="installIosSub">Añadir a pantalla de inicio · Safari</span>
+      </button>
+    </div>
+    <button type="submit" class="btn-secondary" value="cancel" data-i18n="installClose">Cerrar</button>
+  </form>
+</dialog>
 
 <div id="sr-announce" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
 
