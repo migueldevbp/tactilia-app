@@ -77,9 +77,26 @@ const I18N = {
     a11yCalmHelp: "Menos estímulos: sin partículas, voz más lenta, pausas largas, colores suaves y retos en orden.",
     sequenceHint: "Siguiente en orden",
     exerciseMode: "¿Qué quieres hacer?",
-    modeLearn: "Escuchar",
-    modeChallenge: "Jugar",
+    modeLearn: "Explorar",
+    modeChallenge: "Dictado",
     modeWrite: "Escribir",
+    modeBadgeLearn: "EXPLORACIÓN",
+    modeBadgeWrite: "ESCRITURA",
+    modeBadgeChallenge: "DICTADO",
+    modeBadgeAutism: "AUTISMO",
+    langCastellano: "Castellano",
+    langRunasimi: "Runasimi",
+    scanHint: "Acerca una pieza al recuadro",
+    familyTitle: "Familia silábica",
+    exampleTitle: "Ejemplo en castellano",
+    listenAgain: "Escuchar otra vez",
+    readBraille: "Leer el braille",
+    yourSentence: "Tu oración",
+    writePeriod: "Punto",
+    writeSpell: "Deletrear",
+    whatNow: "¿Qué hago ahora?",
+    silence: "Silencio",
+    writeStats: (letters, words) => `${letters} letras · ${words} ${words === 1 ? "palabra" : "palabras"}`,
     modeAutism: "Autismo",
     modeLearnHelp: "Toca Empezar y muestra una pieza. La app te dice qué es.",
     modeChallengeHelp: "Toca Empezar. Busca la pieza que pide la voz.",
@@ -95,9 +112,9 @@ const I18N = {
     autismYes: "Bien. Esa es. Ahora la siguiente.",
     autismNo: (label) => `Esa no. Busca: ${label}.`,
     autismDone: "Terminamos esta ronda. Puedes descansar.",
-    welcomeTitle: "Hola, soy TactilIA",
+    welcomeTitle: "Hola, soy Yachay Ñan 3D",
     welcomeTap: "Toca para hablar conmigo",
-    welcomeTalk: "Hola, soy TactilIA. Te escucho. Di modo escritura, autismo, jugar o escuchar.",
+    welcomeTalk: "Hola, soy Yachay Ñan 3D. Te escucho. Di explorar, escribir o dictado.",
     assistantOff: "Asistente apagado. Toca Hablar cuando quieras que vuelva.",
     assistantOn: "Asistente encendido. Te escucho.",
     gestureThumbUp: "Pulgar arriba. Sí.",
@@ -126,12 +143,12 @@ const I18N = {
     writeReadBtn: "Leer",
     writeClearBtn: "Borrar",
     startWriting: "Escribir",
-    profesorBtn: "Hablar",
-    profesorBtnStop: "Dejar de escuchar",
-    profesorIdle: "Toca Hablar. Di: modo escritura, autismo, jugar o escuchar.",
-    profesorListening: "Te escucho. Di modo escritura, autismo, jugar, escuchar, dime qué dice, o apaga asistente.",
-    profesorHello: "Te escucho. Di modo escritura, autismo, jugar o escuchar.",
-    profesorClarify: "¿Escritura, autismo, jugar o escuchar?",
+    profesorBtn: "Activar voz",
+    profesorBtnStop: "Silenciar voz",
+    profesorIdle: "Toca Activar voz. Di: explorar, escribir o dictado.",
+    profesorListening: "Te escucho. Di explorar, escribir, dictado, dime qué dice, o silencio.",
+    profesorHello: "Te escucho. Di explorar, escribir o dictado.",
+    profesorClarify: "¿Explorar, escribir o dictado?",
     profesorHeard: (s) => `Escuché: ${s}`,
     profesorNoSupport: "Este navegador no reconoce la voz. Prueba Chrome en Android, o usa los botones del panel.",
     profesorMicDenied: "No pude usar el micrófono. Permite el micrófono y vuelve a pulsar Profesor.",
@@ -144,7 +161,7 @@ const I18N = {
     exercisePrompt: "Presiona \"Nuevo reto\" para comenzar",
     newChallenge: "Jugar", repeat: "Otra vez",
     scanPiece: "Muestra la pieza",
-    startCamera: "Cámara", stopCamera: "Parar",
+    startCamera: "Activar cámara", stopCamera: "Pausar cámara",
     flipCamera: "Girar a frontal",
     flipCameraBack: "Girar a trasera",
     flipCameraShort: "Frontal",
@@ -245,9 +262,26 @@ const I18N = {
     a11yCalmHelp: "Aswan thak: mana partículas, rimay allin, suwa suyay.",
     sequenceHint: "Qatiqnin ordenpi",
     exerciseMode: "Imata ruwayta munanki?",
-        modeLearn: "Uyariy",
-    modeChallenge: "Pukllay",
+        modeLearn: "Explorar",
+    modeChallenge: "Dictado",
     modeWrite: "Qillqay",
+    modeBadgeLearn: "EXPLORACIÓN",
+    modeBadgeWrite: "QILLQAY",
+    modeBadgeChallenge: "DICTADO",
+    modeBadgeAutism: "AUTISMO",
+    langCastellano: "Castellano",
+    langRunasimi: "Runasimi",
+    scanHint: "Riqsichiyta recuadroman chayamuy",
+    familyTitle: "Silaba ayllu",
+    exampleTitle: "Castellanopi rikch'ay",
+    listenAgain: "Kutichiy",
+    readBraille: "Brailleta ñiy",
+    yourSentence: "Qillqasqayki",
+    writePeriod: "Ch'iqchi",
+    writeSpell: "Deletrear",
+    whatNow: "¿Imata kunan?",
+    silence: "Thak",
+    writeStats: (letters, words) => `${letters} qillqa · ${words} simi`,
     modeAutism: "Autismo",
     modeLearnHelp: "«Yachayta qallariy» ñitiy, QR-ta qhaway.",
     modeChallengeHelp: "«Musuq atipanakuy» ñitiy.",
@@ -263,9 +297,9 @@ const I18N = {
     autismYes: "Allin. Qatiqnin.",
     autismNo: (label) => `Manam. Maskay: ${label}.`,
     autismDone: "Tukuy. Samayta atinki.",
-    welcomeTitle: "Napaykullayki, TactilIA kani",
+    welcomeTitle: "Napaykullayki, Yachay Ñan 3D kani",
     welcomeTap: "Ñitiy rimaypaq",
-    welcomeTalk: "Napaykullayki. TactilIA kani. Niy: qillqay, autismo, icha apaga asistente.",
+    welcomeTalk: "Napaykullayki. Yachay Ñan 3D kani. Niy: explorar, qillqay icha dictado.",
     assistantOff: "Asistente sayasqa.",
     assistantOn: "Asistente kachkan.",
     gestureThumbUp: "Arí.",
@@ -359,13 +393,13 @@ const t = (key, ...args) => {
    Debe coincidir con /qr/generate_qr.py.
    Sets: letras (A–Z + Ñ), numeros (0–9), signos, figuras, emociones, rutinas. */
 const LETTER_EXAMPLES = {
-  a: ["Araña", "allqu = perro"], b: ["Barco", ""], c: ["Casa", ""], d: ["Dado", ""],
+    a: ["Araña", "allqu = perro"], b: ["Burro", ""], c: ["Casa", ""], d: ["Dado", ""],
   e: ["Elefante", ""], f: ["Foco", ""], g: ["Gato", ""], h: ["Helado", ""],
   i: ["Iguana", "inti = sol"], j: ["Jirafa", ""], k: ["Koala", ""], l: ["Luna", ""],
   m: ["Mamá", ""], n: ["Nube", ""], o: ["Oso", ""], p: ["Perro", ""],
   q: ["Queso", ""], r: ["Ratón", ""], s: ["Sol", ""], t: ["Taza", ""],
   u: ["Uva", "urpi = paloma"], v: ["Vaca", ""], w: ["Wiña", ""], x: ["Xilófono", ""],
-  y: ["Yuca", ""], z: ["Zapato", ""],
+    y: ["Yuca", ""], z: ["Zapato", ""], ñ: ["Ñandú", ""],
 };
 const NUM_WORDS_ES = ["cero", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve"];
 const NUM_WORDS_QU = ["Ch'usaq", "Huk", "Iskay", "Kimsa", "Tawa", "Pichqa", "Suqta", "Qanchis", "Pusaq", "Isqun"];
@@ -716,6 +750,7 @@ function renderWritePanel() {
   const mode = PREFS.playMode || "learn";
   panel.hidden = mode !== "write";
   const text = writeText();
+  const stats = document.getElementById("write-stats");
   if (!text) {
     textEl.textContent = t("writeEmpty");
     textEl.classList.add("is-empty");
@@ -723,6 +758,7 @@ function renderWritePanel() {
       brEl.hidden = true;
       brEl.textContent = "";
     }
+    if (stats) stats.textContent = t("writeStats", 0, 0);
   } else {
     textEl.textContent = text;
     textEl.classList.remove("is-empty");
@@ -731,6 +767,9 @@ function renderWritePanel() {
       brEl.hidden = !cells;
       brEl.textContent = cells;
     }
+    const letters = WRITE.chars.filter((c) => c !== " ").length;
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    if (stats) stats.textContent = t("writeStats", letters, words);
   }
 }
 
@@ -941,9 +980,9 @@ function voiceIntentFromNorm(norm, packed) {
   if (writeHit) return "write";
 
   if (/autismo|aprendizajeautismo|\btea\b|\bthak\b|modocalma/.test(p)) return "autism";
-  if (/modoreto|nuevoreto|activarret|atipanakuy|desafio|desadio/.test(p)
+  if (/dictado|dictar|modoreto|nuevoreto|activarret|atipanakuy|desafio|desadio/.test(p)
     || /\b(jugar|pukllay|reto)\b/.test(n)) return "challenge";
-  if (/modoaprend|modoyachay|activaraprend|aprendizaje/.test(p)
+  if (/explorar|exploracion|modoaprend|modoyachay|activaraprend|aprendizaje/.test(p)
     || /\b(aprender|escuchar|yachay|uyariy)\b/.test(n)) return "learn";
 
   if (/\b(moto|modo|modos|motor)\b/.test(n) && /\b(letra|letras|palabra|texto)\b/.test(n)) return "write";
@@ -1243,6 +1282,8 @@ function applyI18n() {
     if (typeof val === "string") el.textContent = val;
   });
   document.documentElement.lang = LANG === "qu" ? "qu" : "es";
+  const langLab = document.getElementById("lang-toggle-label");
+  if (langLab) langLab.textContent = LANG === "qu" ? t("langRunasimi") : t("langCastellano");
   document.getElementById("scan-status").textContent = scanning ? t("cameraOn") : t("cameraOff");
   updateSessionUI();
   renderKitChips();
@@ -1597,6 +1638,11 @@ function syncPlayModeUI() {
   document.body.classList.toggle("service-challenge", mode === "challenge");
   document.body.classList.toggle("service-write", mode === "write");
   document.body.classList.toggle("service-autism", mode === "autism");
+  const badge = document.getElementById("mode-badge");
+  if (badge) {
+    const key = mode === "write" ? "modeBadgeWrite" : mode === "challenge" ? "modeBadgeChallenge" : mode === "autism" ? "modeBadgeAutism" : "modeBadgeLearn";
+    badge.textContent = t(key);
+  }
   const board = document.getElementById("autism-board");
   if (board) board.hidden = mode !== "autism";
   if (help) {
@@ -2375,12 +2421,68 @@ function showBrailleResult(concept) {
     `<span class="braille-caption">Braille · tócalo también en la pieza</span>`;
 }
 
+let lastExplored = null;
+const QUECHUA_LOAN = { b: 1, d: 1, e: 1, f: 1, g: 1, j: 1, o: 1, v: 1, x: 1, z: 1 };
+
+function letterRoot(concept) {
+  if (!concept || concept.type !== "letra") return "";
+  const g = String(concept.glyph || "");
+  return g.toLowerCase() === "ñ" ? "ñ" : g.toLowerCase().charAt(0);
+}
+
+function fillExploreCard(concept) {
+  lastExplored = concept;
+  const glyphs = document.getElementById("explore-glyphs");
+  const sylBox = document.getElementById("syllable-box");
+  const sylList = document.getElementById("syllable-list");
+  const exBox = document.getElementById("example-box");
+  const exWord = document.getElementById("example-word");
+  const note = document.getElementById("quechua-note");
+  const root = letterRoot(concept);
+  if (glyphs) {
+    if (root === "ñ") glyphs.textContent = "Ñ  ñ";
+    else if (root) glyphs.textContent = root.toUpperCase() + "  " + root;
+    else glyphs.textContent = concept.glyph || "—";
+  }
+  if (sylBox && sylList) {
+    if (root && /[a-zñ]/.test(root)) {
+      const base = root === "ñ" ? "ñ" : root;
+      sylList.innerHTML = ["a", "e", "i", "o", "u"].map((v) => `<span>${base}${v}</span>`).join("");
+      sylBox.hidden = false;
+    } else {
+      sylBox.hidden = true;
+      sylList.innerHTML = "";
+    }
+  }
+  if (exBox && exWord) {
+    const ex = root && LETTER_EXAMPLES[root] ? LETTER_EXAMPLES[root][0] : "";
+    if (ex) {
+      const re = new RegExp(root === "ñ" ? "ñ" : root, "i");
+      exWord.innerHTML = ex.replace(re, (m) => `<u>${m}</u>`);
+      exBox.hidden = false;
+    } else {
+      exBox.hidden = true;
+      exWord.textContent = "";
+    }
+  }
+  if (note) {
+    if (QUECHUA_LOAN[root]) {
+      note.hidden = false;
+      note.textContent = `La letra ${root.toUpperCase()} no pertenece al alfabeto quechua sureño; solo aparece en palabras prestadas del castellano.`;
+    } else {
+      note.hidden = true;
+      note.textContent = "";
+    }
+  }
+}
+
 function teachScan(concept) {
   const resultCard = document.getElementById("result-card");
   resultCard.hidden = false;
   resultCard.classList.remove("is-wrong");
   resultCard.classList.add("is-correct", "is-learn");
   fillPieceVisual(document.getElementById("result-icon"), concept.id);
+  fillExploreCard(concept);
   document.getElementById("result-label").textContent = conceptLabel(concept);
   showBrailleResult(concept);
   const feedback = t("learnFeedback", conceptLabel(concept));
@@ -2802,7 +2904,7 @@ document.getElementById("btn-clear").addEventListener("click", () => {
 /* ---------- 14. Registro del Service Worker (instalable / offline) ---------- */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("service-worker.js?v=22").then((reg) => {
+    navigator.serviceWorker.register("service-worker.js?v=23").then((reg) => {
       reg.update().catch(() => {});
       if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
     }).catch(() => {});
@@ -2828,7 +2930,7 @@ function saveEib(data) {
 
 function collectEibPhraseRows() {
   const rows = [];
-  rows.push({ key: "nombre", section: "Proyecto", text: "Makiwan Yachay («aprendizaje con las manos»)" });
+  rows.push({ key: "nombre", section: "Proyecto", text: "Yachay Ñan 3D («camino del aprendizaje»)" });
   Object.keys(I18N.qu).forEach((key) => {
     const val = I18N.qu[key];
     if (typeof val === "string") {
@@ -2972,6 +3074,39 @@ if (typeof decorateButtonsWithIcons === "function") {
   });
 }
 
+document.getElementById("btn-lang-toggle")?.addEventListener("click", () => {
+  document.getElementById(LANG === "es" ? "lang-qu" : "lang-es")?.click();
+});
+document.getElementById("btn-settings")?.addEventListener("click", () => openPiecesSheet());
+document.getElementById("btn-open-docente")?.addEventListener("click", () => {
+  closePiecesSheet();
+  document.getElementById("tab-docente")?.click();
+});
+document.getElementById("btn-open-acerca")?.addEventListener("click", () => {
+  closePiecesSheet();
+  document.getElementById("tab-acerca")?.click();
+});
+document.getElementById("btn-back")?.addEventListener("click", () => {
+  if (document.body.dataset.tab !== "estudiante") {
+    document.getElementById("tab-estudiante")?.click();
+    return;
+  }
+  activateService("learn");
+});
+document.getElementById("btn-what-now")?.addEventListener("click", () => speak(t("profesorHelp")));
+document.getElementById("btn-footer-repeat")?.addEventListener("click", () => {
+  document.getElementById("btn-repeat-audio")?.click();
+});
+document.getElementById("btn-footer-silence")?.addEventListener("click", () => stopAssistant());
+document.getElementById("btn-write-period")?.addEventListener("click", () => appendWriteChar("."));
+document.getElementById("btn-write-spell")?.addEventListener("click", () => writeReadAloud());
+document.getElementById("btn-listen-again")?.addEventListener("click", () => {
+  if (lastExplored) speak(conceptSay(lastExplored));
+  else document.getElementById("btn-repeat-audio")?.click();
+});
+document.getElementById("btn-read-braille")?.addEventListener("click", () => {
+  if (lastExplored && typeof brailleSpoken === "function") speak(brailleSpoken(lastExplored));
+});
 document.getElementById("btn-welcome-start")?.addEventListener("click", () => startAssistantFromUser());
 document.addEventListener("pointerdown", () => {
   if (document.body.classList.contains("is-welcome")) startAssistantFromUser();

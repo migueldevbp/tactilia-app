@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>TactilIA · Makiwan Yachay — Kit educativo inclusivo con IA y RA</title>
-<meta name="theme-color" content="#7c2d12" id="meta-theme">
+<title>Yachay Ñan 3D — Kit educativo inclusivo con IA y RA</title>
+<meta name="theme-color" content="#1b2a4a" id="meta-theme">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body class="kid-ui is-welcome home-locked" data-tab="estudiante">
+<body class="kid-ui yn-ui is-welcome home-locked" data-tab="estudiante">
 
 <div id="welcome-gate" class="welcome-gate">
   <button type="button" id="btn-welcome-start" class="welcome-start">
     <span class="welcome-mark" aria-hidden="true">Aa</span>
-    <strong data-i18n="welcomeTitle">Hola, soy TactilIA</strong>
+    <strong data-i18n="welcomeTitle">Hola, soy Yachay Ñan 3D</strong>
     <span data-i18n="welcomeTap">Toca para hablar conmigo</span>
   </button>
 </div>
@@ -43,27 +43,35 @@
   <img class="side-sticker sticker-c" data-decor="selva" alt="" hidden>
 </aside>
 
-<header class="topbar">
+<header class="topbar yn-top">
   <div class="brand-row">
     <div class="brand">
+      <button type="button" id="btn-back" class="yn-icon-btn" aria-label="Volver">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M15 6 L9 12 L15 18"/></svg>
+      </button>
       <img class="brand-chakana" data-decor="chakana" alt="" hidden>
-      <span class="brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 32 32" width="28" height="28"><rect x="2" y="2" width="28" height="28" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 6 V26 M6 16 H26 M10 10 H22 V22 H10 Z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
-      </span>
       <div class="brand-text">
-        <h1>TactilIA</h1>
-        <span class="brand-sub">Makiwan Yachay · Perú</span>
+        <h1>Yachay Ñan 3D</h1>
+        <span class="brand-sub">Aprendizaje con las manos · Perú</span>
       </div>
+      <span id="mode-badge" class="yn-badge">EXPLORACIÓN</span>
     </div>
     <div class="header-controls">
-      <button id="btn-install" class="btn-install" type="button" data-i18n="installApp">Instalar app</button>
-      <div class="lang-switch" role="group" aria-label="Idioma / Simi">
+      <button id="btn-install" class="btn-install" type="button" hidden data-i18n="installApp">Instalar app</button>
+      <button type="button" id="btn-lang-toggle" class="yn-lang" aria-label="Idioma">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="none" stroke="currentColor" stroke-width="1.6" d="M3 12 H21 M12 3 C8 7 8 17 12 21 M12 3 C16 7 16 17 12 21"/></svg>
+        <span id="lang-toggle-label">Castellano</span>
+      </button>
+      <div class="lang-switch sr-only" role="group" aria-label="Idioma / Simi">
         <button id="lang-es" class="lang-btn active" data-lang="es" aria-pressed="true">ES</button>
         <button id="lang-qu" class="lang-btn" data-lang="qu" aria-pressed="false">QU</button>
       </div>
+      <button type="button" id="btn-settings" class="yn-icon-btn" aria-label="Ajustes" aria-controls="pieces-sheet">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="none" stroke="currentColor" stroke-width="1.8" d="M12 4 V6 M12 18 V20 M4 12 H6 M18 12 H20 M6.8 6.8 L8.2 8.2 M15.8 15.8 L17.2 17.2 M17.2 6.8 L15.8 8.2 M8.2 15.8 L6.8 17.2"/></svg>
+      </button>
     </div>
   </div>
-  <nav class="tabs" role="tablist" aria-label="Vistas principales">
+  <nav class="tabs sr-only" role="tablist" aria-label="Vistas principales">
     <button class="tab-btn active" role="tab" aria-selected="true" data-view="estudiante" data-i18n="tabEstudiante" data-icon="student" id="tab-estudiante" aria-controls="view-estudiante">Estudiante</button>
     <button class="tab-btn" role="tab" aria-selected="false" data-view="docente" data-i18n="tabDocente" data-icon="teacher" id="tab-docente" aria-controls="view-docente">Docente</button>
     <button class="tab-btn" role="tab" aria-selected="false" data-view="acerca" data-i18n="tabAcerca" data-icon="about" id="tab-acerca" aria-controls="view-acerca">Acerca de</button>
@@ -77,93 +85,126 @@
   <!-- VISTA ESTUDIANTE: una sola cara, un servicio a la vez -->
   <section id="view-estudiante" class="view active" role="tabpanel" aria-labelledby="tab-estudiante">
 
-    <div class="home-shell">
-      <div class="play-mode-switch mode-bar" role="group" aria-label="Servicio">
+    <div class="home-shell yn-shell">
+      <div class="play-mode-switch mode-bar yn-modes" role="group" aria-label="Servicio">
         <button type="button" class="play-mode-btn play-learn active" id="mode-learn" data-mode="learn" aria-pressed="true">
-          <span class="play-mode-big" aria-hidden="true">Aa</span>
-          <span data-i18n="modeLearn">Escuchar</span>
-        </button>
-        <button type="button" class="play-mode-btn play-challenge" id="mode-challenge" data-mode="challenge" aria-pressed="false">
-          <span class="play-mode-big" aria-hidden="true">★</span>
-          <span data-i18n="modeChallenge">Jugar</span>
+          <span class="play-mode-ico" aria-hidden="true">🔎</span>
+          <span data-i18n="modeLearn">Explorar</span>
+          <span class="yn-num">1</span>
         </button>
         <button type="button" class="play-mode-btn play-write" id="mode-write" data-mode="write" aria-pressed="false">
-          <span class="play-mode-big" aria-hidden="true">✎</span>
+          <span class="play-mode-ico" aria-hidden="true">✎</span>
           <span data-i18n="modeWrite">Escribir</span>
+          <span class="yn-num">2</span>
         </button>
-        <button type="button" class="play-mode-btn play-autism" id="mode-autism" data-mode="autism" aria-pressed="false">
-          <span class="play-mode-big" aria-hidden="true">◇</span>
+        <button type="button" class="play-mode-btn play-challenge" id="mode-challenge" data-mode="challenge" aria-pressed="false">
+          <span class="play-mode-ico" aria-hidden="true">◎</span>
+          <span data-i18n="modeChallenge">Dictado</span>
+          <span class="yn-num">3</span>
+        </button>
+        <button type="button" class="play-mode-btn play-autism sr-only" id="mode-autism" data-mode="autism" aria-pressed="false">
           <span data-i18n="modeAutism">Autismo</span>
         </button>
       </div>
 
-      <div class="home-stage" id="home-stage">
-        <div id="scanner-wrap" class="scanner-wrap" role="img" aria-label="Vista de cámara con realidad aumentada">
-          <video id="camera-view" playsinline muted></video>
-          <canvas id="camera-canvas" aria-hidden="true"></canvas>
-          <div id="scan-frame" class="scan-frame" aria-hidden="true"></div>
-          <div id="gesture-badge" class="gesture-badge" hidden></div>
-          <button id="btn-flip-camera" class="btn-flip-overlay" type="button" hidden aria-label="Girar cámara">
-            <span class="ui-ico" data-static-icon="flip" aria-hidden="true"></span>
-            <span data-i18n="flipCameraShort">Frontal</span>
-          </button>
+      <div class="home-stage yn-stage" id="home-stage">
+        <div class="yn-col yn-col-cam">
+          <div id="scanner-wrap" class="scanner-wrap" role="img" aria-label="Vista de cámara con realidad aumentada">
+            <video id="camera-view" playsinline muted></video>
+            <canvas id="camera-canvas" aria-hidden="true"></canvas>
+            <div id="scan-frame" class="scan-frame" aria-hidden="true"></div>
+            <div id="gesture-badge" class="gesture-badge" hidden></div>
+            <button id="btn-flip-camera" class="btn-flip-overlay" type="button" hidden aria-label="Girar cámara">
+              <span class="ui-ico" data-static-icon="flip" aria-hidden="true"></span>
+              <span data-i18n="flipCameraShort">Frontal</span>
+            </button>
+            <p class="yn-scan-hint" data-i18n="scanHint">Acerca una pieza al recuadro</p>
+          </div>
+          <div class="yn-cam-actions">
+            <button id="btn-start-scan" class="yn-ghost" type="button" data-i18n="startCamera">Activar cámara</button>
+            <button id="btn-stop-scan" class="yn-ghost" type="button" hidden data-i18n="stopCamera">Pausar cámara</button>
+            <button id="btn-profesor" class="yn-ghost btn-profesor" type="button" aria-pressed="false" data-icon="mic">
+              <span data-i18n="profesorBtn">Activar voz</span>
+            </button>
+            <button id="btn-flip-camera-row" class="yn-ghost" type="button" hidden data-i18n="flipCamera">Girar</button>
+            <button id="btn-toggle-pieces" class="yn-ghost" type="button" aria-expanded="false" aria-controls="pieces-sheet" data-i18n="piecesBtn">Piezas</button>
+            <span class="yn-jsqr">Lector jsQR</span>
+          </div>
+          <p id="scan-status" class="status-text sr-only" data-i18n="cameraOff" role="status" aria-live="polite">Cámara apagada.</p>
+          <p id="profesor-status" class="profesor-status yn-heard" role="status" aria-live="polite" data-i18n="profesorIdle"></p>
+        </div>
 
-          <div class="stage-hud">
-            <div class="session-strip" aria-label="Progreso de la sesión">
-              <div class="session-stat"><span class="n" id="stat-streak">0</span><span class="l" data-i18n="statStreak">Racha</span></div>
-              <div class="session-stat"><span class="n" id="stat-correct">0</span><span class="l" data-i18n="statCorrect">Aciertos</span></div>
-              <div class="session-stat"><span class="n" id="stat-accuracy">—</span><span class="l" data-i18n="statAccuracy">Precisión</span></div>
-            </div>
-            <p id="play-mode-help" class="sr-only" data-i18n="modeLearnHelp">Toca Escuchar y muestra una pieza. La app te dice qué es.</p>
-            <p id="exercise-target" class="target-text" data-i18n="learnPrompt" role="status" aria-live="polite">Toca Escuchar y apunta al QR.</p>
-            <div id="pace-bar" class="pace-bar" hidden>
-              <div id="pace-fill" class="pace-fill"></div>
-              <span id="pace-label" class="pace-label" data-i18n="paceLabel">Tómate tu tiempo</span>
-            </div>
-            <div id="target-picto" class="target-picto" hidden aria-hidden="true"></div>
-            <div class="card autism-board" id="autism-board" hidden>
-              <ol class="autism-steps" aria-label="Pasos">
-                <li id="autism-step-look" class="is-on"><span class="autism-n">1</span><span data-i18n="autismLook">Mira</span></li>
-                <li id="autism-step-listen"><span class="autism-n">2</span><span data-i18n="autismListen">Escucha</span></li>
-                <li id="autism-step-do"><span class="autism-n">3</span><span data-i18n="autismDo">Muestra</span></li>
-              </ol>
-              <p class="autism-then" data-i18n="autismThen">Primero esta pieza. Después, descanso.</p>
-            </div>
+        <div class="yn-col yn-col-panel">
+          <div class="session-strip yn-stats" aria-label="Progreso de la sesión">
+            <div class="session-stat"><span class="n" id="stat-streak">0</span><span class="l" data-i18n="statStreak">Racha</span></div>
+            <div class="session-stat"><span class="n" id="stat-correct">0</span><span class="l" data-i18n="statCorrect">Aciertos</span></div>
+            <div class="session-stat"><span class="n" id="stat-accuracy">—</span><span class="l" data-i18n="statAccuracy">Precisión</span></div>
+          </div>
+          <p id="play-mode-help" class="sr-only" data-i18n="modeLearnHelp">Acerca una pieza. La app te dice qué es.</p>
+          <p id="exercise-target" class="target-text" data-i18n="learnPrompt" role="status" aria-live="polite">Acerca una pieza al recuadro.</p>
+          <div id="pace-bar" class="pace-bar" hidden>
+            <div id="pace-fill" class="pace-fill"></div>
+            <span id="pace-label" class="pace-label" data-i18n="paceLabel">Tómate tu tiempo</span>
+          </div>
+          <div id="target-picto" class="target-picto" hidden aria-hidden="true"></div>
+          <div class="card autism-board" id="autism-board" hidden>
+            <ol class="autism-steps" aria-label="Pasos">
+              <li id="autism-step-look" class="is-on"><span class="autism-n">1</span><span data-i18n="autismLook">Mira</span></li>
+              <li id="autism-step-listen"><span class="autism-n">2</span><span data-i18n="autismListen">Escucha</span></li>
+              <li id="autism-step-do"><span class="autism-n">3</span><span data-i18n="autismDo">Muestra</span></li>
+            </ol>
+            <p class="autism-then" data-i18n="autismThen">Primero esta pieza. Después, descanso.</p>
           </div>
 
-          <div class="card write-card" id="write-panel" hidden>
-            <h2><span class="ui-ico" data-static-icon="write" aria-hidden="true"></span> <span data-i18n="writeTitle">Pizarra</span></h2>
-            <div id="write-text" class="write-text is-empty" aria-live="polite" aria-atomic="true">(vacío — muestra una pieza)</div>
-            <div id="write-braille" class="write-braille" hidden aria-hidden="true"></div>
-            <div class="row write-actions">
-              <button id="btn-write-space" class="btn-secondary" type="button" data-i18n="writeSpaceBtn" data-icon="write">Espacio</button>
-              <button id="btn-write-back" class="btn-secondary" type="button" data-i18n="writeBackBtn">Quitar</button>
-              <button id="btn-write-read" class="btn-primary" type="button" data-i18n="writeReadBtn" data-icon="speak">Leer</button>
-              <button id="btn-write-clear" class="btn-danger" type="button" data-i18n="writeClearBtn">Borrar</button>
+          <div class="card result-card yn-explore" id="result-card" hidden role="status" aria-live="assertive" aria-atomic="true">
+            <div class="yn-letter-row">
+              <div id="explore-glyphs" class="yn-glyphs">—</div>
+              <div id="result-icon" class="result-icon" aria-hidden="true">—</div>
             </div>
-          </div>
-
-          <div class="card result-card" id="result-card" hidden role="status" aria-live="assertive" aria-atomic="true">
-            <div id="result-icon" class="result-icon" aria-hidden="true">—</div>
             <div id="result-label" class="result-label">—</div>
             <div id="result-braille" class="result-braille" hidden aria-hidden="true"></div>
+            <div id="syllable-box" class="yn-block" hidden>
+              <p class="yn-kicker" data-i18n="familyTitle">Familia silábica</p>
+              <div id="syllable-list" class="yn-pills"></div>
+            </div>
+            <div id="example-box" class="yn-block" hidden>
+              <p class="yn-kicker" data-i18n="exampleTitle">Ejemplo en castellano</p>
+              <p id="example-word" class="yn-example"></p>
+            </div>
+            <p id="quechua-note" class="yn-note" hidden></p>
             <div id="result-feedback" class="result-feedback">—</div>
+            <div class="row yn-explore-actions">
+              <button id="btn-listen-again" class="yn-ghost" type="button" data-i18n="listenAgain">Escuchar otra vez</button>
+              <button id="btn-read-braille" class="yn-ghost" type="button" data-i18n="readBraille">Leer el braille</button>
+            </div>
           </div>
 
-          <div class="stage-controls">
-            <div class="row" id="challenge-actions">
-              <button id="btn-new-challenge" class="btn-primary" type="button" data-i18n="startLearning" data-icon="challenge">Empezar</button>
-              <button id="btn-repeat-audio" class="btn-secondary" type="button" data-i18n="repeat" data-icon="repeat">Otra vez</button>
+          <div class="card write-card yn-write" id="write-panel" hidden>
+            <p class="yn-kicker" data-i18n="yourSentence">Tu oración</p>
+            <div id="write-text" class="write-text is-empty" aria-live="polite" aria-atomic="true">(vacío — muestra una pieza)</div>
+            <div id="write-braille" class="write-braille" hidden aria-hidden="true"></div>
+            <p id="write-stats" class="yn-write-stats"></p>
+            <div class="yn-write-grid">
+              <button id="btn-write-read" class="yn-key" type="button"><strong data-i18n="writeReadBtn">Leer</strong><small>Enter</small></button>
+              <button id="btn-write-space" class="yn-key" type="button"><strong data-i18n="writeSpaceBtn">Espacio</strong><small>Espacio</small></button>
+              <button id="btn-write-back" class="yn-key" type="button"><strong data-i18n="writeBackBtn">Borrar</strong><small>←</small></button>
+              <button id="btn-write-period" class="yn-key" type="button"><strong data-i18n="writePeriod">Punto</strong><small>.</small></button>
+              <button id="btn-write-spell" class="yn-key" type="button"><strong data-i18n="writeSpell">Deletrear</strong><small>F2</small></button>
+              <button id="btn-write-clear" class="yn-key yn-key-danger" type="button"><strong data-i18n="writeClearBtn">Limpiar</strong><small>Supr</small></button>
             </div>
-            <div class="row cam-row">
-              <button id="btn-start-scan" class="btn-primary" type="button" data-i18n="startCamera" data-icon="camera">Cámara</button>
-              <button id="btn-flip-camera-row" class="btn-secondary" type="button" hidden data-i18n="flipCamera" data-icon="flip">Girar a frontal</button>
-              <button id="btn-stop-scan" class="btn-secondary" type="button" hidden data-i18n="stopCamera" data-icon="stop">Detener</button>
-              <button id="btn-toggle-pieces" class="btn-secondary" type="button" aria-expanded="false" aria-controls="pieces-sheet" data-i18n="piecesBtn">Piezas</button>
-            </div>
-            <p id="scan-status" class="status-text" data-i18n="cameraOff" role="status" aria-live="polite">Cámara apagada.</p>
+          </div>
+
+          <div class="row" id="challenge-actions">
+            <button id="btn-new-challenge" class="btn-primary" type="button" data-i18n="startLearning" data-icon="challenge">Empezar</button>
+            <button id="btn-repeat-audio" class="btn-secondary" type="button" data-i18n="repeat" data-icon="repeat">Otra vez</button>
           </div>
         </div>
+      </div>
+
+      <div class="yn-footer">
+        <button type="button" id="btn-what-now" class="yn-pill yn-pill-help" data-i18n="whatNow">¿Qué hago ahora?</button>
+        <button type="button" id="btn-footer-repeat" class="yn-pill yn-pill-repeat" data-i18n="repeat">Repetir</button>
+        <button type="button" id="btn-footer-silence" class="yn-pill yn-pill-quiet" data-i18n="silence">Silencio</button>
       </div>
     </div>
 
@@ -171,6 +212,10 @@
       <div class="sheet-head">
         <p class="kit-label" data-i18n="setLabel">¿Con qué piezas juegas?</p>
         <button type="button" id="btn-close-pieces" class="btn-secondary btn-tiny" data-i18n="piecesClose">Cerrar</button>
+      </div>
+      <div class="row" style="margin-bottom:10px">
+        <button type="button" id="btn-open-docente" class="btn-secondary" data-i18n="tabDocente">Profe</button>
+        <button type="button" id="btn-open-acerca" class="btn-secondary" data-i18n="tabAcerca">Info</button>
       </div>
       <div id="kit-chips" class="kit-chips" role="radiogroup" aria-label="Kit de piezas"></div>
       <select id="set-select" class="sr-only" aria-hidden="true" tabindex="-1">
@@ -320,8 +365,8 @@
   <!-- VISTA ACERCA DE -->
   <section id="view-acerca" class="view" role="tabpanel" aria-labelledby="tab-acerca">
     <div class="card">
-      <h2>TactilIA · Makiwan Yachay</h2>
-      <p><em>Makiwan Yachay</em> significa, en quechua, «aprendizaje con las manos». Es el nombre bilingüe del proyecto, en homenaje a las comunidades quechuahablantes de Pasco y de otras regiones andinas.</p>
+      <h2>Yachay Ñan 3D</h2>
+      <p><em>Yachay Ñan</em> significa, en quechua, «camino del aprendizaje». Es un kit 3D + QR + voz para leer y escribir con las manos, en homenaje a las comunidades quechuahablantes de Pasco y de otras regiones andinas.</p>
       <p>Prototipo para la <strong>Hackathon en Tecnologías Digitales 2026 (Minedu) — Categoría A</strong>: integrar tecnologías emergentes para la atención de estudiantes de Educación Básica Especial.</p>
       <p>Kit multisensorial: piezas 3D con QR + esta PWA. Reconoce cada pieza con <strong>realidad aumentada</strong>, da voz en <strong>español o quechua</strong>, saluda al abrir, se apaga si dices «apaga asistente», incluye <strong>modo autismo</strong> (paso a paso) y detecta <strong>señas simples de mano</strong> (pulgar, palma, puño). No sustituye la lengua de señas peruana completa.</p>
       <p class="muted">Alineado a ODS 4 (Educación de calidad) y ODS 10 (Reducción de las desigualdades).</p>
@@ -439,12 +484,7 @@
 
 </main>
 
-<div id="profesor-dock" class="profesor-dock">
-  <button id="btn-profesor" class="btn-profesor" type="button" aria-pressed="false" data-icon="mic">
-    <span data-i18n="profesorBtn">Profesor por voz</span>
-  </button>
-  <p id="profesor-status" class="profesor-status" role="status" aria-live="polite" data-i18n="profesorIdle">Pulsa para hablar con el profesor. Di: activa el modo escritura.</p>
-</div>
+<div id="profesor-dock" class="profesor-dock" hidden></div>
 
 <div id="reward-flash" class="reward-flash" hidden aria-hidden="true"></div>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
