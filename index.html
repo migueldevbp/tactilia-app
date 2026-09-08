@@ -10,7 +10,15 @@
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="kid-ui is-welcome home-locked" data-tab="estudiante">
+
+<div id="welcome-gate" class="welcome-gate">
+  <button type="button" id="btn-welcome-start" class="welcome-start">
+    <span class="welcome-mark" aria-hidden="true">Aa</span>
+    <strong data-i18n="welcomeTitle">Hola, soy TactilIA</strong>
+    <span data-i18n="welcomeTap">Toca para hablar conmigo</span>
+  </button>
+</div>
 
 <div class="peru-band" aria-hidden="true"></div>
 
@@ -66,41 +74,148 @@
 
 <main>
 
-  <!-- VISTA ESTUDIANTE -->
+  <!-- VISTA ESTUDIANTE: una sola cara, un servicio a la vez -->
   <section id="view-estudiante" class="view active" role="tabpanel" aria-labelledby="tab-estudiante">
 
-    <div class="session-strip" aria-label="Progreso de la sesión">
-      <div class="session-stat"><span class="n" id="stat-streak">0</span><span class="l" data-i18n="statStreak">Racha</span></div>
-      <div class="session-stat"><span class="n" id="stat-correct">0</span><span class="l" data-i18n="statCorrect">Aciertos</span></div>
-      <div class="session-stat"><span class="n" id="stat-accuracy">—</span><span class="l" data-i18n="statAccuracy">Precisión</span></div>
-    </div>
-
-    <div id="guide-card" class="card guide-card">
-      <div class="guide-head">
-        <h2 data-i18n="guideTitle">Cómo empezar (3 pasos)</h2>
-        <button type="button" id="btn-guide-hide" class="btn-secondary btn-tiny" data-i18n="guideHide">Ocultar</button>
+    <div class="home-shell">
+      <div class="play-mode-switch mode-bar" role="group" aria-label="Servicio">
+        <button type="button" class="play-mode-btn play-learn active" id="mode-learn" data-mode="learn" aria-pressed="true">
+          <span class="play-mode-big" aria-hidden="true">Aa</span>
+          <span data-i18n="modeLearn">Escuchar</span>
+        </button>
+        <button type="button" class="play-mode-btn play-challenge" id="mode-challenge" data-mode="challenge" aria-pressed="false">
+          <span class="play-mode-big" aria-hidden="true">★</span>
+          <span data-i18n="modeChallenge">Jugar</span>
+        </button>
+        <button type="button" class="play-mode-btn play-write" id="mode-write" data-mode="write" aria-pressed="false">
+          <span class="play-mode-big" aria-hidden="true">✎</span>
+          <span data-i18n="modeWrite">Escribir</span>
+        </button>
+        <button type="button" class="play-mode-btn play-autism" id="mode-autism" data-mode="autism" aria-pressed="false">
+          <span class="play-mode-big" aria-hidden="true">◇</span>
+          <span data-i18n="modeAutism">Autismo</span>
+        </button>
       </div>
-      <ol class="guide-steps">
-        <li data-i18n="guideStep1">Elige perfil inclusivo (TEA, baja visión…) o ajusta Accesibilidad.</li>
-        <li data-i18n="guideStep2">Pulsa «Profesor por voz» y habla: «modo escritura», «aprender» o «reto».</li>
-        <li data-i18n="guideStep3">En escritura, muestra letras/números con el QR. Di «dime qué dice» para escuchar el texto.</li>
-      </ol>
-    </div>
 
-    <div class="card profile-presets-card">
-      <h2 data-i18n="profilesTitle">Perfil inclusivo rápido</h2>
-      <p class="muted" data-i18n="profilesHelp">Un toque configura varias opciones de apoyo a la vez.</p>
-      <div class="profile-presets" role="group" aria-label="Perfiles inclusivos">
-        <button type="button" class="profile-btn" data-profile="tea" data-i18n="profileTea">TEA / calma</button>
-        <button type="button" class="profile-btn" data-profile="vision" data-i18n="profileVision">Baja visión</button>
-        <button type="button" class="profile-btn" data-profile="motor" data-i18n="profileMotor">Motricidad</button>
-        <button type="button" class="profile-btn" data-profile="default" data-i18n="profileDefault">Estándar</button>
+      <div class="home-stage" id="home-stage">
+        <div id="scanner-wrap" class="scanner-wrap" role="img" aria-label="Vista de cámara con realidad aumentada">
+          <video id="camera-view" playsinline muted></video>
+          <canvas id="camera-canvas" aria-hidden="true"></canvas>
+          <div id="scan-frame" class="scan-frame" aria-hidden="true"></div>
+          <div id="gesture-badge" class="gesture-badge" hidden></div>
+          <button id="btn-flip-camera" class="btn-flip-overlay" type="button" hidden aria-label="Girar cámara">
+            <span class="ui-ico" data-static-icon="flip" aria-hidden="true"></span>
+            <span data-i18n="flipCameraShort">Frontal</span>
+          </button>
+
+          <div class="stage-hud">
+            <div class="session-strip" aria-label="Progreso de la sesión">
+              <div class="session-stat"><span class="n" id="stat-streak">0</span><span class="l" data-i18n="statStreak">Racha</span></div>
+              <div class="session-stat"><span class="n" id="stat-correct">0</span><span class="l" data-i18n="statCorrect">Aciertos</span></div>
+              <div class="session-stat"><span class="n" id="stat-accuracy">—</span><span class="l" data-i18n="statAccuracy">Precisión</span></div>
+            </div>
+            <p id="play-mode-help" class="sr-only" data-i18n="modeLearnHelp">Toca Escuchar y muestra una pieza. La app te dice qué es.</p>
+            <p id="exercise-target" class="target-text" data-i18n="learnPrompt" role="status" aria-live="polite">Toca Escuchar y apunta al QR.</p>
+            <div id="pace-bar" class="pace-bar" hidden>
+              <div id="pace-fill" class="pace-fill"></div>
+              <span id="pace-label" class="pace-label" data-i18n="paceLabel">Tómate tu tiempo</span>
+            </div>
+            <div id="target-picto" class="target-picto" hidden aria-hidden="true"></div>
+            <div class="card autism-board" id="autism-board" hidden>
+              <ol class="autism-steps" aria-label="Pasos">
+                <li id="autism-step-look" class="is-on"><span class="autism-n">1</span><span data-i18n="autismLook">Mira</span></li>
+                <li id="autism-step-listen"><span class="autism-n">2</span><span data-i18n="autismListen">Escucha</span></li>
+                <li id="autism-step-do"><span class="autism-n">3</span><span data-i18n="autismDo">Muestra</span></li>
+              </ol>
+              <p class="autism-then" data-i18n="autismThen">Primero esta pieza. Después, descanso.</p>
+            </div>
+          </div>
+
+          <div class="card write-card" id="write-panel" hidden>
+            <h2><span class="ui-ico" data-static-icon="write" aria-hidden="true"></span> <span data-i18n="writeTitle">Pizarra</span></h2>
+            <div id="write-text" class="write-text is-empty" aria-live="polite" aria-atomic="true">(vacío — muestra una pieza)</div>
+            <div id="write-braille" class="write-braille" hidden aria-hidden="true"></div>
+            <div class="row write-actions">
+              <button id="btn-write-space" class="btn-secondary" type="button" data-i18n="writeSpaceBtn" data-icon="write">Espacio</button>
+              <button id="btn-write-back" class="btn-secondary" type="button" data-i18n="writeBackBtn">Quitar</button>
+              <button id="btn-write-read" class="btn-primary" type="button" data-i18n="writeReadBtn" data-icon="speak">Leer</button>
+              <button id="btn-write-clear" class="btn-danger" type="button" data-i18n="writeClearBtn">Borrar</button>
+            </div>
+          </div>
+
+          <div class="card result-card" id="result-card" hidden role="status" aria-live="assertive" aria-atomic="true">
+            <div id="result-icon" class="result-icon" aria-hidden="true">—</div>
+            <div id="result-label" class="result-label">—</div>
+            <div id="result-braille" class="result-braille" hidden aria-hidden="true"></div>
+            <div id="result-feedback" class="result-feedback">—</div>
+          </div>
+
+          <div class="stage-controls">
+            <div class="row" id="challenge-actions">
+              <button id="btn-new-challenge" class="btn-primary" type="button" data-i18n="startLearning" data-icon="challenge">Empezar</button>
+              <button id="btn-repeat-audio" class="btn-secondary" type="button" data-i18n="repeat" data-icon="repeat">Otra vez</button>
+            </div>
+            <div class="row cam-row">
+              <button id="btn-start-scan" class="btn-primary" type="button" data-i18n="startCamera" data-icon="camera">Cámara</button>
+              <button id="btn-flip-camera-row" class="btn-secondary" type="button" hidden data-i18n="flipCamera" data-icon="flip">Girar a frontal</button>
+              <button id="btn-stop-scan" class="btn-secondary" type="button" hidden data-i18n="stopCamera" data-icon="stop">Detener</button>
+              <button id="btn-toggle-pieces" class="btn-secondary" type="button" aria-expanded="false" aria-controls="pieces-sheet" data-i18n="piecesBtn">Piezas</button>
+            </div>
+            <p id="scan-status" class="status-text" data-i18n="cameraOff" role="status" aria-live="polite">Cámara apagada.</p>
+          </div>
+        </div>
       </div>
     </div>
 
-    <details class="card a11y-card">
-      <summary><span class="ui-ico" data-static-icon="a11y" aria-hidden="true"></span><span data-i18n="a11yTitle">Accesibilidad</span></summary>
-      <div class="a11y-body">
+    <div id="pieces-sheet" class="pieces-sheet" hidden>
+      <div class="sheet-head">
+        <p class="kit-label" data-i18n="setLabel">¿Con qué piezas juegas?</p>
+        <button type="button" id="btn-close-pieces" class="btn-secondary btn-tiny" data-i18n="piecesClose">Cerrar</button>
+      </div>
+      <div id="kit-chips" class="kit-chips" role="radiogroup" aria-label="Kit de piezas"></div>
+      <select id="set-select" class="sr-only" aria-hidden="true" tabindex="-1">
+        <option value="letras-may" data-i18n-option="setLetrasMay">Letras grandes A Ñ</option>
+        <option value="letras-min" data-i18n-option="setLetrasMin">Letras chiquitas a ñ</option>
+        <option value="letras" data-i18n-option="setLetras">Todas las letras</option>
+        <option value="numeros" data-i18n-option="setNumeros">Números 0–9</option>
+        <option value="signos" data-i18n-option="setSignos">Signos</option>
+        <option value="figuras" data-i18n-option="setFiguras">Figuras</option>
+        <option value="emociones" data-i18n-option="setEmociones">Emociones</option>
+        <option value="rutinas" data-i18n-option="setRutinas">Rutinas</option>
+        <option value="todos" data-i18n-option="setTodos">Todas</option>
+      </select>
+      <div id="demo-card" class="demo-block">
+        <h2><span class="ui-ico" data-static-icon="hand" aria-hidden="true"></span> <span data-i18n="demoTitle">Practicar sin QR (demo)</span></h2>
+        <div id="piece-grid" class="piece-grid" role="list"></div>
+      </div>
+      <details class="settings-fold">
+        <summary><span class="ui-ico" data-static-icon="a11y" aria-hidden="true"></span><span data-i18n="settingsTitle">Ajustes</span></summary>
+
+      <div id="guide-card" class="guide-card nested-block">
+        <div class="guide-head">
+          <h2 data-i18n="guideTitle">Cómo empezar (3 pasos)</h2>
+          <button type="button" id="btn-guide-hide" class="btn-secondary btn-tiny" data-i18n="guideHide">Ocultar</button>
+        </div>
+        <ol class="guide-steps">
+          <li data-i18n="guideStep1">Toca Escuchar, Jugar o Escribir (o habla al profesor).</li>
+          <li data-i18n="guideStep2">Elige letras grandes (A Ñ) o chiquitas (a ñ).</li>
+          <li data-i18n="guideStep3">Muestra el QR. En escribir, di «dime qué dice».</li>
+        </ol>
+      </div>
+
+      <div class="nested-block">
+        <h3 data-i18n="profilesTitle">Perfil de apoyo</h3>
+        <p class="muted" data-i18n="profilesHelp">Un toque configura varias ayudas.</p>
+        <div class="profile-presets" role="group" aria-label="Perfiles inclusivos">
+          <button type="button" class="profile-btn" data-profile="tea" data-i18n="profileTea">TEA / calma</button>
+          <button type="button" class="profile-btn" data-profile="vision" data-i18n="profileVision">Baja visión</button>
+          <button type="button" class="profile-btn" data-profile="motor" data-i18n="profileMotor">Motricidad</button>
+          <button type="button" class="profile-btn" data-profile="default" data-i18n="profileDefault">Estándar</button>
+        </div>
+      </div>
+
+      <div class="a11y-body nested-block">
+        <h3 data-i18n="a11yTitle">Accesibilidad</h3>
         <label class="a11y-row">
           <span data-i18n="a11yContrast">Alto contraste</span>
           <input type="checkbox" id="chk-contrast">
@@ -117,7 +232,7 @@
           <span data-i18n="a11yCalm">Modo calma (autismo / TEA)</span>
           <input type="checkbox" id="chk-calm">
         </label>
-        <p class="muted a11y-calm-help" data-i18n="a11yCalmHelp">Menos estímulos: sin partículas, voz más lenta, pausas largas, colores suaves y retos en orden.</p>
+        <p class="muted a11y-calm-help" data-i18n="a11yCalmHelp">Menos estímulos: voz más lenta y retos en orden.</p>
         <label class="a11y-row">
           <span data-i18n="a11yPictos">Solo pictogramas (sin texto)</span>
           <input type="checkbox" id="chk-pictos">
@@ -139,93 +254,15 @@
           </select>
         </div>
       </div>
-    </details>
 
-    <div class="card profile-card">
-      <label for="student-select" data-i18n="activeStudent">Estudiante activo</label>
-      <div class="row">
-        <select id="student-select"></select>
-        <button id="btn-new-student" class="btn-secondary" type="button" data-i18n="newStudent">+ Nuevo</button>
+      <div class="nested-block">
+        <label for="student-select" data-i18n="activeStudent">Estudiante activo</label>
+        <div class="row">
+          <select id="student-select"></select>
+          <button id="btn-new-student" class="btn-secondary" type="button" data-i18n="newStudent">+ Nuevo</button>
+        </div>
       </div>
-    </div>
-
-    <div class="card set-card">
-      <label for="set-select" data-i18n="setLabel">Kit / set temático</label>
-      <select id="set-select" aria-describedby="set-help">
-        <option value="letras" data-i18n-option="setLetras">Letras A–Z + Ñ</option>
-        <option value="numeros" data-i18n-option="setNumeros">Números 0–9</option>
-        <option value="signos" data-i18n-option="setSignos">Signos</option>
-        <option value="figuras" data-i18n-option="setFiguras">Figuras</option>
-        <option value="emociones" data-i18n-option="setEmociones">Emociones</option>
-        <option value="rutinas" data-i18n-option="setRutinas">Rutinas diarias</option>
-        <option value="todos" data-i18n-option="setTodos">Todos los sets</option>
-      </select>
-      <p id="set-help" class="muted" data-i18n="setHelp">Elige el banco de piezas. Para autismo: prueba Modo calma + un solo set (ej. letras).</p>
-    </div>
-
-    <div class="card exercise-card">
-      <h2 data-i18n="exerciseMode">Modo ejercicio</h2>
-      <div class="play-mode-switch" role="group" aria-label="Modo de práctica">
-        <button type="button" class="play-mode-btn active" id="mode-learn" data-mode="learn" data-i18n="modeLearn">1. Aprender</button>
-        <button type="button" class="play-mode-btn" id="mode-challenge" data-mode="challenge" data-i18n="modeChallenge">2. Reto</button>
-        <button type="button" class="play-mode-btn" id="mode-write" data-mode="write" data-i18n="modeWrite">3. Escritura</button>
-      </div>
-      <p id="play-mode-help" class="muted" data-i18n="modeLearnHelp">Pulsa «Iniciar aprendizaje», apunta al QR y la app te dice qué es y su braille.</p>
-      <p id="exercise-target" class="target-text" data-i18n="learnPrompt" role="status" aria-live="polite">Pulsa «Iniciar aprendizaje» y apunta la cámara al QR.</p>
-      <div id="pace-bar" class="pace-bar" hidden>
-        <div id="pace-fill" class="pace-fill"></div>
-        <span id="pace-label" class="pace-label" data-i18n="paceLabel">Tómate tu tiempo</span>
-      </div>
-      <div id="target-picto" class="target-picto" hidden aria-hidden="true"></div>
-      <div class="row" id="challenge-actions">
-        <button id="btn-new-challenge" class="btn-primary" type="button" data-i18n="startLearning" data-icon="challenge">Iniciar aprendizaje</button>
-        <button id="btn-repeat-audio" class="btn-secondary" type="button" data-i18n="repeat" data-icon="repeat">Repetir</button>
-      </div>
-    </div>
-
-    <div class="card write-card" id="write-panel" hidden>
-      <h2><span class="ui-ico" data-static-icon="write" aria-hidden="true"></span> <span data-i18n="writeTitle">Pizarra de escritura</span></h2>
-      <p class="muted" data-i18n="writeHelp">Para estudiantes ciegos o con baja visión: el profesor escucha y la pizarra se arma con el kit 3D.</p>
-      <div id="write-text" class="write-text is-empty" aria-live="polite" aria-atomic="true">(vacío — muestra una pieza)</div>
-      <div id="write-braille" class="write-braille" hidden aria-hidden="true"></div>
-      <div class="row write-actions">
-        <button id="btn-write-space" class="btn-secondary" type="button" data-i18n="writeSpaceBtn" data-icon="write">Espacio</button>
-        <button id="btn-write-back" class="btn-secondary" type="button" data-i18n="writeBackBtn">Borrar última</button>
-        <button id="btn-write-read" class="btn-primary" type="button" data-i18n="writeReadBtn" data-icon="speak">Dime qué dice</button>
-        <button id="btn-write-clear" class="btn-danger" type="button" data-i18n="writeClearBtn">Borrar todo</button>
-      </div>
-    </div>
-
-    <div class="card scanner-card">
-      <h2 data-i18n="scanPiece">Escanear pieza (Realidad Aumentada)</h2>
-      <div id="scanner-wrap" class="scanner-wrap" role="img" aria-label="Vista de cámara con realidad aumentada">
-        <video id="camera-view" playsinline muted></video>
-        <canvas id="camera-canvas" aria-hidden="true"></canvas>
-        <div id="scan-frame" class="scan-frame" aria-hidden="true"></div>
-        <button id="btn-flip-camera" class="btn-flip-overlay" type="button" hidden aria-label="Girar cámara">
-          <span class="ui-ico" data-static-icon="flip" aria-hidden="true"></span>
-          <span data-i18n="flipCameraShort">Frontal</span>
-        </button>
-      </div>
-      <div class="row">
-        <button id="btn-start-scan" class="btn-primary" type="button" data-i18n="startCamera" data-icon="camera">Activar cámara</button>
-        <button id="btn-flip-camera-row" class="btn-secondary" type="button" hidden data-i18n="flipCamera" data-icon="flip">Girar a frontal</button>
-        <button id="btn-stop-scan" class="btn-secondary" type="button" hidden data-i18n="stopCamera" data-icon="stop">Detener</button>
-      </div>
-      <p id="scan-status" class="status-text" data-i18n="cameraOff" role="status" aria-live="polite">Cámara apagada.</p>
-    </div>
-
-    <div class="card" id="demo-card">
-      <h2><span class="ui-ico" data-static-icon="hand" aria-hidden="true"></span> <span data-i18n="demoTitle">Practicar sin QR (demo)</span></h2>
-      <p class="muted" data-i18n="demoHelp">Toca una pieza para simular el escaneo — útil en mentoría o cuando aún no tienes el kit 3D.</p>
-      <div id="piece-grid" class="piece-grid" role="list"></div>
-    </div>
-
-    <div class="card result-card" id="result-card" hidden role="status" aria-live="assertive" aria-atomic="true">
-      <div id="result-icon" class="result-icon" aria-hidden="true">—</div>
-      <div id="result-label" class="result-label">—</div>
-      <div id="result-braille" class="result-braille" hidden aria-hidden="true"></div>
-      <div id="result-feedback" class="result-feedback">—</div>
+      </details>
     </div>
 
   </section>
@@ -286,14 +323,14 @@
       <h2>TactilIA · Makiwan Yachay</h2>
       <p><em>Makiwan Yachay</em> significa, en quechua, «aprendizaje con las manos». Es el nombre bilingüe del proyecto, en homenaje a las comunidades quechuahablantes de Pasco y de otras regiones andinas.</p>
       <p>Prototipo para la <strong>Hackathon en Tecnologías Digitales 2026 (Minedu) — Categoría A</strong>: integrar tecnologías emergentes para la atención de estudiantes de Educación Básica Especial.</p>
-      <p>Kit multisensorial: piezas 3D con QR + esta PWA. Reconoce cada pieza con <strong>realidad aumentada</strong>, da voz en <strong>español o quechua</strong> y actúa como <strong>profesor por voz</strong> (modo escritura: armar palabras con letras/números y pedir que las lea). Incluye alto contraste, texto ajustable, vibración y roles ARIA. Funciona <strong>100% offline</strong> tras la primera carga (el reconocimiento de voz del profesor usa el micrófono del celular).</p>
+      <p>Kit multisensorial: piezas 3D con QR + esta PWA. Reconoce cada pieza con <strong>realidad aumentada</strong>, da voz en <strong>español o quechua</strong>, saluda al abrir, se apaga si dices «apaga asistente», incluye <strong>modo autismo</strong> (paso a paso) y detecta <strong>señas simples de mano</strong> (pulgar, palma, puño). No sustituye la lengua de señas peruana completa.</p>
       <p class="muted">Alineado a ODS 4 (Educación de calidad) y ODS 10 (Reducción de las desigualdades).</p>
     </div>
 
     <div class="card">
       <h3>Cómo se usa (paso a paso)</h3>
       <ol class="about-list">
-        <li><strong>Preparar el kit:</strong> imprime piezas en 3D y pega el PNG de <code>qr/output/&lt;id&gt;.png</code> (hay 62: letras A–Z+Ñ, números 0–9, signos, figuras, emociones y rutinas).</li>
+        <li><strong>Preparar el kit:</strong> imprime piezas 3D y pega el PNG de <code>qr/output/&lt;id&gt;.png</code>. Hay <strong>89 piezas</strong>: 27 mayúsculas (A–Z+Ñ), 27 minúsculas (a–z+ñ), números, signos, figuras, emociones y rutinas. La Ñ mayúscula es <code>letra-enie.png</code>; la ñ minúscula es <code>letra-min-enie.png</code>.</li>
         <li><strong>Abrir la app</strong>. Elige set (Letras / Números / Signos…) e idioma. Para TEA: activa <strong>Modo calma</strong> en Accesibilidad.</li>
         <li><strong>Estudiante:</strong> «1. Aprender» (cámara + voz + braille), «2. Reto», o «3. Escritura» (pizarra con QR). También <strong>Profesor por voz</strong>: di «activa el modo escritura», muestra letras y luego «dime qué dice».</li>
         <li><strong>Docente:</strong> progreso, áreas a reforzar y recomendación.</li>
@@ -313,8 +350,9 @@
     </div>
 
     <div class="card">
-      <p class="muted">Cada QR contiene el texto <code>TACTILIA:&lt;id&gt;</code>. Archivo a imprimir: <code>qr/output/&lt;id&gt;.png</code>.</p>
-      <p class="muted">Ilustraciones a los costados: <code>media/decor/costa.png</code>, <code>sierra.png</code>, <code>selva.png</code>. Banner bajo el encabezado: <code>banner.png</code>. Icono opcional: <code>chakana.png</code>.</p>
+      <h3>Catálogo de piezas y códigos QR</h3>
+      <p class="muted">Cada QR contiene <code>TACTILIA:&lt;id&gt;</code>. Mayúsculas: <code>letra-a.png</code> … <code>letra-enie.png</code> (Ñ). Minúsculas: <code>letra-min-a.png</code> … <code>letra-min-enie.png</code> (ñ).</p>
+      <p class="muted">Ilustraciones a los costados: <code>media/decor/costa.png</code>, <code>sierra.png</code>, <code>selva.png</code>.</p>
       <div id="piezas-catalogo" class="catalogo"></div>
     </div>
 
@@ -435,6 +473,7 @@
 <script src="lib/pictos.js"></script>
 <script src="lib/braille.js"></script>
 <script src="lib/ui-icons.js"></script>
+<script src="lib/gestures.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

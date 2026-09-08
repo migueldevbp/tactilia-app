@@ -2,7 +2,7 @@
    Cachea todos los archivos de la app para que funcione 100% offline
    después de la primera visita (requisito clave para aulas rurales sin internet). */
 
-const CACHE_NAME = "tactilia-cache-v18";
+const CACHE_NAME = "tactilia-cache-v22";
 const ASSETS = [
   "./",
   "./index.html",
@@ -13,6 +13,7 @@ const ASSETS = [
   "./lib/pictos.js",
   "./lib/braille.js",
   "./lib/ui-icons.js",
+  "./lib/gestures.js",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./media/decor/costa.webp",

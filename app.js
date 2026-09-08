@@ -12,7 +12,7 @@
    uso oficial, dado que el quechua tiene variedades regionales. --------- */
 const I18N = {
   es: {
-    tabEstudiante: "Estudiante", tabDocente: "Docente", tabAcerca: "Acerca de",
+    tabEstudiante: "Juego", tabDocente: "Profe", tabAcerca: "Info",
     a11yTitle: "Accesibilidad", a11yContrast: "Alto contraste",
     a11yVibration: "Vibración al acertar", a11yTextSize: "Tamaño de texto",
     a11yVoice: "Voz / audio", a11yMotion: "Menos movimiento",
@@ -58,26 +58,55 @@ const I18N = {
     installSuggestIos: "Detectamos iPhone — usa la opción iPhone / iPad.",
     paceLabel: "Tómate tu tiempo",
     activeStudent: "Estudiante activo", newStudent: "+ Nuevo",
-    setLabel: "Kit / set temático",
-    setLetras: "Letras A–Z + Ñ",
+    setLabel: "¿Con qué piezas juegas?",
+    setLetras: "Todas las letras",
+    setLetrasMay: "Letras grandes A Ñ",
+    setLetrasMin: "Letras chiquitas a ñ",
     setNumeros: "Números 0–9",
     setSignos: "Signos",
     setFiguras: "Figuras",
     setEmociones: "Emociones",
-    setRutinas: "Rutinas diarias",
-    setTodos: "Todos los sets",
-    setHelp: "Elige el banco de piezas. Para autismo: prueba Modo calma + un solo set (ej. letras).",
+    setRutinas: "Rutinas",
+    setTodos: "Todas",
+    setHelp: "Toca el dibujo del kit. Letras grandes = mayúsculas. Letras chiquitas = minúsculas (incluye ñ).",
+    settingsTitle: "Ajustes",
+    kitMore: "Más piezas",
+    piecesBtn: "Piezas",
+    piecesClose: "Cerrar",
     a11yCalm: "Modo calma (autismo / TEA)",
     a11yCalmHelp: "Menos estímulos: sin partículas, voz más lenta, pausas largas, colores suaves y retos en orden.",
     sequenceHint: "Siguiente en orden",
-    exerciseMode: "Modo ejercicio",
-    modeLearn: "1. Aprender",
-    modeChallenge: "2. Reto",
-    modeWrite: "3. Escritura",
-    modeLearnHelp: "Pulsa «Iniciar aprendizaje», apunta al QR y la app te dice qué es y su braille (también debajo de la pieza).",
-    modeChallengeHelp: "Pulsa «Nuevo reto» y encuentra la pieza que pide la app.",
-    modeWriteHelp: "Muestra letras o números con el QR; se van escribiendo. Di «dime qué dice» para escuchar el texto.",
-    learnPrompt: "Pulsa «Iniciar aprendizaje» y apunta la cámara al QR. Te diré qué es y el braille.",
+    exerciseMode: "¿Qué quieres hacer?",
+    modeLearn: "Escuchar",
+    modeChallenge: "Jugar",
+    modeWrite: "Escribir",
+    modeAutism: "Autismo",
+    modeLearnHelp: "Toca Empezar y muestra una pieza. La app te dice qué es.",
+    modeChallengeHelp: "Toca Empezar. Busca la pieza que pide la voz.",
+    modeWriteHelp: "Muestra letras. Se escriben solas. Di «dime qué dice».",
+    modeAutismHelp: "Un paso a la vez: mira, escucha y muestra. Sin prisas ni luces fuertes.",
+    autismLook: "Mira",
+    autismListen: "Escucha",
+    autismDo: "Muestra",
+    autismThen: "Primero esta pieza. Después, descanso.",
+    autismStart: "Paso a paso",
+    autismStarted: "Modo autismo. Mira la pieza. Escucha. Luego muéstrala a la cámara o tócala.",
+    autismPrompt: (label) => `Mira. Busca: ${label}.`,
+    autismYes: "Bien. Esa es. Ahora la siguiente.",
+    autismNo: (label) => `Esa no. Busca: ${label}.`,
+    autismDone: "Terminamos esta ronda. Puedes descansar.",
+    welcomeTitle: "Hola, soy TactilIA",
+    welcomeTap: "Toca para hablar conmigo",
+    welcomeTalk: "Hola, soy TactilIA. Te escucho. Di modo escritura, autismo, jugar o escuchar.",
+    assistantOff: "Asistente apagado. Toca Hablar cuando quieras que vuelva.",
+    assistantOn: "Asistente encendido. Te escucho.",
+    gestureThumbUp: "Pulgar arriba. Sí.",
+    gesturePalm: "Palma. Pauso.",
+    gestureFist: "Puño. Cámara en pausa.",
+    gesturePoint: "Dedo arriba. Cámara.",
+    gestureVictory: "Victoria. Leo lo escrito.",
+    gestureThumbDown: "Pulgar abajo. Quitar última.",
+    learnPrompt: "Toca Empezar y muestra el QR.",
     writePrompt: "Muestra cada letra o número al QR. Di «espacio», «borra la última» o «dime qué dice».",
     writeStarted: "Modo escritura. Soy tu profesor. Muestra las piezas. Cuando termines, di: dime qué dice.",
     writeAdded: (glyph, text) => (text && text.trim() ? `Añadí ${glyph}. Ahora dice: ${text}.` : `Añadí ${glyph}.`),
@@ -90,31 +119,32 @@ const I18N = {
     writeBack: (text) => (text ? `Borré la última. Queda: ${text}.` : "Borré la última. El texto quedó vacío."),
     writeCleared: "Borré todo. El texto está vacío.",
     writeNotLetter: "Esa pieza no es letra, número ni signo. En escritura usa esas piezas.",
-    writeTitle: "Pizarra de escritura",
-    writeHelp: "Para estudiantes ciegos o con baja visión: el profesor escucha y la pizarra se arma con el kit 3D.",
+    writeTitle: "Pizarra",
+    writeHelp: "Muestra letras. La pizarra escribe. Di «dime qué dice».",
     writeSpaceBtn: "Espacio",
-    writeBackBtn: "Borrar última",
-    writeReadBtn: "Dime qué dice",
-    writeClearBtn: "Borrar todo",
-    startWriting: "Empezar a escribir",
-    profesorBtn: "Profesor por voz",
+    writeBackBtn: "Quitar",
+    writeReadBtn: "Leer",
+    writeClearBtn: "Borrar",
+    startWriting: "Escribir",
+    profesorBtn: "Hablar",
     profesorBtnStop: "Dejar de escuchar",
-    profesorIdle: "Pulsa para hablar con el profesor. Di: activa el modo escritura.",
-    profesorListening: "Te escucho. Di: modo escritura, aprender, reto, dime qué dice, espacio, borra la última, ayuda.",
-    profesorHello: "Te escucho. Di: activa el modo escritura. O di ayuda.",
+    profesorIdle: "Toca Hablar. Di: modo escritura, autismo, jugar o escuchar.",
+    profesorListening: "Te escucho. Di modo escritura, autismo, jugar, escuchar, dime qué dice, o apaga asistente.",
+    profesorHello: "Te escucho. Di modo escritura, autismo, jugar o escuchar.",
+    profesorClarify: "¿Escritura, autismo, jugar o escuchar?",
     profesorHeard: (s) => `Escuché: ${s}`,
     profesorNoSupport: "Este navegador no reconoce la voz. Prueba Chrome en Android, o usa los botones del panel.",
     profesorMicDenied: "No pude usar el micrófono. Permite el micrófono y vuelve a pulsar Profesor.",
-    profesorHelp: "Puedes decir: activa el modo escritura; modo aprender; modo reto; dime qué dice; espacio; borra la última; borra todo; activa la cámara; ayuda.",
+    profesorHelp: "Di: modo escritura; modo autismo; modo jugar; modo escuchar; dime qué dice; apaga asistente; cámara; ayuda.",
     profesorUnknown: "No entendí. Di ayuda para oír los comandos.",
     profesorOff: "Dejé de escuchar.",
-    startLearning: "Iniciar aprendizaje",
+    startLearning: "Empezar",
     learnStarted: "Aprendizaje activo. Apunta al QR de la pieza.",
     learnFeedback: (label) => `Esto es: ${label}. Mira y toca también el braille debajo de la pieza.`,
     exercisePrompt: "Presiona \"Nuevo reto\" para comenzar",
-    newChallenge: "Nuevo reto", repeat: "Repetir",
-    scanPiece: "Escanear pieza (Realidad Aumentada)",
-    startCamera: "Activar cámara", stopCamera: "Detener",
+    newChallenge: "Jugar", repeat: "Otra vez",
+    scanPiece: "Muestra la pieza",
+    startCamera: "Cámara", stopCamera: "Parar",
     flipCamera: "Girar a frontal",
     flipCameraBack: "Girar a trasera",
     flipCameraShort: "Frontal",
@@ -130,7 +160,7 @@ const I18N = {
     sayWrong: (label, target) => `Esa es ${label}. Sigue buscando ${target}.`,
     freeMode: "Modo exploración libre",
     notRecognized: "Pieza no reconocida",
-    demoTitle: "Practicar sin QR (demo)",
+    demoTitle: "Toca una letra",
     demoHelp: "Toca una pieza para simular el escaneo — útil en mentoría o cuando aún no tienes el kit 3D.",
     statStreak: "Racha", statCorrect: "Aciertos", statAccuracy: "Precisión",
     teacherTitle: "Panel del docente",
@@ -150,7 +180,7 @@ const I18N = {
     btnClear: "Borrar todos los datos",
   },
   qu: {
-    tabEstudiante: "Yachaqaq", tabDocente: "Yachachiq", tabAcerca: "Kaymanta",
+    tabEstudiante: "Pukllay", tabDocente: "Yachachiq", tabAcerca: "Kaymanta",
     a11yTitle: "Runa yanapay", a11yContrast: "Sinchi rikch'ay",
     a11yVibration: "Kuyuchiy allin kaqtin", a11yTextSize: "Qillqa hatunchay",
     a11yVoice: "Rimay / uyarina", a11yMotion: "Aswanta mana kuyuchiy",
@@ -196,25 +226,54 @@ const I18N = {
     installSuggestIos: "iPhone kasqan.",
     paceLabel: "Pacharaykiwan",
     activeStudent: "Kunan yachaqaq", newStudent: "+ Musuq",
-    setLabel: "Impay kit",
-    setLetras: "Letras A–Z + Ñ",
+    setLabel: "Ima kitwan pukllay",
+    setLetras: "Llapan letras",
+    setLetrasMay: "Hatun A Ñ",
+    setLetrasMin: "Huchuy a ñ",
     setNumeros: "Yupaykuna 0–9",
     setSignos: "Unanchakuna",
     setFiguras: "Rikch'akuna",
     setEmociones: "Sunquykuna",
     setRutinas: "Sapa p'unchaw",
     setTodos: "Llapan",
-    setHelp: "Akllay kit. Autismipaq: Mode calmata churay.",
+    setHelp: "Rikch'ayta ñitiy. Hatun = mayúscula. Huchuy = minúscula.",
+    settingsTitle: "Allichay",
+    kitMore: "Aswan",
+    piecesBtn: "Riqsichiykuna",
+    piecesClose: "Wichqay",
     a11yCalm: "Thak mode (autismo / TEA)",
     a11yCalmHelp: "Aswan thak: mana partículas, rimay allin, suwa suyay.",
     sequenceHint: "Qatiqnin ordenpi",
-    exerciseMode: "Yachay pukllay",
-        modeLearn: "1. Yachay",
-    modeChallenge: "2. Atipanakuy",
-    modeWrite: "3. Qillqay",
+    exerciseMode: "Imata ruwayta munanki?",
+        modeLearn: "Uyariy",
+    modeChallenge: "Pukllay",
+    modeWrite: "Qillqay",
+    modeAutism: "Autismo",
     modeLearnHelp: "«Yachayta qallariy» ñitiy, QR-ta qhaway.",
     modeChallengeHelp: "«Musuq atipanakuy» ñitiy.",
     modeWriteHelp: "Letra QR-ta qhaway, qillqakun. «Imata niy» nispa uyarinki.",
+    modeAutismHelp: "Huk pasu: qhaway, uyariy, rikuchiy.",
+    autismLook: "Qhaway",
+    autismListen: "Uyariy",
+    autismDo: "Rikuchiy",
+    autismThen: "Ñawpaq kay. Chaymanta samay.",
+    autismStart: "Pasu pasu",
+    autismStarted: "Autismo mode. Qhaway, uyariy, rikuchiy.",
+    autismPrompt: (label) => `Qhaway. Maskay: ${label}.`,
+    autismYes: "Allin. Qatiqnin.",
+    autismNo: (label) => `Manam. Maskay: ${label}.`,
+    autismDone: "Tukuy. Samayta atinki.",
+    welcomeTitle: "Napaykullayki, TactilIA kani",
+    welcomeTap: "Ñitiy rimaypaq",
+    welcomeTalk: "Napaykullayki. TactilIA kani. Niy: qillqay, autismo, icha apaga asistente.",
+    assistantOff: "Asistente sayasqa.",
+    assistantOn: "Asistente kachkan.",
+    gestureThumbUp: "Arí.",
+    gesturePalm: "Sayay.",
+    gestureFist: "Kamara sayay.",
+    gesturePoint: "Kamara.",
+    gestureVictory: "Qillqasqata ñiyni.",
+    gestureThumbDown: "Qhipata pichay.",
     learnPrompt: "«Yachayta qallariy» ñitiy. QR-ta qhawaspa yachanki.",
     writePrompt: "Letra icha yupay QR-ta qhaway. «Espacio», «borra», «imata niy» niy.",
     writeStarted: "Qillqay kachkan. Riqsichiykunata qhaway. Tukuspa: imata niy.",
@@ -237,14 +296,15 @@ const I18N = {
     startWriting: "Qillqayta qallariy",
     profesorBtn: "Profesor rimaywan",
     profesorBtnStop: "Ama uyarichu",
-    profesorIdle: "Profesorta ñitiy. Niy: qillqay mode.",
-    profesorListening: "Uyarishayki. Niy: qillqay, yachay, atipanakuy, imata niy, espacio, ayuda.",
-    profesorHello: "Uyarishayki. Niy: qillqay. O ayuda.",
+    profesorIdle: "Profesorta ñitiy. Niy: qillqay, autismo, pukllay.",
+    profesorListening: "Uyarishayki. Niy: qillqay, autismo, pukllay, uyariy.",
+    profesorHello: "Uyarishayki. Niy: qillqay, autismo, pukllay.",
     profesorHeard: (s) => `Uyarirqani: ${s}`,
     profesorNoSupport: "Kay navegador mana rimayta hap'inchu. Chromewan Androidpi.",
     profesorMicDenied: "Micrófono mana kanchu. Permisota quy.",
-    profesorHelp: "Niyta atinki: qillqay; yachay; atipanakuy; imata niy; espacio; qhipata pichay; llapan pichay; kamara; ayuda.",
+    profesorHelp: "Niyta atinki: qillqay; autismo; yachay; atipanakuy; imata niy; apaga asistente; kamara; ayuda.",
     profesorUnknown: "Manam hamutani. Ayuda niy.",
+    profesorClarify: "¿Qillqay, autismo, pukllay icha uyariy?",
     profesorOff: "Manaña uyariniñachu.",
     startLearning: "Yachayta qallariy",
     learnStarted: "Yachay kachkan. QR-ta qhaway.",
@@ -317,24 +377,48 @@ function buildLetterConcepts() {
     const [exEs, tipQu] = LETTER_EXAMPLES[ch] || [up, ""];
     list.push({
       id: "letra-" + ch,
-      set: "letras",
+      set: "letras-may",
       type: "letra",
-      label: "Letra " + up,
+      letterCase: "may",
+      label: "Mayúscula " + up,
       glyph: up,
-      say: `Letra ${up}, como en ${exEs}.`,
-      label_qu: "Letra " + up,
-      say_qu: tipQu ? `Kayqa letra ${up}, ${tipQu}.` : `Kayqa letra ${up}.`,
+      say: `Letra mayúscula ${up}, como en ${exEs}.`,
+      label_qu: "Hatun letra " + up,
+      say_qu: tipQu ? `Kayqa hatun letra ${up}, ${tipQu}.` : `Kayqa hatun letra ${up}.`,
+    });
+    list.push({
+      id: "letra-min-" + ch,
+      set: "letras-min",
+      type: "letra",
+      letterCase: "min",
+      label: "Minúscula " + ch,
+      glyph: ch,
+      say: `Letra minúscula ${ch}, como en ${exEs.toLowerCase()}.`,
+      label_qu: "Huchuy letra " + ch,
+      say_qu: tipQu ? `Kayqa huchuy letra ${ch}, ${tipQu}.` : `Kayqa huchuy letra ${ch}.`,
     });
   });
   list.push({
     id: "letra-enie",
-    set: "letras",
+    set: "letras-may",
     type: "letra",
-    label: "Letra Ñ",
+    letterCase: "may",
+    label: "Mayúscula Ñ",
     glyph: "Ñ",
-    say: "Letra eñe, como en Ñandú.",
-    label_qu: "Letra Ñ",
-    say_qu: "Kayqa letra eñe.",
+    say: "Letra mayúscula eñe, como en Ñandú.",
+    label_qu: "Hatun letra Ñ",
+    say_qu: "Kayqa hatun letra eñe.",
+  });
+  list.push({
+    id: "letra-min-enie",
+    set: "letras-min",
+    type: "letra",
+    letterCase: "min",
+    label: "Minúscula ñ",
+    glyph: "ñ",
+    say: "Letra minúscula eñe, como en ñandú.",
+    label_qu: "Huchuy letra ñ",
+    say_qu: "Kayqa huchuy letra eñe.",
   });
   return list;
 }
@@ -413,10 +497,13 @@ const findConcept = (id) => CONCEPTS.find((c) => c.id === id);
 const conceptLabel = (c) => (LANG === "qu" ? c.label_qu : c.label);
 const conceptSay = (c) => (LANG === "qu" ? c.say_qu : c.say);
 
-let activeSet = localStorage.getItem("tactilia_set") || "letras";
-if (activeSet === "basico") activeSet = "letras"; // migración kit antiguo
+let activeSet = localStorage.getItem("tactilia_set") || "letras-may";
+if (activeSet === "basico") activeSet = "letras-may";
 function conceptsInActiveSet() {
   if (activeSet === "todos") return CONCEPTS;
+  if (activeSet === "letras") {
+    return CONCEPTS.filter((c) => c.set === "letras-may" || c.set === "letras-min");
+  }
   return CONCEPTS.filter((c) => c.set === activeSet);
 }
 
@@ -473,19 +560,24 @@ const SESSION = { attempts: 0, correct: 0, streak: 0 };
 let speakBusy = false;
 let lastSpokenNorm = "";
 let lastSpokenTs = 0;
+let lastSpeakEndTs = 0;
+const Assistant = { on: true, welcomed: false, autoplaySpoken: false, booting: false };
 
-function speak(text, onEnd) {
+function speak(text, onEnd, force) {
   if (!text) {
     if (onEnd) onEnd();
     return;
   }
   lastSpokenNorm = normalizeVoice(text);
   lastSpokenTs = Date.now();
+  if (!force && !Assistant.on) {
+    if (onEnd) onEnd();
+    return;
+  }
   if (!PREFS.voice || !("speechSynthesis" in window)) {
     if (onEnd) onEnd();
     return;
   }
-  pauseVoiceListen();
   speakBusy = true;
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
@@ -493,10 +585,14 @@ function speak(text, onEnd) {
   u.rate = PREFS.calmMode ? 0.78 : (LANG === "qu" ? 0.88 : 0.95);
   u.pitch = PREFS.calmMode ? 0.95 : 1;
   const done = () => {
-    if (!speakBusy) return;
+    lastSpeakEndTs = Date.now();
+    if (!speakBusy) {
+      if (onEnd) onEnd();
+      return;
+    }
     speakBusy = false;
     if (onEnd) onEnd();
-    resumeVoiceListenSoon();
+    if (Voice.wanted && !Voice.paused) beginVoiceRec();
   };
   u.onend = done;
   u.onerror = done;
@@ -515,6 +611,9 @@ function scanCooldownMs() {
 }
 
 function flashReward(ok) {
+  if (PREFS.playMode === "autism" || PREFS.calmMode) {
+    if (!ok) return;
+  }
   const el = document.getElementById("reward-flash");
   if (!el) return;
   el.hidden = false;
@@ -543,7 +642,7 @@ function updateTargetPicto() {
   const box = document.getElementById("target-picto");
   const targetText = document.getElementById("exercise-target");
   if (!box) return;
-  if (currentTarget && PREFS.pictosOnly) {
+  if (currentTarget && (PREFS.pictosOnly || PREFS.playMode === "autism")) {
     box.hidden = false;
     box.innerHTML = typeof pictoMarkup === "function" ? pictoMarkup(currentTarget.id) : "";
     if (targetText) targetText.classList.add("sr-visual-hide");
@@ -642,6 +741,8 @@ function refreshExerciseTarget() {
   if (mode === "write") {
     const text = writeText();
     el.textContent = text ? t("writeNow", text) : t("writePrompt");
+  } else if (mode === "autism") {
+    el.textContent = currentTarget ? t("autismPrompt", conceptLabel(currentTarget)) : t("autismStarted");
   } else if (mode === "learn") {
     el.textContent = t(scanning ? "learnStarted" : "learnPrompt");
   } else if (currentTarget) {
@@ -729,12 +830,12 @@ function handleWriteScan(concept, { allowRepeat } = {}) {
 }
 
 async function startWriteSession() {
+  leaveActiveService();
   setPlayMode("write");
   renderWritePanel();
   refreshExerciseTarget();
   const msg = t("writeStarted");
   announceForScreenReader(msg);
-  document.getElementById("write-panel")?.scrollIntoView({ behavior: "smooth", block: "center" });
   if (!scanning) {
     try { await startScan(); } catch (e) { /* permiso de cámara opcional */ }
   }
@@ -798,26 +899,129 @@ function resumeVoiceListenSoon() {
   }, 650);
 }
 
+function interruptSpeech() {
+  const wasBusy = speakBusy;
+  speakBusy = false;
+  try { if ("speechSynthesis" in window) window.speechSynthesis.cancel(); } catch (e) { /* ignore */ }
+  Voice.paused = false;
+  if (wasBusy && Assistant.on && !Voice.wanted) startProfesor({ silent: true });
+  else if (Voice.wanted) beginVoiceRec();
+}
+
+function voicePack(s) {
+  return normalizeVoice(s).replace(/\s+/g, "");
+}
+
+function voiceLooksLikeCommand(norm, packed) {
+  return voiceIntentFromNorm(norm, packed) !== "";
+}
+
+function voiceIntentFromNorm(norm, packed) {
+  const p = packed || voicePack(norm);
+  const n = " " + norm + " ";
+
+  if (/(callate|silencio|adios|hasta luego|ama uyarichu)/.test(n)
+    || /apaga(r)?(el|la|l)?asistente/.test(p)
+    || /apagalavoz|dejadeescuchar|paradeescuchar/.test(p)) return "off";
+  if (/enciendeasistente|prendeasistente|activaasistente|hablaasistente/.test(p)) return "on";
+
+  if (/(dimequedice|quedice|quedije|leelo|leertexto|imataniy|imatanin)/.test(p)
+    || /lee lo que/.test(n)) return "read";
+  if (/(borratodo|limpiatodo|empezardenuevo|llapanpichay)/.test(p)) return "clear";
+  if (/(borraultim|borrarultim|quitaultim|borraletra|qhipatapichay)/.test(p)) return "back";
+  if (/\bespacio\b/.test(n) || /palabra nueva/.test(n)) return "space";
+
+  if (/apagacamara|detenercamara|paracamara/.test(p)) return "cam-off";
+  if (/activacamara|abrecamara|prendecamara|escanear/.test(p)) return "cam-on";
+  if (/\brepetir\b|\botra vez\b|\bkutichiy\b/.test(n)) return "repeat";
+  if (/(ayuda|comandos|quepuedodecir|imataniytaatini)/.test(p)) return "help";
+
+  const writeHit = /escrit|escrib|esritur|pizarra|qillq|qillk|quilc|killk/.test(p)
+    || /modo de escritura|modo escritura|activar escritura|quiero escribir/.test(n);
+  if (writeHit) return "write";
+
+  if (/autismo|aprendizajeautismo|\btea\b|\bthak\b|modocalma/.test(p)) return "autism";
+  if (/modoreto|nuevoreto|activarret|atipanakuy|desafio|desadio/.test(p)
+    || /\b(jugar|pukllay|reto)\b/.test(n)) return "challenge";
+  if (/modoaprend|modoyachay|activaraprend|aprendizaje/.test(p)
+    || /\b(aprender|escuchar|yachay|uyariy)\b/.test(n)) return "learn";
+
+  if (/\b(moto|modo|modos|motor)\b/.test(n) && /\b(letra|letras|palabra|texto)\b/.test(n)) return "write";
+  return "";
+}
+
+function voiceIntent(texts) {
+  const list = (Array.isArray(texts) ? texts : [texts]).map((x) => String(x || "").trim()).filter(Boolean);
+  for (const text of list) {
+    const norm = normalizeVoice(text);
+    const packed = voicePack(text);
+    const hit = voiceIntentFromNorm(norm, packed);
+    if (hit) return { intent: hit, heard: text, norm };
+  }
+  const first = list[0] || "";
+  return { intent: "", heard: first, norm: normalizeVoice(first) };
+}
+
+let lastVoiceIntent = "";
+let lastVoiceIntentTs = 0;
+function acceptIntent(name) {
+  const now = Date.now();
+  if (name && name === lastVoiceIntent && now - lastVoiceIntentTs < 1400) return false;
+  lastVoiceIntent = name;
+  lastVoiceIntentTs = now;
+  return true;
+}
+
+function isTtsEcho(norm) {
+  const packedHeard = voicePack(norm);
+  const packedSpoken = voicePack(lastSpokenNorm);
+  if (!packedHeard || packedHeard.length < 4 || !packedSpoken) return false;
+  const during = speakBusy;
+  const justAfter = Date.now() - lastSpeakEndTs < 700;
+  if (!during && !justAfter) return false;
+  return packedSpoken.includes(packedHeard);
+}
+
+function collectTranscripts(result) {
+  const out = [];
+  for (let a = 0; a < result.length; a++) {
+    const t = result[a] && result[a].transcript;
+    if (t) out.push(t);
+  }
+  return out;
+}
+
+function ingestVoice(texts, { interim } = {}) {
+  const hit = voiceIntent(texts);
+  if (!hit.heard) return;
+  if (isTtsEcho(hit.norm)) return;
+  if (speakBusy) {
+    if (!hit.intent) return;
+    interruptSpeech();
+  }
+  if (interim && !hit.intent) return;
+  handleVoiceCommand(texts);
+}
+
 function ensureVoiceRec() {
   if (Voice.rec || !canVoiceInput()) return;
   const Ctor = window.SpeechRecognition || window.webkitSpeechRecognition;
   const rec = new Ctor();
   rec.continuous = true;
-  rec.interimResults = false;
+  rec.interimResults = true;
   rec.lang = "es-PE";
-  rec.maxAlternatives = 3;
+  rec.maxAlternatives = 5;
   rec.onresult = (ev) => {
-    if (speakBusy || Voice.paused) return;
     for (let i = ev.resultIndex; i < ev.results.length; i++) {
-      if (!ev.results[i].isFinal) continue;
-      const text = ev.results[i][0] && ev.results[i][0].transcript;
-      if (text) handleVoiceCommand(text);
+      const alts = collectTranscripts(ev.results[i]);
+      if (!alts.length) continue;
+      ingestVoice(alts, { interim: !ev.results[i].isFinal });
     }
   };
   rec.onend = () => {
     Voice.starting = false;
-    if (Voice.wanted && !Voice.paused && !speakBusy) {
-      setTimeout(() => beginVoiceRec(), 240);
+    if (Voice.wanted && !Voice.paused) {
+      setTimeout(() => beginVoiceRec(), 180);
     }
     updateProfesorUI();
   };
@@ -833,7 +1037,7 @@ function ensureVoiceRec() {
 }
 
 function beginVoiceRec() {
-  if (!Voice.wanted || Voice.paused || speakBusy) return;
+  if (!Voice.wanted || Voice.paused) return;
   ensureVoiceRec();
   if (!Voice.rec) return;
   try {
@@ -846,10 +1050,12 @@ function beginVoiceRec() {
   updateProfesorUI();
 }
 
-function startProfesor() {
+function startProfesor(opts) {
+  const silent = opts && opts.silent;
+  Assistant.on = true;
   if (!canVoiceInput()) {
     updateProfesorUI();
-    speak(t("profesorNoSupport"));
+    if (!silent) speak(t("profesorNoSupport"));
     toast(t("profesorNoSupport"));
     return;
   }
@@ -857,7 +1063,7 @@ function startProfesor() {
   Voice.paused = false;
   beginVoiceRec();
   updateProfesorUI();
-  speak(t("profesorHello"));
+  if (!silent) speak(t("profesorHello"));
 }
 
 function stopProfesor({ silent } = {}) {
@@ -867,12 +1073,40 @@ function stopProfesor({ silent } = {}) {
     try { Voice.rec.stop(); } catch (e) { /* ignore */ }
   }
   updateProfesorUI();
-  if (!silent) speak(t("profesorOff"));
+  if (!silent) speak(t("profesorOff"), null, true);
+}
+
+function stopAssistant() {
+  Voice.wanted = false;
+  Voice.paused = false;
+  if (Voice.rec) {
+    try { Voice.rec.stop(); } catch (e) { /* ignore */ }
+  }
+  updateProfesorUI();
+  speak(t("assistantOff"), () => {
+    Assistant.on = false;
+    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+  }, true);
+}
+
+function startAssistantFromUser() {
+  dismissWelcome();
+  Assistant.on = true;
+  if (Voice.wanted || Assistant.booting) return;
+  Assistant.booting = true;
+  Assistant.welcomed = true;
+  speakBusy = false;
+  try { if ("speechSynthesis" in window) window.speechSynthesis.cancel(); } catch (e) { /* ignore */ }
+  Voice.paused = false;
+  speak(t("profesorHello"), () => {
+    Assistant.booting = false;
+    startProfesor({ silent: true });
+  }, true);
 }
 
 function toggleProfesor() {
-  if (Voice.wanted) stopProfesor();
-  else startProfesor();
+  if (Voice.wanted) stopAssistant();
+  else startAssistantFromUser();
 }
 
 const SPEECH_LETTER = {
@@ -890,15 +1124,25 @@ const SPEECH_NUMBER = {
 };
 
 function trySpeechGlyph(norm) {
+  const wantUpper = /\b(mayuscula|mayusculas|grande|grandes|hatun)\b/.test(norm);
+  const wantLower = /\b(minuscula|minusculas|chiquita|chiquitas|pequena|pequenas|huchuy)\b/.test(norm);
+  const toCase = (upperGlyph) => {
+    if (!upperGlyph) return "";
+    if (wantUpper) return upperGlyph;
+    if (wantLower) return upperGlyph.toLowerCase();
+    return upperGlyph.toLowerCase();
+  };
   const letra = norm.match(/\bletra\s+(uve doble|i griega|n tilde|enie|eneie|enye|hache|jota|equis|zeta|efe|eme|ene|ele|ese|uve|erre|ere|ce|be|de|ge|ka|pe|cu|te|[a-z])\b/);
   if (letra) {
     const key = letra[1].replace(/\s+/g, " ");
-    if (key === "uve doble") return "W";
-    if (key === "i griega") return "Y";
-    if (key === "n tilde") return "Ñ";
-    return SPEECH_LETTER[key] || (key.length === 1 ? key.toUpperCase() : "");
+    let upper = "";
+    if (key === "uve doble") upper = "W";
+    else if (key === "i griega") upper = "Y";
+    else if (key === "n tilde" || key === "enie" || key === "eneie" || key === "enye") upper = "Ñ";
+    else upper = SPEECH_LETTER[key] || (key.length === 1 ? key.toUpperCase() : "");
+    return toCase(upper);
   }
-  const num = norm.match(/\b(?:numero|numero)\s+(cero|uno|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|[0-9])\b/)
+  const num = norm.match(/\b(?:numero)\s+(cero|uno|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|[0-9])\b/)
     || norm.match(/\b(cero|uno|dos|tres|cuatro|cinco|seis|siete|ocho|nueve)\b/);
   if (num) {
     const key = num[1];
@@ -909,73 +1153,49 @@ function trySpeechGlyph(norm) {
 }
 
 function handleVoiceCommand(raw) {
-  const heard = String(raw || "").trim();
+  const texts = Array.isArray(raw) ? raw : [raw];
+  const hit = voiceIntent(texts);
+  const heard = hit.heard || String(texts[0] || "").trim();
   if (!heard) return;
-  const norm = normalizeVoice(heard);
+  const norm = hit.norm || normalizeVoice(heard);
   if (!norm || norm.length < 2) return;
-  if (lastSpokenNorm && Date.now() - lastSpokenTs < 2200) {
-    if (lastSpokenNorm.includes(norm) || (norm.length > 12 && lastSpokenNorm.includes(norm.slice(0, 12)))) {
-      return;
-    }
-  }
 
   const status = document.getElementById("profesor-status");
   if (status) status.textContent = t("profesorHeard", heard);
 
-  const has = (...bits) => bits.every((b) => norm.includes(normalizeVoice(b)));
-  const any = (...bits) => bits.some((b) => norm.includes(normalizeVoice(b)));
+  const intent = hit.intent;
+  if (intent && !acceptIntent(intent)) return;
 
-  if (any("ayuda", "comandos", "que puedo decir", "imata niyta atini")) {
-    speak(t("profesorHelp"));
-    return;
-  }
-  if (any("deja de escuchar", "para de escuchar", "silencio", "ama uyarichu")) {
-    stopProfesor();
-    return;
-  }
-  if (any("dime que dice", "que dice", "que dije", "leelo", "lee lo que", "leer texto", "imata niy", "imata nin")) {
+  if (intent === "help") { speak(t("profesorHelp")); return; }
+  if (intent === "off") { stopAssistant(); return; }
+  if (intent === "on") { startAssistantFromUser(); return; }
+  if (intent === "autism") { startAutismSession(); return; }
+  if (intent === "write") { startWriteSession(); return; }
+  if (intent === "learn") { startLearningSession(); return; }
+  if (intent === "challenge") { startChallengeSession(); return; }
+  if (intent === "read") {
     if ((PREFS.playMode || "learn") !== "write") startWriteSession();
     writeReadAloud();
     return;
   }
-  if (any("borra todo", "borrar todo", "limpia todo", "empezar de nuevo", "llapan pichay")) {
+  if (intent === "clear") {
     if ((PREFS.playMode || "learn") !== "write") startWriteSession();
     writeClear();
     return;
   }
-  if (any("borra la ultima", "borrar ultima", "quita la ultima", "borra letra", "qhipata pichay")) {
+  if (intent === "back") {
     if ((PREFS.playMode || "learn") !== "write") startWriteSession();
     writeBackspace();
     return;
   }
-  if (any("espacio en blanco", "espacio", "palabra nueva")) {
+  if (intent === "space") {
     if ((PREFS.playMode || "learn") !== "write") startWriteSession();
     writeSpace();
     return;
   }
-  if (any("modo escritura", "activar escritura", "activa el modo escritura", "quiero escribir", "qillqay")) {
-    startWriteSession();
-    return;
-  }
-  if (any("modo aprender", "modo aprendizaje", "activar aprendizaje", "yachay")) {
-    startLearningSession();
-    return;
-  }
-  if (any("modo reto", "nuevo reto", "activar reto", "atipanakuy")) {
-    startChallengeSession();
-    return;
-  }
-  if (any("apaga la camara", "detener camara", "para la camara")) {
-    stopScan();
-    speak(t("cameraOff"));
-    return;
-  }
-  if (any("activa la camara", "abre la camara", "prende la camara", "escanear")) {
-    startScan();
-    speak(t("cameraOn"));
-    return;
-  }
-  if (any("repetir")) {
+  if (intent === "cam-off") { stopScan(); speak(t("cameraOff")); return; }
+  if (intent === "cam-on") { startScan(); speak(t("cameraOn")); return; }
+  if (intent === "repeat") {
     document.getElementById("btn-repeat-audio")?.click();
     return;
   }
@@ -989,12 +1209,10 @@ function handleVoiceCommand(raw) {
     }
   }
 
-  if (has("profesor") || any("escucha", "escuchame")) {
-    speak(t("profesorListening"));
+  if (/\b(modo|moto|motor|modos)\b/.test(norm)) {
+    speak(t("profesorClarify"));
     return;
   }
-
-  speak(t("profesorUnknown"));
 }
 
 /* ---------- 4. Aplicar traducciones a elementos [data-i18n] -------------- */
@@ -1027,6 +1245,7 @@ function applyI18n() {
   document.documentElement.lang = LANG === "qu" ? "qu" : "es";
   document.getElementById("scan-status").textContent = scanning ? t("cameraOn") : t("cameraOff");
   updateSessionUI();
+  renderKitChips();
   syncPlayModeUI();
   updateProfesorUI();
   if (typeof decorateButtonsWithIcons === "function") decorateButtonsWithIcons();
@@ -1186,6 +1405,16 @@ window.addEventListener("appinstalled", () => {
 })();
 
 /* ---------- 5. Navegación por pestañas ---------- */
+function setHomeTab(view) {
+  const isHome = view === "estudiante";
+  document.body.classList.toggle("home-locked", isHome);
+  document.body.dataset.tab = view || "estudiante";
+  if (!isHome) {
+    closePiecesSheet();
+    if (typeof scanning !== "undefined" && scanning && typeof stopScan === "function") stopScan();
+  }
+}
+
 document.querySelectorAll(".tab-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".tab-btn").forEach((b) => {
@@ -1195,22 +1424,60 @@ document.querySelectorAll(".tab-btn").forEach((btn) => {
     });
     document.querySelectorAll(".view").forEach((v) => v.classList.remove("active"));
     document.getElementById("view-" + btn.dataset.view).classList.add("active");
+    setHomeTab(btn.dataset.view);
     if (btn.dataset.view === "docente") renderDashboard();
   });
 });
 
 /* ---------- 5b. Selector de set temático ---------- */
+const KIT_CHIPS = [
+  { id: "letras-may", glyph: "AÑ", i18n: "setLetrasMay" },
+  { id: "letras-min", glyph: "añ", i18n: "setLetrasMin" },
+  { id: "letras", glyph: "Aa", i18n: "setLetras" },
+  { id: "numeros", glyph: "123", i18n: "setNumeros" },
+  { id: "signos", glyph: "+ =", i18n: "setSignos" },
+  { id: "figuras", glyph: "△○", i18n: "setFiguras" },
+  { id: "emociones", glyph: ":)", i18n: "setEmociones" },
+  { id: "rutinas", glyph: "⌂", i18n: "setRutinas" },
+  { id: "todos", glyph: "★", i18n: "setTodos" },
+];
+
+function renderKitChips() {
+  const root = document.getElementById("kit-chips");
+  if (!root) return;
+  root.innerHTML = "";
+  KIT_CHIPS.forEach((k) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "kit-chip" + (activeSet === k.id ? " active" : "");
+    btn.dataset.set = k.id;
+    btn.setAttribute("role", "radio");
+    btn.setAttribute("aria-checked", activeSet === k.id ? "true" : "false");
+    btn.setAttribute("aria-label", t(k.i18n));
+    btn.innerHTML = `<span class="kit-glyph" aria-hidden="true">${k.glyph}</span><span class="kit-name">${t(k.i18n)}</span>`;
+    btn.addEventListener("click", () => setActiveKit(k.id));
+    root.appendChild(btn);
+  });
+}
+
+function setActiveKit(id) {
+  activeSet = id;
+  localStorage.setItem("tactilia_set", activeSet);
+  currentTarget = null;
+  pickAdaptiveChallenge._seq = 0;
+  if (setSelect) setSelect.value = activeSet;
+  renderKitChips();
+  renderPieceGrid();
+  refreshExerciseTarget();
+}
+
 const setSelect = document.getElementById("set-select");
 if (setSelect) {
+  if (![...setSelect.options].some((o) => o.value === activeSet)) {
+    activeSet = "letras-may";
+  }
   setSelect.value = activeSet;
-  setSelect.addEventListener("change", () => {
-    activeSet = setSelect.value;
-    localStorage.setItem("tactilia_set", activeSet);
-    currentTarget = null;
-    pickAdaptiveChallenge._seq = 0;
-    applyI18n();
-    renderPieceGrid();
-  });
+  setSelect.addEventListener("change", () => setActiveKit(setSelect.value));
 }
 /* ---------- 6. Selector de estudiante ---------- */
 const studentSelect = document.getElementById("student-select");
@@ -1320,22 +1587,33 @@ function applyPrefs() {
 function syncPlayModeUI() {
   const mode = PREFS.playMode || "learn";
   document.querySelectorAll(".play-mode-btn").forEach((b) => {
-    b.classList.toggle("active", b.dataset.mode === mode);
+    const on = b.dataset.mode === mode;
+    b.classList.toggle("active", on);
+    b.setAttribute("aria-pressed", on ? "true" : "false");
   });
   const help = document.getElementById("play-mode-help");
+  document.body.classList.toggle("autism-mode", mode === "autism");
+  document.body.classList.toggle("service-learn", mode === "learn");
+  document.body.classList.toggle("service-challenge", mode === "challenge");
+  document.body.classList.toggle("service-write", mode === "write");
+  document.body.classList.toggle("service-autism", mode === "autism");
+  const board = document.getElementById("autism-board");
+  if (board) board.hidden = mode !== "autism";
   if (help) {
     help.textContent = mode === "write"
       ? t("modeWriteHelp")
-      : mode === "learn"
-        ? t("modeLearnHelp")
-        : t("modeChallengeHelp");
+      : mode === "autism"
+        ? t("modeAutismHelp")
+        : mode === "learn"
+          ? t("modeLearnHelp")
+          : t("modeChallengeHelp");
   }
   const actions = document.getElementById("challenge-actions");
   if (actions) actions.hidden = false;
 
   const primary = document.getElementById("btn-new-challenge");
   if (primary) {
-    const key = mode === "write" ? "startWriting" : mode === "learn" ? "startLearning" : "newChallenge";
+    const key = mode === "write" ? "startWriting" : mode === "autism" ? "autismStart" : mode === "learn" ? "startLearning" : "newChallenge";
     primary.setAttribute("data-i18n", key);
     let textEl = primary.querySelector("[data-i18n-text]");
     if (!textEl) {
@@ -1357,6 +1635,9 @@ function syncPlayModeUI() {
     currentTarget = null;
     updateTargetPicto();
     updatePaceBar(false);
+  } else if (mode === "autism") {
+    updateTargetPicto();
+    updatePaceBar(true);
   } else if (!currentTarget) {
     updatePaceBar(false);
   }
@@ -1365,23 +1646,162 @@ function syncPlayModeUI() {
   renderPieceGrid();
 }
 
+function closePiecesSheet() {
+  const sheet = document.getElementById("pieces-sheet");
+  if (sheet) sheet.hidden = true;
+  document.body.classList.remove("sheet-open");
+  const btn = document.getElementById("btn-toggle-pieces");
+  if (btn) btn.setAttribute("aria-expanded", "false");
+}
+
+function openPiecesSheet() {
+  const sheet = document.getElementById("pieces-sheet");
+  if (!sheet) return;
+  sheet.hidden = false;
+  document.body.classList.add("sheet-open");
+  const btn = document.getElementById("btn-toggle-pieces");
+  if (btn) btn.setAttribute("aria-expanded", "true");
+  renderKitChips();
+  renderPieceGrid();
+}
+
+function togglePiecesSheet() {
+  const sheet = document.getElementById("pieces-sheet");
+  if (!sheet || sheet.hidden) openPiecesSheet();
+  else closePiecesSheet();
+}
+
+function leaveActiveService() {
+  try {
+    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+  } catch (e) { /* ignore */ }
+  currentTarget = null;
+  autismHits = 0;
+  if (typeof setAutismStep === "function") setAutismStep("look");
+  const result = document.getElementById("result-card");
+  if (result) result.hidden = true;
+  closePiecesSheet();
+}
+
+function activateService(mode) {
+  const next = ["learn", "challenge", "write", "autism"].includes(mode) ? mode : "learn";
+  if (next === "write") return startWriteSession();
+  if (next === "autism") return startAutismSession();
+  if (next === "challenge") return startChallengeSession();
+  return startLearningSession();
+}
+
 function setPlayMode(mode) {
-  PREFS.playMode = mode === "challenge" ? "challenge" : mode === "write" ? "write" : "learn";
+  const allowed = ["learn", "challenge", "write", "autism"];
+  PREFS.playMode = allowed.includes(mode) ? mode : "learn";
   savePrefs(PREFS);
   syncPlayModeUI();
 }
 
-document.getElementById("mode-learn")?.addEventListener("click", () => setPlayMode("learn"));
-document.getElementById("mode-challenge")?.addEventListener("click", () => setPlayMode("challenge"));
-document.getElementById("mode-write")?.addEventListener("click", () => startWriteSession());
+document.getElementById("mode-learn")?.addEventListener("click", () => activateService("learn"));
+document.getElementById("mode-challenge")?.addEventListener("click", () => activateService("challenge"));
+document.getElementById("mode-write")?.addEventListener("click", () => activateService("write"));
+document.getElementById("mode-autism")?.addEventListener("click", () => activateService("autism"));
+document.getElementById("btn-toggle-pieces")?.addEventListener("click", () => togglePiecesSheet());
+document.getElementById("btn-close-pieces")?.addEventListener("click", () => closePiecesSheet());
+
+let autismHits = 0;
+
+function setAutismStep(which) {
+  ["look", "listen", "do"].forEach((step) => {
+    document.getElementById("autism-step-" + step)?.classList.toggle("is-on", step === which);
+  });
+}
+
+async function startAutismSession() {
+  leaveActiveService();
+  PREFS = { ...PREFS, ...A11Y_PROFILES.tea, playMode: "autism" };
+  savePrefs(PREFS);
+  applyPrefs();
+  autismHits = 0;
+  currentTarget = pickAdaptiveChallenge();
+  setAutismStep("look");
+  const board = document.getElementById("autism-board");
+  if (board) board.hidden = false;
+  updateTargetPicto();
+  updatePaceBar(true);
+  renderPieceGrid();
+  refreshExerciseTarget();
+  announceForScreenReader(t("autismStarted"));
+  speak(t("autismStarted"), () => {
+    setAutismStep("listen");
+    if (currentTarget) {
+      speak(t("autismPrompt", conceptLabel(currentTarget)), () => setAutismStep("do"));
+    }
+  });
+  if (!scanning) {
+    try { await startScan(); } catch (e) { /* cámara opcional: se puede tocar la grilla */ }
+  }
+}
+
+function handleAutismScan(concept) {
+  const resultCard = document.getElementById("result-card");
+  if (resultCard) {
+    resultCard.hidden = false;
+    resultCard.classList.remove("is-learn");
+    resultCard.classList.toggle("is-correct", !!(currentTarget && concept.id === currentTarget.id));
+    resultCard.classList.toggle("is-wrong", !!(currentTarget && concept.id !== currentTarget.id));
+    fillPieceVisual(document.getElementById("result-icon"), concept.id);
+    document.getElementById("result-label").textContent = conceptLabel(concept);
+    showBrailleResult(concept);
+  }
+  if (!currentTarget) {
+    currentTarget = concept;
+    document.getElementById("result-feedback").textContent = t("autismPrompt", conceptLabel(concept));
+    speak(t("autismPrompt", conceptLabel(concept)));
+    updateTargetPicto();
+    return;
+  }
+  const correct = concept.id === currentTarget.id;
+  document.getElementById("result-feedback").textContent = correct
+    ? t("autismYes")
+    : t("autismNo", conceptLabel(currentTarget));
+  logAttempt(concept.id, currentTarget.id, correct);
+  SESSION.attempts++;
+  if (correct) {
+    SESSION.correct++;
+    SESSION.streak++;
+    flashReward(true);
+    vibrate(120);
+    speak(t("autismYes"));
+    autismHits++;
+    if (autismHits >= 5) {
+      currentTarget = null;
+      updateTargetPicto();
+      updatePaceBar(false);
+      speak(t("autismDone"));
+    } else {
+      setTimeout(() => {
+        currentTarget = pickAdaptiveChallenge();
+        setAutismStep("listen");
+        updateTargetPicto();
+        renderPieceGrid();
+        refreshExerciseTarget();
+        if (currentTarget) {
+          speak(t("autismPrompt", conceptLabel(currentTarget)), () => setAutismStep("do"));
+        }
+      }, 2200);
+    }
+  } else {
+    SESSION.streak = 0;
+    speak(t("autismNo", conceptLabel(currentTarget)));
+  }
+  updateSessionUI();
+  renderPieceGrid();
+}
 
 async function startLearningSession() {
+  leaveActiveService();
   setPlayMode("learn");
   const target = document.getElementById("exercise-target");
   if (target) target.textContent = t("learnStarted");
   speak(t("learnStarted"));
   announceForScreenReader(t("learnStarted"));
-  document.getElementById("scanner-wrap")?.scrollIntoView({ behavior: "smooth", block: "center" });
   if (!scanning) {
     await startScan();
   }
@@ -1389,6 +1809,7 @@ async function startLearningSession() {
 }
 
 function startChallengeSession() {
+  leaveActiveService();
   setPlayMode("challenge");
   currentTarget = pickAdaptiveChallenge();
   if (!currentTarget) return;
@@ -1399,7 +1820,7 @@ function startChallengeSession() {
   updateTargetPicto();
   updatePaceBar(true);
   renderPieceGrid();
-  document.getElementById("scanner-wrap")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  if (!scanning) startScan();
 }
 
 function applyProfile(id) {
@@ -1497,12 +1918,14 @@ function pickAdaptiveChallenge() {
 document.getElementById("btn-new-challenge").addEventListener("click", () => {
   const mode = PREFS.playMode || "learn";
   if (mode === "write") startWriteSession();
+  else if (mode === "autism") startAutismSession();
   else if (mode === "learn") startLearningSession();
   else startChallengeSession();
 });
 
 document.getElementById("btn-repeat-audio").addEventListener("click", () => {
   if ((PREFS.playMode || "learn") === "write") writeReadAloud();
+  else if ((PREFS.playMode || "learn") === "autism" && currentTarget) speak(t("autismPrompt", conceptLabel(currentTarget)));
   else if (currentTarget) speak(t("sayFind", conceptLabel(currentTarget)));
   else speak(t("exercisePrompt"));
 });
@@ -1650,6 +2073,7 @@ async function startScan(facing) {
     document.getElementById("scan-status").textContent =
       cameraFacing === "user" ? t("cameraFront") : t("cameraOn");
     requestAnimationFrame(scanLoop);
+    if (typeof initGestures === "function") initGestures();
   } catch (err) {
     if (facing === "user" || cameraFacing === "user") {
       document.getElementById("scan-status").textContent = t("cameraSwitchFail");
@@ -1752,6 +2176,84 @@ function updateAndDrawParticles() {
   particles = next;
 }
 
+function showGestureBadge(label) {
+  const el = document.getElementById("gesture-badge");
+  if (!el) return;
+  el.hidden = false;
+  el.textContent = label;
+  clearTimeout(showGestureBadge._t);
+  showGestureBadge._t = setTimeout(() => { el.hidden = true; }, 1400);
+}
+
+function applyHandGesture(name) {
+  if (typeof gestureCooldownOk === "function" && !gestureCooldownOk(1700)) return;
+  const actions = {
+    Thumb_Up: () => {
+      showGestureBadge("SÍ");
+      speak(t("gestureThumbUp"));
+      if (currentTarget) document.getElementById("btn-repeat-audio")?.click();
+    },
+    Open_Palm: () => {
+      showGestureBadge("PARAR");
+      stopAssistant();
+    },
+    Closed_Fist: () => {
+      showGestureBadge("STOP");
+      if (scanning) stopScan();
+      speak(t("gestureFist"));
+    },
+    Pointing_Up: () => {
+      showGestureBadge("CÁMARA");
+      if (!scanning) startScan();
+      speak(t("gesturePoint"));
+    },
+    Victory: () => {
+      showGestureBadge("LEER");
+      if ((PREFS.playMode || "learn") === "write") writeReadAloud();
+      else speak(t("gestureVictory"));
+    },
+    Thumb_Down: () => {
+      showGestureBadge("NO");
+      if ((PREFS.playMode || "learn") === "write") writeBackspace();
+      else speak(t("gestureThumbDown"));
+    },
+  };
+  const fn = actions[name];
+  if (fn) fn();
+}
+
+function dismissWelcome() {
+  const gate = document.getElementById("welcome-gate");
+  if (gate) gate.hidden = true;
+  document.body.classList.remove("is-welcome");
+}
+
+function speakWelcomeOnLoad() {
+  if (Assistant.autoplaySpoken) return;
+  Assistant.on = true;
+  if (!("speechSynthesis" in window)) return;
+  const talk = () => {
+    if (Assistant.autoplaySpoken || Voice.wanted) return;
+    Assistant.autoplaySpoken = true;
+    try {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(t("welcomeTalk"));
+      u.lang = "es-PE";
+      u.rate = 0.92;
+      u.onend = () => { Assistant.welcomed = true; lastSpeakEndTs = Date.now(); };
+      window.speechSynthesis.speak(u);
+      lastSpokenNorm = normalizeVoice(t("welcomeTalk"));
+      lastSpokenTs = Date.now();
+    } catch (e) {
+      Assistant.autoplaySpoken = false;
+    }
+  };
+  talk();
+  if (window.speechSynthesis && speechSynthesis.addEventListener) {
+    speechSynthesis.addEventListener("voiceschanged", talk, { once: true });
+  }
+}
+
 function scanLoop() {
   if (!scanning) return;
   if (video.readyState === video.HAVE_ENOUGH_DATA) {
@@ -1779,6 +2281,10 @@ function scanLoop() {
       WRITE.readyForNext = true;
     }
     updateAndDrawParticles();
+    if (typeof pollHandGesture === "function") {
+      const g = pollHandGesture(video);
+      if (g) applyHandGesture(g);
+    }
   }
   requestAnimationFrame(scanLoop);
 }
@@ -1893,6 +2399,10 @@ function handleScan(concept, location) {
     handleWriteScan(concept, { allowRepeat: !location });
     return;
   }
+  if ((PREFS.playMode || "learn") === "autism") {
+    handleAutismScan(concept);
+    return;
+  }
 
   if ((PREFS.playMode || "learn") === "learn") {
     currentTarget = null;
@@ -1998,13 +2508,17 @@ function renderPieceGrid() {
     if (!PREFS.pictosOnly) {
       const lb = document.createElement("span");
       lb.className = "lb";
-      lb.textContent = conceptLabel(c);
+      lb.textContent = c.glyph || conceptLabel(c);
       btn.appendChild(ic);
       btn.appendChild(lb);
     } else {
       btn.appendChild(ic);
     }
-    btn.addEventListener("click", () => handleScan(c, null));
+    if (c.letterCase) btn.classList.add(c.letterCase === "may" ? "is-may" : "is-min");
+    btn.addEventListener("click", () => {
+      closePiecesSheet();
+      handleScan(c, null);
+    });
     grid.appendChild(btn);
   });
 }
@@ -2012,12 +2526,13 @@ function renderPieceGrid() {
 function renderPiezasCatalogo() {
   const root = document.getElementById("piezas-catalogo");
   if (!root) return;
-  const groups = { letras: [], numeros: [], signos: [], figuras: [], emociones: [], rutinas: [] };
+  const groups = { "letras-may": [], "letras-min": [], numeros: [], signos: [], figuras: [], emociones: [], rutinas: [] };
   CONCEPTS.forEach((c) => {
     if (groups[c.set]) groups[c.set].push(c);
   });
   const titles = {
-    letras: "Letras A–Z + Ñ",
+    "letras-may": "Mayúsculas A–Z + Ñ  (letra-a.png … letra-enie.png)",
+    "letras-min": "Minúsculas a–z + ñ  (letra-min-a.png … letra-min-enie.png)",
     numeros: "Números 0–9",
     signos: "Signos",
     figuras: "Figuras",
@@ -2287,7 +2802,7 @@ document.getElementById("btn-clear").addEventListener("click", () => {
 /* ---------- 14. Registro del Service Worker (instalable / offline) ---------- */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("service-worker.js?v=17").then((reg) => {
+    navigator.serviceWorker.register("service-worker.js?v=22").then((reg) => {
       reg.update().catch(() => {});
       if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
     }).catch(() => {});
@@ -2456,3 +2971,12 @@ if (typeof decorateButtonsWithIcons === "function") {
     if (typeof uiIcon === "function") el.innerHTML = uiIcon(name);
   });
 }
+
+document.getElementById("btn-welcome-start")?.addEventListener("click", () => startAssistantFromUser());
+document.addEventListener("pointerdown", () => {
+  if (document.body.classList.contains("is-welcome")) startAssistantFromUser();
+}, { once: true });
+window.addEventListener("load", () => {
+  speakWelcomeOnLoad();
+  setTimeout(speakWelcomeOnLoad, 400);
+});

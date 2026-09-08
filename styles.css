@@ -16,7 +16,7 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; height: 100%; }
 
 body {
   margin: 0;
@@ -209,16 +209,28 @@ button:active { transform: scale(0.98); }
 .session-stat .l { display: block; font-size: 11px; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.04em; }
 
 .play-mode-switch {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0 0 10px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 12px;
 }
 .play-mode-btn {
-  background: #f5ecd2; color: var(--teal-dark); border: 2px solid transparent;
-  border-radius: 12px; padding: 12px 8px; font-size: 13px; font-weight: 800; cursor: pointer;
+  background: #f5ecd2; color: var(--teal-dark); border: 3px solid transparent;
+  border-radius: 20px; padding: 14px 8px 12px; font-size: 14px; font-weight: 800; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 96px;
 }
+.play-mode-big {
+  font-size: 32px; line-height: 1; font-weight: 900; letter-spacing: 0.02em;
+}
+.play-learn { background: #e0f2fe; color: #075985; }
+.play-challenge { background: #fef3c7; color: #92400e; }
+.play-write { background: #dcfce7; color: #166534; }
+.play-autism { background: #ede9fe; color: #5b21b6; }
 .play-mode-btn.active {
-  border-color: var(--gold); background: #fff8e7;
-  box-shadow: 0 0 0 2px rgba(201,162,39,0.25);
+  border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,162,39,0.28);
+  transform: translateY(-2px);
 }
+.play-learn.active { background: #bae6fd; }
+.play-challenge.active { background: #fde68a; }
+.play-write.active { background: #86efac; }
+.play-autism.active { background: #ddd6fe; }
 
 .write-card { border-top-color: var(--teal-dark); }
 .write-text {
@@ -303,8 +315,115 @@ body.contrast-mode .write-text {
 }
 
 @media (max-width: 420px) {
-  .play-mode-btn { font-size: 12px; padding: 10px 4px; }
+  .play-mode-btn { font-size: 12px; padding: 10px 4px; min-height: 88px; }
+  .play-mode-big { font-size: 26px; }
 }
+
+.kit-label { margin: 0 0 10px; font-size: 18px; font-weight: 800; color: var(--teal-dark); }
+.kit-chips {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.kit-chip {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; min-height: 84px; padding: 10px 6px;
+  border-radius: 20px; border: 3px solid transparent;
+  background: #fffdf8; color: var(--ink); cursor: pointer; font-weight: 800;
+}
+.kit-chip .kit-glyph {
+  font-size: 26px; line-height: 1; font-weight: 900; color: var(--teal-dark);
+  font-family: "Segoe UI", Georgia, serif;
+}
+.kit-chip .kit-name { font-size: 11px; text-align: center; color: var(--muted); font-weight: 700; line-height: 1.2; }
+.kit-chip.active {
+  border-color: var(--gold); background: #fff4cc;
+  box-shadow: 0 0 0 3px rgba(201,162,39,0.25);
+}
+.kit-chip[data-set="letras-min"] .kit-glyph { font-size: 24px; font-weight: 600; }
+
+.btn-xl { min-height: 56px; font-size: 18px; padding: 14px 18px; border-radius: 18px; }
+.settings-fold summary {
+  cursor: pointer; font-weight: 800; font-size: 16px; list-style: none;
+  display: flex; align-items: center; gap: 8px;
+}
+.settings-fold summary::-webkit-details-marker { display: none; }
+.nested-block { margin-top: 16px; padding-top: 12px; border-top: 1px dashed var(--border); }
+.nested-block h2, .nested-block h3 { font-size: 15px; margin: 0 0 8px; }
+
+body.kid-ui {
+  --radius: 20px;
+  font-size: 17px;
+}
+body.kid-ui .card { padding: 20px 16px; border-radius: 22px; }
+body.kid-ui .target-text {
+  font-size: 20px; font-weight: 800; text-align: center;
+  background: #fff8e7; border-radius: 16px; padding: 14px 12px; margin: 8px 0;
+}
+body.kid-ui .piece-grid { grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 10px; }
+body.kid-ui .piece-chip { min-height: 92px; border-radius: 18px; border-width: 2px; }
+body.kid-ui .piece-chip .lb { font-size: 22px; font-weight: 900; color: var(--teal-dark); }
+body.kid-ui .piece-chip.is-min .lb { font-weight: 600; font-size: 20px; }
+body.kid-ui .profesor-dock { padding: 12px 14px calc(12px + env(safe-area-inset-bottom)); }
+body.kid-ui .btn-profesor { min-height: 56px; font-size: 16px; padding: 14px 20px; }
+body.kid-ui .tab-btn { min-height: 48px; font-size: 15px; border-radius: 14px; }
+body.kid-ui .write-text { border-radius: 18px; }
+
+.welcome-gate {
+  position: fixed; inset: 0; z-index: 80;
+  display: grid; place-items: center;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(255,244,220,0.96), rgba(232,210,175,0.94));
+  padding: 24px;
+}
+.welcome-gate[hidden] { display: none !important; }
+.welcome-start {
+  width: min(420px, 100%);
+  min-height: 280px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; text-align: center;
+  background: #fffdf8; color: var(--teal-dark);
+  border: 4px solid var(--gold); border-radius: 32px;
+  box-shadow: 0 18px 40px rgba(80,40,10,0.2);
+  padding: 28px 20px; cursor: pointer;
+}
+.welcome-mark {
+  width: 88px; height: 88px; border-radius: 24px;
+  display: grid; place-items: center;
+  background: #fde68a; font-size: 40px; font-weight: 900;
+}
+.welcome-start strong { font-size: 26px; }
+.welcome-start span { font-size: 18px; font-weight: 700; color: var(--muted); }
+
+.autism-board { border-top-color: #7c3aed; background: #f5f3ff; }
+.autism-steps {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+}
+.autism-steps li {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 12px 6px; border-radius: 16px; background: #ede9fe;
+  font-weight: 800; font-size: 14px; opacity: 0.45;
+}
+.autism-steps li.is-on { opacity: 1; background: #ddd6fe; box-shadow: 0 0 0 3px rgba(124,58,237,0.25); }
+.autism-n {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: grid; place-items: center; background: #7c3aed; color: #fff;
+}
+.autism-then { margin: 12px 0 0; text-align: center; font-weight: 700; }
+
+.gesture-badge {
+  position: absolute; left: 10px; top: 10px; z-index: 6;
+  background: rgba(0,0,0,0.78); color: #fff; font-weight: 800;
+  padding: 8px 12px; border-radius: 999px; font-size: 14px;
+  border: 2px solid var(--gold);
+}
+.gesture-badge[hidden] { display: none !important; }
+
+body.autism-mode .atmosphere,
+body.autism-mode .side-rail,
+body.autism-mode .banner-photo { opacity: 0.2; }
+body.is-welcome { overflow: hidden; }
 .result-braille {
   text-align: center; margin: 8px 0 4px; padding: 10px;
   background: #1c1917; color: #facc15; border-radius: 12px;
@@ -394,7 +513,7 @@ body.calm-mode .result-card.is-correct, body.calm-mode .result-card.is-wrong { a
   border-radius: 10px; font-size: 14px; white-space: pre-wrap; min-height: 20px;
 }
 .toast {
-  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  position: fixed; bottom: 96px; left: 50%; transform: translateX(-50%);
   background: var(--teal-dark); color: white; padding: 10px 18px; border-radius: 999px; font-size: 14px; z-index: 50;
 }
 .sr-only, .sr-visual-hide {
@@ -587,3 +706,209 @@ body.reduce-motion .banner-photo,
 body.reduce-motion .side-sticker,
 body.reduce-motion .brand-chakana,
 body.reduce-motion .atm-img { animation: none !important; }
+
+/* --- Pantalla principal: una cara, un servicio --- */
+body.home-locked {
+  height: 100dvh;
+  overflow: hidden;
+  padding-bottom: 0;
+  display: flex;
+  flex-direction: column;
+}
+body.home-locked .banner-photo,
+body.home-locked .side-rail { display: none !important; }
+body.home-locked .atmosphere { opacity: 0.28; }
+body.home-locked .peru-band { flex-shrink: 0; }
+body.home-locked .topbar {
+  flex-shrink: 0;
+  position: relative;
+  top: 0;
+  padding: 6px 10px 8px;
+  gap: 6px;
+}
+body.home-locked .brand-sub { display: none; }
+body.home-locked .brand-text h1 { font-size: 17px; }
+body.home-locked .btn-install { display: none; }
+body.home-locked .tab-btn { min-height: 40px; padding: 8px 6px; font-size: 13px; }
+body.home-locked main {
+  flex: 1;
+  min-height: 0;
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding: 0 0 calc(70px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+}
+body.home-locked #view-estudiante.active {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  animation: none;
+}
+.home-shell {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.mode-bar.play-mode-switch {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin: 0;
+  padding: 8px 10px 6px;
+  flex-shrink: 0;
+}
+body.home-locked .play-mode-btn {
+  min-height: 52px;
+  padding: 6px 2px;
+  border-radius: 14px;
+  border-width: 2px;
+  font-size: 11px;
+}
+body.home-locked .play-mode-big { font-size: 18px; }
+body.home-locked .play-mode-btn.active { transform: none; }
+
+.home-stage {
+  flex: 1;
+  min-height: 0;
+  padding: 0 10px 8px;
+  display: flex;
+}
+body.home-locked .scanner-wrap {
+  flex: 1;
+  width: 100%;
+  height: auto;
+  aspect-ratio: auto;
+  min-height: 0;
+  margin: 0;
+  border-radius: 18px;
+}
+.stage-hud {
+  position: absolute;
+  left: 8px; right: 8px; top: 8px;
+  z-index: 4;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 46%;
+  overflow: auto;
+}
+.stage-hud > * { pointer-events: auto; }
+body.home-locked .session-strip {
+  display: flex;
+  gap: 6px;
+  margin: 0;
+  justify-content: flex-end;
+}
+body.home-locked .session-stat {
+  padding: 4px 8px;
+  margin: 0;
+  background: rgba(255, 252, 245, 0.9);
+  box-shadow: none;
+}
+body.home-locked .session-stat .n { font-size: 13px; }
+body.home-locked .session-stat .l { font-size: 9px; margin: 0; }
+body.home-locked .target-text {
+  margin: 0;
+  padding: 8px 10px;
+  font-size: 15px;
+  background: rgba(255, 248, 231, 0.94);
+}
+body.home-locked .target-picto {
+  width: 72px;
+  margin: 0 auto;
+}
+body.home-locked .pace-bar { height: 22px; margin: 0; }
+body.home-locked .autism-board {
+  margin: 0;
+  padding: 8px;
+  border-radius: 14px;
+}
+body.home-locked .autism-then { margin: 6px 0 0; font-size: 12px; }
+body.home-locked .autism-steps li { padding: 8px 4px; font-size: 12px; }
+
+#write-panel {
+  position: absolute;
+  left: 8px; right: 8px;
+  bottom: 92px;
+  z-index: 5;
+  margin: 0;
+  max-height: 40%;
+  overflow: auto;
+  padding: 10px 12px;
+}
+#write-panel h2 { font-size: 14px; margin: 0 0 6px; }
+body.home-locked .write-text { font-size: 22px; padding: 10px; margin: 0 0 6px; }
+body.home-locked .write-braille { font-size: 20px; padding: 6px; margin: 0 0 6px; }
+body.home-locked .write-actions { gap: 6px; }
+body.home-locked .write-actions button { flex: 1; min-height: 40px; padding: 8px 6px; font-size: 12px; }
+
+#result-card {
+  position: absolute;
+  left: 10%; right: 10%;
+  top: 38%;
+  z-index: 6;
+  margin: 0;
+  padding: 10px;
+  transform: none;
+}
+body.home-locked .result-icon { width: 56px; height: 56px; }
+body.home-locked .result-label { font-size: 16px; margin: 4px 0; }
+
+.stage-controls {
+  position: absolute;
+  left: 8px; right: 8px; bottom: 8px;
+  z-index: 5;
+  background: rgba(15, 23, 42, 0.62);
+  backdrop-filter: blur(8px);
+  border-radius: 14px;
+  padding: 8px;
+}
+.stage-controls .row { margin: 0; }
+.stage-controls .cam-row { margin-top: 6px; }
+.stage-controls button {
+  flex: 1;
+  min-height: 42px;
+  padding: 8px 10px;
+  font-size: 13px;
+}
+.stage-controls .status-text { color: #f8fafc; margin: 4px 0 0; font-size: 12px; }
+body.service-write #challenge-actions { display: none; }
+
+.pieces-sheet {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 46;
+  max-height: min(78dvh, 640px);
+  overflow: auto;
+  background: #fffdf8;
+  border-radius: 22px 22px 0 0;
+  border-top: 3px solid var(--gold);
+  padding: 14px 14px calc(88px + env(safe-area-inset-bottom));
+  box-shadow: 0 -16px 40px rgba(0,0,0,0.28);
+}
+.pieces-sheet[hidden] { display: none !important; }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.sheet-head .kit-label { margin: 0; font-size: 16px; }
+.demo-block { margin-top: 14px; }
+.demo-block h2 { font-size: 15px; margin: 0 0 8px; }
+
+body.home-locked .profesor-dock {
+  padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+}
+body.home-locked .btn-profesor { min-height: 48px; font-size: 14px; padding: 10px 16px; }
+body.home-locked .profesor-status { font-size: 12px; }
+
+@media (max-width: 420px) {
+  body.home-locked .play-mode-btn { min-height: 48px; font-size: 10px; }
+  body.home-locked .play-mode-big { font-size: 16px; }
+  #write-panel { bottom: 86px; max-height: 34%; }
+}
+
+@media (min-width: 980px) {
+  body.home-locked main { max-width: none; }
+}

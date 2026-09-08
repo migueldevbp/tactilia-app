@@ -12,8 +12,11 @@ import os
 import qrcode
 import string
 
-# Letras A–Z + Ñ (id: letra-enie)
-LETTERS = [f"letra-{c}" for c in string.ascii_lowercase] + ["letra-enie"]
+# Mayúsculas A–Z + Ñ (ids actuales: letra-a … letra-z, letra-enie)
+LETTERS_MAY = [f"letra-{c}" for c in string.ascii_lowercase] + ["letra-enie"]
+# Minúsculas a–z + ñ (ids nuevos: letra-min-a … letra-min-enie)
+LETTERS_MIN = [f"letra-min-{c}" for c in string.ascii_lowercase] + ["letra-min-enie"]
+LETTERS = LETTERS_MAY + LETTERS_MIN
 
 NUMBERS = [f"numero-{n}" for n in range(0, 10)]
 
