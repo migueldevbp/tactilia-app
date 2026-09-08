@@ -20,9 +20,9 @@ const I18N = {
     a11yExtraTime: "Más tiempo / ritmo lento",
     guideTitle: "Cómo empezar (3 pasos)",
     guideHide: "Ocultar",
-    guideStep1: "Elige perfil inclusivo (TEA, baja visión…) o ajusta Accesibilidad.",
-    guideStep2: "Pulsa «Nuevo reto» y escucha la pieza.",
-    guideStep3: "Activa la cámara con el QR — o toca la grilla demo sin kit.",
+        guideStep1: "Elige perfil inclusivo (TEA, baja visión…) o ajusta Accesibilidad.",
+    guideStep2: "Pulsa «Profesor por voz» y habla: «modo escritura», «aprender» o «reto».",
+    guideStep3: "En escritura, muestra letras/números con el QR. Di «dime qué dice» para escuchar el texto.",
     profilesTitle: "Perfil inclusivo rápido",
     profilesHelp: "Un toque configura varias opciones de apoyo a la vez.",
     profileTea: "TEA / calma",
@@ -73,9 +73,41 @@ const I18N = {
     exerciseMode: "Modo ejercicio",
     modeLearn: "1. Aprender",
     modeChallenge: "2. Reto",
+    modeWrite: "3. Escritura",
     modeLearnHelp: "Pulsa «Iniciar aprendizaje», apunta al QR y la app te dice qué es y su braille (también debajo de la pieza).",
     modeChallengeHelp: "Pulsa «Nuevo reto» y encuentra la pieza que pide la app.",
+    modeWriteHelp: "Muestra letras o números con el QR; se van escribiendo. Di «dime qué dice» para escuchar el texto.",
     learnPrompt: "Pulsa «Iniciar aprendizaje» y apunta la cámara al QR. Te diré qué es y el braille.",
+    writePrompt: "Muestra cada letra o número al QR. Di «espacio», «borra la última» o «dime qué dice».",
+    writeStarted: "Modo escritura. Soy tu profesor. Muestra las piezas. Cuando termines, di: dime qué dice.",
+    writeAdded: (glyph, text) => (text && text.trim() ? `Añadí ${glyph}. Ahora dice: ${text}.` : `Añadí ${glyph}.`),
+    writeNow: (text) => `Escrito: ${text}`,
+    writeEmpty: "(vacío — muestra una pieza)",
+    writeRead: (text) => `Dice: ${text}.`,
+    writeReadSpell: (spell) => `Deletreo: ${spell}.`,
+    writeReadEmpty: "Todavía no hay nada escrito. Muestra una letra o un número.",
+    writeSpace: "Espacio.",
+    writeBack: (text) => (text ? `Borré la última. Queda: ${text}.` : "Borré la última. El texto quedó vacío."),
+    writeCleared: "Borré todo. El texto está vacío.",
+    writeNotLetter: "Esa pieza no es letra, número ni signo. En escritura usa esas piezas.",
+    writeTitle: "Pizarra de escritura",
+    writeHelp: "Para estudiantes ciegos o con baja visión: el profesor escucha y la pizarra se arma con el kit 3D.",
+    writeSpaceBtn: "Espacio",
+    writeBackBtn: "Borrar última",
+    writeReadBtn: "Dime qué dice",
+    writeClearBtn: "Borrar todo",
+    startWriting: "Empezar a escribir",
+    profesorBtn: "Profesor por voz",
+    profesorBtnStop: "Dejar de escuchar",
+    profesorIdle: "Pulsa para hablar con el profesor. Di: activa el modo escritura.",
+    profesorListening: "Te escucho. Di: modo escritura, aprender, reto, dime qué dice, espacio, borra la última, ayuda.",
+    profesorHello: "Te escucho. Di: activa el modo escritura. O di ayuda.",
+    profesorHeard: (s) => `Escuché: ${s}`,
+    profesorNoSupport: "Este navegador no reconoce la voz. Prueba Chrome en Android, o usa los botones del panel.",
+    profesorMicDenied: "No pude usar el micrófono. Permite el micrófono y vuelve a pulsar Profesor.",
+    profesorHelp: "Puedes decir: activa el modo escritura; modo aprender; modo reto; dime qué dice; espacio; borra la última; borra todo; activa la cámara; ayuda.",
+    profesorUnknown: "No entendí. Di ayuda para oír los comandos.",
+    profesorOff: "Dejé de escuchar.",
     startLearning: "Iniciar aprendizaje",
     learnStarted: "Aprendizaje activo. Apunta al QR de la pieza.",
     learnFeedback: (label) => `Esto es: ${label}. Mira y toca también el braille debajo de la pieza.`,
@@ -126,9 +158,9 @@ const I18N = {
     a11yExtraTime: "Aswan pacha",
     guideTitle: "Imaynata qallariy (3)",
     guideHide: "Pakay",
-    guideStep1: "Perfil inclusivota akllay.",
-    guideStep2: "«Musuq atipanakuy» ñitiy.",
-    guideStep3: "Kamarata icha grilla demota.",
+        guideStep1: "Perfil inclusivota akllay.",
+    guideStep2: "«Profesor» ñitiy. Rimay: «qillqay», «yachay» icha «atipanakuy».",
+    guideStep3: "Qillqaypi QR letraswan. «Imata niy» nispa uyarinki.",
     profilesTitle: "Perfil yanapakuq",
     profilesHelp: "Huk ñitiywan yanapaykuna.",
     profileTea: "TEA / thak",
@@ -177,11 +209,43 @@ const I18N = {
     a11yCalmHelp: "Aswan thak: mana partículas, rimay allin, suwa suyay.",
     sequenceHint: "Qatiqnin ordenpi",
     exerciseMode: "Yachay pukllay",
-    modeLearn: "1. Yachay",
+        modeLearn: "1. Yachay",
     modeChallenge: "2. Atipanakuy",
+    modeWrite: "3. Qillqay",
     modeLearnHelp: "«Yachayta qallariy» ñitiy, QR-ta qhaway.",
     modeChallengeHelp: "«Musuq atipanakuy» ñitiy.",
+    modeWriteHelp: "Letra QR-ta qhaway, qillqakun. «Imata niy» nispa uyarinki.",
     learnPrompt: "«Yachayta qallariy» ñitiy. QR-ta qhawaspa yachanki.",
+    writePrompt: "Letra icha yupay QR-ta qhaway. «Espacio», «borra», «imata niy» niy.",
+    writeStarted: "Qillqay kachkan. Riqsichiykunata qhaway. Tukuspa: imata niy.",
+    writeAdded: (glyph, text) => (text && text.trim() ? `${glyph} yaparqani. Kunan: ${text}.` : `${glyph} yaparqani.`),
+    writeNow: (text) => `Qillqasqa: ${text}`,
+    writeEmpty: "(ch'usaq — riqsichiyta qhaway)",
+    writeRead: (text) => `Nin: ${text}.`,
+    writeReadSpell: (spell) => `Deletreo: ${spell}.`,
+    writeReadEmpty: "Manaraqmi qillqasqachu. Letra icha yupayta qhaway.",
+    writeSpace: "Espacio.",
+    writeBack: (text) => (text ? `Qhipata picharqani. Kunan: ${text}.` : "Qhipata picharqani. Ch'usaq."),
+    writeCleared: "Llapan pichasqa.",
+    writeNotLetter: "Kayqa mana letra, yupay nitaq unanchachu.",
+    writeTitle: "Qillqana pizarra",
+    writeHelp: "Ñawsa icha mana allin rikuqpaq: profesor uyarin, kit 3Dwan qillqan.",
+    writeSpaceBtn: "Espacio",
+    writeBackBtn: "Qhipata pichay",
+    writeReadBtn: "Imata niy",
+    writeClearBtn: "Llapan pichay",
+    startWriting: "Qillqayta qallariy",
+    profesorBtn: "Profesor rimaywan",
+    profesorBtnStop: "Ama uyarichu",
+    profesorIdle: "Profesorta ñitiy. Niy: qillqay mode.",
+    profesorListening: "Uyarishayki. Niy: qillqay, yachay, atipanakuy, imata niy, espacio, ayuda.",
+    profesorHello: "Uyarishayki. Niy: qillqay. O ayuda.",
+    profesorHeard: (s) => `Uyarirqani: ${s}`,
+    profesorNoSupport: "Kay navegador mana rimayta hap'inchu. Chromewan Androidpi.",
+    profesorMicDenied: "Micrófono mana kanchu. Permisota quy.",
+    profesorHelp: "Niyta atinki: qillqay; yachay; atipanakuy; imata niy; espacio; qhipata pichay; llapan pichay; kamara; ayuda.",
+    profesorUnknown: "Manam hamutani. Ayuda niy.",
+    profesorOff: "Manaña uyariniñachu.",
     startLearning: "Yachayta qallariy",
     learnStarted: "Yachay kachkan. QR-ta qhaway.",
     learnFeedback: (label) => `Kayqa: ${label}. Braillepis uraypi kachkan.`,
@@ -402,16 +466,40 @@ function savePrefs(p) {
 }
 let PREFS = loadPrefs();
 let currentTarget = null;
+let scanning = false;
 const SESSION = { attempts: 0, correct: 0, streak: 0 };
 
 /* ---------- 3. Utilidades de voz y vibración (funcionan sin internet) --- */
-function speak(text) {
-  if (!PREFS.voice || !("speechSynthesis" in window)) return;
+let speakBusy = false;
+let lastSpokenNorm = "";
+let lastSpokenTs = 0;
+
+function speak(text, onEnd) {
+  if (!text) {
+    if (onEnd) onEnd();
+    return;
+  }
+  lastSpokenNorm = normalizeVoice(text);
+  lastSpokenTs = Date.now();
+  if (!PREFS.voice || !("speechSynthesis" in window)) {
+    if (onEnd) onEnd();
+    return;
+  }
+  pauseVoiceListen();
+  speakBusy = true;
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
   u.lang = "es-PE";
   u.rate = PREFS.calmMode ? 0.78 : (LANG === "qu" ? 0.88 : 0.95);
   u.pitch = PREFS.calmMode ? 0.95 : 1;
+  const done = () => {
+    if (!speakBusy) return;
+    speakBusy = false;
+    if (onEnd) onEnd();
+    resumeVoiceListenSoon();
+  };
+  u.onend = done;
+  u.onerror = done;
   window.speechSynthesis.speak(u);
 }
 
@@ -421,6 +509,7 @@ function shouldAnimate() {
 }
 
 function scanCooldownMs() {
+  if ((PREFS.playMode || "learn") === "write") return 700;
   if (PREFS.extraTime || PREFS.calmMode) return 3200;
   return 1200;
 }
@@ -487,6 +576,427 @@ function announceForScreenReader(msg) {
   });
 }
 
+/* ---------- 3b. Pizarra de escritura + profesor por voz ----------------- */
+const WRITE_KEY = "tactilia_write_v1";
+const WRITE = {
+  chars: [],
+  lastPieceId: null,
+  readyForNext: true,
+};
+
+function loadWriteBuffer() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(WRITE_KEY) || "[]");
+    WRITE.chars = Array.isArray(raw) ? raw.map((c) => String(c)).slice(0, 120) : [];
+  } catch (e) {
+    WRITE.chars = [];
+  }
+}
+function saveWriteBuffer() {
+  localStorage.setItem(WRITE_KEY, JSON.stringify(WRITE.chars));
+}
+loadWriteBuffer();
+
+function writeText() {
+  return WRITE.chars.join("");
+}
+
+function glyphForWrite(concept) {
+  if (!concept) return "";
+  if (concept.type === "letra" || concept.type === "numero" || concept.type === "signo") {
+    return concept.glyph || "";
+  }
+  return "";
+}
+
+function renderWritePanel() {
+  const panel = document.getElementById("write-panel");
+  const textEl = document.getElementById("write-text");
+  const brEl = document.getElementById("write-braille");
+  if (!panel || !textEl) return;
+  const mode = PREFS.playMode || "learn";
+  panel.hidden = mode !== "write";
+  const text = writeText();
+  if (!text) {
+    textEl.textContent = t("writeEmpty");
+    textEl.classList.add("is-empty");
+    if (brEl) {
+      brEl.hidden = true;
+      brEl.textContent = "";
+    }
+  } else {
+    textEl.textContent = text;
+    textEl.classList.remove("is-empty");
+    if (brEl && typeof brailleForText === "function") {
+      const cells = brailleForText(text);
+      brEl.hidden = !cells;
+      brEl.textContent = cells;
+    }
+  }
+}
+
+function refreshExerciseTarget() {
+  const el = document.getElementById("exercise-target");
+  if (!el) return;
+  const mode = PREFS.playMode || "learn";
+  if (mode === "write") {
+    const text = writeText();
+    el.textContent = text ? t("writeNow", text) : t("writePrompt");
+  } else if (mode === "learn") {
+    el.textContent = t(scanning ? "learnStarted" : "learnPrompt");
+  } else if (currentTarget) {
+    el.textContent = t("findPiece", conceptLabel(currentTarget));
+  } else {
+    el.textContent = t("exercisePrompt");
+  }
+}
+
+function appendWriteChar(glyph, { silent } = {}) {
+  if (!glyph) return;
+  WRITE.chars.push(glyph);
+  if (WRITE.chars.length > 120) WRITE.chars = WRITE.chars.slice(-120);
+  saveWriteBuffer();
+  renderWritePanel();
+  refreshExerciseTarget();
+  vibrate(80);
+  const phrase = writeText();
+  const msg = t("writeAdded", glyph, phrase);
+  announceForScreenReader(msg);
+  if (!silent) speak(msg);
+}
+
+function writeSpace({ silent } = {}) {
+  if (WRITE.chars.length === 0 || WRITE.chars[WRITE.chars.length - 1] === " ") return;
+  WRITE.chars.push(" ");
+  saveWriteBuffer();
+  renderWritePanel();
+  refreshExerciseTarget();
+  const msg = t("writeSpace");
+  announceForScreenReader(msg);
+  if (!silent) speak(msg);
+}
+
+function writeBackspace({ silent } = {}) {
+  if (WRITE.chars.length === 0) {
+    if (!silent) speak(t("writeReadEmpty"));
+    return;
+  }
+  WRITE.chars.pop();
+  saveWriteBuffer();
+  renderWritePanel();
+  refreshExerciseTarget();
+  const msg = t("writeBack", writeText());
+  announceForScreenReader(msg);
+  if (!silent) speak(msg);
+}
+
+function writeClear({ silent } = {}) {
+  WRITE.chars = [];
+  WRITE.lastPieceId = null;
+  WRITE.readyForNext = true;
+  saveWriteBuffer();
+  renderWritePanel();
+  refreshExerciseTarget();
+  const msg = t("writeCleared");
+  announceForScreenReader(msg);
+  if (!silent) speak(msg);
+}
+
+function writeReadAloud() {
+  const text = writeText().replace(/\s+/g, " ").trim();
+  if (!text) {
+    speak(t("writeReadEmpty"));
+    announceForScreenReader(t("writeReadEmpty"));
+    return;
+  }
+  const letters = WRITE.chars.filter((c) => c !== " ");
+  const spell = letters.join(", ");
+  const msg = `${t("writeRead", text)} ${spell ? t("writeReadSpell", spell) : ""}`.trim();
+  announceForScreenReader(msg);
+  speak(msg);
+}
+
+function handleWriteScan(concept, { allowRepeat } = {}) {
+  if (!allowRepeat && !WRITE.readyForNext && WRITE.lastPieceId === concept.id) return;
+  const glyph = glyphForWrite(concept);
+  if (!glyph) {
+    speak(t("writeNotLetter"));
+    return;
+  }
+  WRITE.readyForNext = !!allowRepeat;
+  WRITE.lastPieceId = concept.id;
+  appendWriteChar(glyph);
+}
+
+async function startWriteSession() {
+  setPlayMode("write");
+  renderWritePanel();
+  refreshExerciseTarget();
+  const msg = t("writeStarted");
+  announceForScreenReader(msg);
+  document.getElementById("write-panel")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  if (!scanning) {
+    try { await startScan(); } catch (e) { /* permiso de cámara opcional */ }
+  }
+  speak(msg);
+  toast(t("modeWrite"));
+}
+
+const Voice = {
+  rec: null,
+  wanted: false,
+  paused: false,
+  starting: false,
+};
+
+function canVoiceInput() {
+  return typeof window !== "undefined" && !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+}
+
+function normalizeVoice(s) {
+  return String(s || "")
+    .toLowerCase()
+    .replace(/ñ/g, "ny")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function updateProfesorUI() {
+  const dock = document.getElementById("profesor-dock");
+  const btn = document.getElementById("btn-profesor");
+  const status = document.getElementById("profesor-status");
+  const on = Voice.wanted && !Voice.paused;
+  if (dock) dock.classList.toggle("is-listening", on);
+  if (btn) {
+    btn.setAttribute("aria-pressed", on ? "true" : "false");
+    const label = btn.querySelector("[data-i18n]") || btn.querySelector("[data-i18n-text]");
+    const text = t(on ? "profesorBtnStop" : "profesorBtn");
+    if (label) label.textContent = text;
+    else btn.textContent = text;
+    if (typeof decorateButtonsWithIcons === "function") decorateButtonsWithIcons();
+  }
+  if (status) status.textContent = t(on ? "profesorListening" : "profesorIdle");
+}
+
+function pauseVoiceListen() {
+  Voice.paused = true;
+  if (Voice.rec) {
+    try { Voice.rec.stop(); } catch (e) { /* ya detenido */ }
+  }
+}
+
+function resumeVoiceListenSoon() {
+  Voice.paused = false;
+  if (!Voice.wanted) return;
+  clearTimeout(resumeVoiceListenSoon._t);
+  resumeVoiceListenSoon._t = setTimeout(() => {
+    if (Voice.wanted && !speakBusy) beginVoiceRec();
+    updateProfesorUI();
+  }, 650);
+}
+
+function ensureVoiceRec() {
+  if (Voice.rec || !canVoiceInput()) return;
+  const Ctor = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const rec = new Ctor();
+  rec.continuous = true;
+  rec.interimResults = false;
+  rec.lang = "es-PE";
+  rec.maxAlternatives = 3;
+  rec.onresult = (ev) => {
+    if (speakBusy || Voice.paused) return;
+    for (let i = ev.resultIndex; i < ev.results.length; i++) {
+      if (!ev.results[i].isFinal) continue;
+      const text = ev.results[i][0] && ev.results[i][0].transcript;
+      if (text) handleVoiceCommand(text);
+    }
+  };
+  rec.onend = () => {
+    Voice.starting = false;
+    if (Voice.wanted && !Voice.paused && !speakBusy) {
+      setTimeout(() => beginVoiceRec(), 240);
+    }
+    updateProfesorUI();
+  };
+  rec.onerror = (ev) => {
+    Voice.starting = false;
+    if (ev.error === "not-allowed" || ev.error === "service-not-allowed") {
+      Voice.wanted = false;
+      updateProfesorUI();
+      speak(t("profesorMicDenied"));
+    }
+  };
+  Voice.rec = rec;
+}
+
+function beginVoiceRec() {
+  if (!Voice.wanted || Voice.paused || speakBusy) return;
+  ensureVoiceRec();
+  if (!Voice.rec) return;
+  try {
+    Voice.rec.lang = "es-PE";
+    Voice.rec.start();
+    Voice.starting = true;
+  } catch (e) {
+    /* already started */
+  }
+  updateProfesorUI();
+}
+
+function startProfesor() {
+  if (!canVoiceInput()) {
+    updateProfesorUI();
+    speak(t("profesorNoSupport"));
+    toast(t("profesorNoSupport"));
+    return;
+  }
+  Voice.wanted = true;
+  Voice.paused = false;
+  beginVoiceRec();
+  updateProfesorUI();
+  speak(t("profesorHello"));
+}
+
+function stopProfesor({ silent } = {}) {
+  Voice.wanted = false;
+  Voice.paused = false;
+  if (Voice.rec) {
+    try { Voice.rec.stop(); } catch (e) { /* ignore */ }
+  }
+  updateProfesorUI();
+  if (!silent) speak(t("profesorOff"));
+}
+
+function toggleProfesor() {
+  if (Voice.wanted) stopProfesor();
+  else startProfesor();
+}
+
+const SPEECH_LETTER = {
+  a: "A", be: "B", b: "B", ce: "C", c: "C", de: "D", d: "D",
+  e: "E", efe: "F", f: "F", ge: "G", g: "G", hache: "H", h: "H",
+  i: "I", jota: "J", j: "J", ka: "K", k: "K", ele: "L", l: "L",
+  eme: "M", m: "M", ene: "N", n: "N",   enie: "Ñ", eneie: "Ñ", enye: "Ñ",
+  o: "O", pe: "P", p: "P", cu: "Q", q: "Q", ere: "R", erre: "R", r: "R",
+  ese: "S", s: "S", te: "T", t: "T", u: "U", uve: "V", v: "V",
+  w: "W", equis: "X", x: "X", ye: "Y", y: "Y", zeta: "Z", z: "Z",
+};
+const SPEECH_NUMBER = {
+  cero: "0", uno: "1", dos: "2", tres: "3", cuatro: "4",
+  cinco: "5", seis: "6", siete: "7", ocho: "8", nueve: "9",
+};
+
+function trySpeechGlyph(norm) {
+  const letra = norm.match(/\bletra\s+(uve doble|i griega|n tilde|enie|eneie|enye|hache|jota|equis|zeta|efe|eme|ene|ele|ese|uve|erre|ere|ce|be|de|ge|ka|pe|cu|te|[a-z])\b/);
+  if (letra) {
+    const key = letra[1].replace(/\s+/g, " ");
+    if (key === "uve doble") return "W";
+    if (key === "i griega") return "Y";
+    if (key === "n tilde") return "Ñ";
+    return SPEECH_LETTER[key] || (key.length === 1 ? key.toUpperCase() : "");
+  }
+  const num = norm.match(/\b(?:numero|numero)\s+(cero|uno|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|[0-9])\b/)
+    || norm.match(/\b(cero|uno|dos|tres|cuatro|cinco|seis|siete|ocho|nueve)\b/);
+  if (num) {
+    const key = num[1];
+    if (/^\d$/.test(key)) return key;
+    return SPEECH_NUMBER[key] || "";
+  }
+  return "";
+}
+
+function handleVoiceCommand(raw) {
+  const heard = String(raw || "").trim();
+  if (!heard) return;
+  const norm = normalizeVoice(heard);
+  if (!norm || norm.length < 2) return;
+  if (lastSpokenNorm && Date.now() - lastSpokenTs < 2200) {
+    if (lastSpokenNorm.includes(norm) || (norm.length > 12 && lastSpokenNorm.includes(norm.slice(0, 12)))) {
+      return;
+    }
+  }
+
+  const status = document.getElementById("profesor-status");
+  if (status) status.textContent = t("profesorHeard", heard);
+
+  const has = (...bits) => bits.every((b) => norm.includes(normalizeVoice(b)));
+  const any = (...bits) => bits.some((b) => norm.includes(normalizeVoice(b)));
+
+  if (any("ayuda", "comandos", "que puedo decir", "imata niyta atini")) {
+    speak(t("profesorHelp"));
+    return;
+  }
+  if (any("deja de escuchar", "para de escuchar", "silencio", "ama uyarichu")) {
+    stopProfesor();
+    return;
+  }
+  if (any("dime que dice", "que dice", "que dije", "leelo", "lee lo que", "leer texto", "imata niy", "imata nin")) {
+    if ((PREFS.playMode || "learn") !== "write") startWriteSession();
+    writeReadAloud();
+    return;
+  }
+  if (any("borra todo", "borrar todo", "limpia todo", "empezar de nuevo", "llapan pichay")) {
+    if ((PREFS.playMode || "learn") !== "write") startWriteSession();
+    writeClear();
+    return;
+  }
+  if (any("borra la ultima", "borrar ultima", "quita la ultima", "borra letra", "qhipata pichay")) {
+    if ((PREFS.playMode || "learn") !== "write") startWriteSession();
+    writeBackspace();
+    return;
+  }
+  if (any("espacio en blanco", "espacio", "palabra nueva")) {
+    if ((PREFS.playMode || "learn") !== "write") startWriteSession();
+    writeSpace();
+    return;
+  }
+  if (any("modo escritura", "activar escritura", "activa el modo escritura", "quiero escribir", "qillqay")) {
+    startWriteSession();
+    return;
+  }
+  if (any("modo aprender", "modo aprendizaje", "activar aprendizaje", "yachay")) {
+    startLearningSession();
+    return;
+  }
+  if (any("modo reto", "nuevo reto", "activar reto", "atipanakuy")) {
+    startChallengeSession();
+    return;
+  }
+  if (any("apaga la camara", "detener camara", "para la camara")) {
+    stopScan();
+    speak(t("cameraOff"));
+    return;
+  }
+  if (any("activa la camara", "abre la camara", "prende la camara", "escanear")) {
+    startScan();
+    speak(t("cameraOn"));
+    return;
+  }
+  if (any("repetir")) {
+    document.getElementById("btn-repeat-audio")?.click();
+    return;
+  }
+
+  if ((PREFS.playMode || "learn") === "write") {
+    const glyph = trySpeechGlyph(norm);
+    if (glyph) {
+      WRITE.readyForNext = true;
+      appendWriteChar(glyph);
+      return;
+    }
+  }
+
+  if (has("profesor") || any("escucha", "escuchame")) {
+    speak(t("profesorListening"));
+    return;
+  }
+
+  speak(t("profesorUnknown"));
+}
+
 /* ---------- 4. Aplicar traducciones a elementos [data-i18n] -------------- */
 function applyI18n() {
   document.querySelectorAll("[data-i18n]").forEach((el) => {
@@ -515,12 +1025,10 @@ function applyI18n() {
     if (typeof val === "string") el.textContent = val;
   });
   document.documentElement.lang = LANG === "qu" ? "qu" : "es";
-  document.getElementById("exercise-target").textContent = currentTarget
-    ? t("findPiece", conceptLabel(currentTarget))
-    : t("exercisePrompt");
   document.getElementById("scan-status").textContent = scanning ? t("cameraOn") : t("cameraOff");
-  renderPieceGrid();
   updateSessionUI();
+  syncPlayModeUI();
+  updateProfesorUI();
   if (typeof decorateButtonsWithIcons === "function") decorateButtonsWithIcons();
 }
 
@@ -815,14 +1323,19 @@ function syncPlayModeUI() {
     b.classList.toggle("active", b.dataset.mode === mode);
   });
   const help = document.getElementById("play-mode-help");
-  if (help) help.textContent = mode === "learn" ? t("modeLearnHelp") : t("modeChallengeHelp");
-  const target = document.getElementById("exercise-target");
+  if (help) {
+    help.textContent = mode === "write"
+      ? t("modeWriteHelp")
+      : mode === "learn"
+        ? t("modeLearnHelp")
+        : t("modeChallengeHelp");
+  }
   const actions = document.getElementById("challenge-actions");
   if (actions) actions.hidden = false;
 
   const primary = document.getElementById("btn-new-challenge");
   if (primary) {
-    const key = mode === "learn" ? "startLearning" : "newChallenge";
+    const key = mode === "write" ? "startWriting" : mode === "learn" ? "startLearning" : "newChallenge";
     primary.setAttribute("data-i18n", key);
     let textEl = primary.querySelector("[data-i18n-text]");
     if (!textEl) {
@@ -838,23 +1351,29 @@ function syncPlayModeUI() {
 
   if (mode === "learn") {
     currentTarget = null;
-    if (target) target.textContent = t("learnPrompt");
     updateTargetPicto();
     updatePaceBar(false);
-  } else if (target && !currentTarget) {
-    target.textContent = t("exercisePrompt");
+  } else if (mode === "write") {
+    currentTarget = null;
+    updateTargetPicto();
+    updatePaceBar(false);
+  } else if (!currentTarget) {
+    updatePaceBar(false);
   }
+  renderWritePanel();
+  refreshExerciseTarget();
   renderPieceGrid();
 }
 
 function setPlayMode(mode) {
-  PREFS.playMode = mode === "challenge" ? "challenge" : "learn";
+  PREFS.playMode = mode === "challenge" ? "challenge" : mode === "write" ? "write" : "learn";
   savePrefs(PREFS);
   syncPlayModeUI();
 }
 
 document.getElementById("mode-learn")?.addEventListener("click", () => setPlayMode("learn"));
 document.getElementById("mode-challenge")?.addEventListener("click", () => setPlayMode("challenge"));
+document.getElementById("mode-write")?.addEventListener("click", () => startWriteSession());
 
 async function startLearningSession() {
   setPlayMode("learn");
@@ -976,17 +1495,23 @@ function pickAdaptiveChallenge() {
 }
 
 document.getElementById("btn-new-challenge").addEventListener("click", () => {
-  if ((PREFS.playMode || "learn") === "learn") {
-    startLearningSession();
-  } else {
-    startChallengeSession();
-  }
+  const mode = PREFS.playMode || "learn";
+  if (mode === "write") startWriteSession();
+  else if (mode === "learn") startLearningSession();
+  else startChallengeSession();
 });
 
 document.getElementById("btn-repeat-audio").addEventListener("click", () => {
-  if (currentTarget) speak(t("sayFind", conceptLabel(currentTarget)));
+  if ((PREFS.playMode || "learn") === "write") writeReadAloud();
+  else if (currentTarget) speak(t("sayFind", conceptLabel(currentTarget)));
   else speak(t("exercisePrompt"));
 });
+
+document.getElementById("btn-profesor")?.addEventListener("click", () => toggleProfesor());
+document.getElementById("btn-write-space")?.addEventListener("click", () => writeSpace());
+document.getElementById("btn-write-back")?.addEventListener("click", () => writeBackspace());
+document.getElementById("btn-write-read")?.addEventListener("click", () => writeReadAloud());
+document.getElementById("btn-write-clear")?.addEventListener("click", () => writeClear());
 
 /* ---------- 9. Escáner de cámara + QR (jsQR) + Realidad Aumentada -------
    El <canvas> es ahora la superficie visible: dibujamos el fotograma del
@@ -998,7 +1523,6 @@ const video = document.getElementById("camera-view");
 const canvas = document.getElementById("camera-canvas");
 const ctx = canvas.getContext("2d", { willReadFrequently: true });
 let stream = null;
-let scanning = false;
 let cameraFacing = "environment"; // environment = trasera, user = frontal
 let lastReadTs = 0;
 let lastCode = null; // { concept, location, ts }
@@ -1251,6 +1775,8 @@ function scanLoop() {
     } else if (lastCode && now - lastCode.ts < 350) {
       // sostiene la etiqueta un instante para que no "parpadee" entre frames
       drawAROverlay(lastCode.concept, lastCode.location);
+    } else {
+      WRITE.readyForNext = true;
     }
     updateAndDrawParticles();
   }
@@ -1363,6 +1889,11 @@ function teachScan(concept) {
 }
 
 function handleScan(concept, location) {
+  if ((PREFS.playMode || "learn") === "write") {
+    handleWriteScan(concept, { allowRepeat: !location });
+    return;
+  }
+
   if ((PREFS.playMode || "learn") === "learn") {
     currentTarget = null;
     teachScan(concept);

@@ -82,8 +82,8 @@
       </div>
       <ol class="guide-steps">
         <li data-i18n="guideStep1">Elige perfil inclusivo (TEA, baja visión…) o ajusta Accesibilidad.</li>
-        <li data-i18n="guideStep2">Pulsa «Nuevo reto» y escucha la pieza.</li>
-        <li data-i18n="guideStep3">Activa la cámara con el QR — o toca la grilla demo sin kit.</li>
+        <li data-i18n="guideStep2">Pulsa «Profesor por voz» y habla: «modo escritura», «aprender» o «reto».</li>
+        <li data-i18n="guideStep3">En escritura, muestra letras/números con el QR. Di «dime qué dice» para escuchar el texto.</li>
       </ol>
     </div>
 
@@ -168,6 +168,7 @@
       <div class="play-mode-switch" role="group" aria-label="Modo de práctica">
         <button type="button" class="play-mode-btn active" id="mode-learn" data-mode="learn" data-i18n="modeLearn">1. Aprender</button>
         <button type="button" class="play-mode-btn" id="mode-challenge" data-mode="challenge" data-i18n="modeChallenge">2. Reto</button>
+        <button type="button" class="play-mode-btn" id="mode-write" data-mode="write" data-i18n="modeWrite">3. Escritura</button>
       </div>
       <p id="play-mode-help" class="muted" data-i18n="modeLearnHelp">Pulsa «Iniciar aprendizaje», apunta al QR y la app te dice qué es y su braille.</p>
       <p id="exercise-target" class="target-text" data-i18n="learnPrompt" role="status" aria-live="polite">Pulsa «Iniciar aprendizaje» y apunta la cámara al QR.</p>
@@ -179,6 +180,19 @@
       <div class="row" id="challenge-actions">
         <button id="btn-new-challenge" class="btn-primary" type="button" data-i18n="startLearning" data-icon="challenge">Iniciar aprendizaje</button>
         <button id="btn-repeat-audio" class="btn-secondary" type="button" data-i18n="repeat" data-icon="repeat">Repetir</button>
+      </div>
+    </div>
+
+    <div class="card write-card" id="write-panel" hidden>
+      <h2><span class="ui-ico" data-static-icon="write" aria-hidden="true"></span> <span data-i18n="writeTitle">Pizarra de escritura</span></h2>
+      <p class="muted" data-i18n="writeHelp">Para estudiantes ciegos o con baja visión: el profesor escucha y la pizarra se arma con el kit 3D.</p>
+      <div id="write-text" class="write-text is-empty" aria-live="polite" aria-atomic="true">(vacío — muestra una pieza)</div>
+      <div id="write-braille" class="write-braille" hidden aria-hidden="true"></div>
+      <div class="row write-actions">
+        <button id="btn-write-space" class="btn-secondary" type="button" data-i18n="writeSpaceBtn" data-icon="write">Espacio</button>
+        <button id="btn-write-back" class="btn-secondary" type="button" data-i18n="writeBackBtn">Borrar última</button>
+        <button id="btn-write-read" class="btn-primary" type="button" data-i18n="writeReadBtn" data-icon="speak">Dime qué dice</button>
+        <button id="btn-write-clear" class="btn-danger" type="button" data-i18n="writeClearBtn">Borrar todo</button>
       </div>
     </div>
 
@@ -272,7 +286,7 @@
       <h2>TactilIA · Makiwan Yachay</h2>
       <p><em>Makiwan Yachay</em> significa, en quechua, «aprendizaje con las manos». Es el nombre bilingüe del proyecto, en homenaje a las comunidades quechuahablantes de Pasco y de otras regiones andinas.</p>
       <p>Prototipo para la <strong>Hackathon en Tecnologías Digitales 2026 (Minedu) — Categoría A</strong>: integrar tecnologías emergentes para la atención de estudiantes de Educación Básica Especial.</p>
-      <p>Kit multisensorial: piezas 3D con QR + esta PWA. Reconoce cada pieza con <strong>realidad aumentada</strong> (recuadro y etiqueta anclados al marcador), da voz en <strong>español o quechua</strong>, propone retos por set temático y muestra progreso al docente. Incluye alto contraste, texto ajustable, vibración y roles ARIA. Funciona <strong>100% offline</strong> tras la primera carga.</p>
+      <p>Kit multisensorial: piezas 3D con QR + esta PWA. Reconoce cada pieza con <strong>realidad aumentada</strong>, da voz en <strong>español o quechua</strong> y actúa como <strong>profesor por voz</strong> (modo escritura: armar palabras con letras/números y pedir que las lea). Incluye alto contraste, texto ajustable, vibración y roles ARIA. Funciona <strong>100% offline</strong> tras la primera carga (el reconocimiento de voz del profesor usa el micrófono del celular).</p>
       <p class="muted">Alineado a ODS 4 (Educación de calidad) y ODS 10 (Reducción de las desigualdades).</p>
     </div>
 
@@ -281,13 +295,24 @@
       <ol class="about-list">
         <li><strong>Preparar el kit:</strong> imprime piezas en 3D y pega el PNG de <code>qr/output/&lt;id&gt;.png</code> (hay 62: letras A–Z+Ñ, números 0–9, signos, figuras, emociones y rutinas).</li>
         <li><strong>Abrir la app</strong>. Elige set (Letras / Números / Signos…) e idioma. Para TEA: activa <strong>Modo calma</strong> en Accesibilidad.</li>
-        <li><strong>Estudiante:</strong> primero «1. Aprender» (cámara + voz + braille), luego «2. Reto». También grilla demo. Para TEA: Modo calma.</li>
+        <li><strong>Estudiante:</strong> «1. Aprender» (cámara + voz + braille), «2. Reto», o «3. Escritura» (pizarra con QR). También <strong>Profesor por voz</strong>: di «activa el modo escritura», muestra letras y luego «dime qué dice».</li>
         <li><strong>Docente:</strong> progreso, áreas a reforzar y recomendación.</li>
       </ol>
     </div>
 
     <div class="card">
-      <h3>Catálogo de piezas y códigos QR</h3>
+      <h3>Profesor por voz y modo escritura</h3>
+      <p>Pensado para estudiantes ciegos o con baja visión que usan las piezas 3D (letra + braille + QR). El profesor escucha y la pizarra se arma sola.</p>
+      <ol class="about-list">
+        <li>Pulsa <strong>Profesor por voz</strong> (hace falta el micrófono; funciona mejor en Chrome / Android).</li>
+        <li>Di <em>«activa el modo escritura»</em>. Se abre la pizarra y la cámara.</li>
+        <li>Muestra cada pieza al QR (o di <em>«letra eme»</em>, <em>«número cinco»</em>). Se va escribiendo.</li>
+        <li>Di <em>«espacio»</em>, <em>«borra la última»</em> o <em>«borra todo»</em> si hace falta.</li>
+        <li>Di <em>«dime qué dice»</em>: la app lee la palabra y la deletrea.</li>
+      </ol>
+    </div>
+
+    <div class="card">
       <p class="muted">Cada QR contiene el texto <code>TACTILIA:&lt;id&gt;</code>. Archivo a imprimir: <code>qr/output/&lt;id&gt;.png</code>.</p>
       <p class="muted">Ilustraciones a los costados: <code>media/decor/costa.png</code>, <code>sierra.png</code>, <code>selva.png</code>. Banner bajo el encabezado: <code>banner.png</code>. Icono opcional: <code>chakana.png</code>.</p>
       <div id="piezas-catalogo" class="catalogo"></div>
@@ -375,6 +400,13 @@
   </section>
 
 </main>
+
+<div id="profesor-dock" class="profesor-dock">
+  <button id="btn-profesor" class="btn-profesor" type="button" aria-pressed="false" data-icon="mic">
+    <span data-i18n="profesorBtn">Profesor por voz</span>
+  </button>
+  <p id="profesor-status" class="profesor-status" role="status" aria-live="polite" data-i18n="profesorIdle">Pulsa para hablar con el profesor. Di: activa el modo escritura.</p>
+</div>
 
 <div id="reward-flash" class="reward-flash" hidden aria-hidden="true"></div>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
