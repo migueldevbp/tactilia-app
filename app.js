@@ -113,7 +113,7 @@ const I18N = {
     autismNo: (label) => `Esa no. Busca: ${label}.`,
     autismDone: "Terminamos esta ronda. Puedes descansar.",
     welcomeTitle: "Hola, soy Yachay Ñan 3D",
-    welcomeTap: "Di iniciar. O toca para hablar.",
+    welcomeTap: "Toca o di iniciar.",
     welcomeTalk: "Hola, soy Yachay Ñan 3D. Estoy aquí contigo.",
     appReady: "Listo. Ya puedes usar la app.",
     assistantOff: "Asistente en pausa.",
@@ -147,10 +147,10 @@ const I18N = {
     startWriting: "Escribir",
     profesorBtn: "Activar voz",
     profesorBtnStop: "Silenciar voz",
-    profesorIdle: "Di activar. O toca Activar voz.",
-    profesorListening: "Te escucho. Di explorar, escribir, dictado, parar asistente, o activar.",
+    profesorIdle: "Toca o di iniciar.",
+    profesorListening: "Te escucho.",
     profesorHello: "Hola. Ya te escucho.",
-    profesorClarify: "¿Explorar, escribir, dictado, parar o activar?",
+    profesorClarify: "¿Explorar, escribir o dictado?",
     profesorHeard: (s) => `Escuché: ${s}`,
     profesorNoSupport: "Este navegador no reconoce la voz. Prueba Chrome en Android, o usa los botones del panel.",
     profesorMicDenied: "No pude usar el micrófono. Permite el micrófono y vuelve a pulsar Profesor.",
@@ -592,7 +592,9 @@ function savePrefs(p) {
 let PREFS = loadPrefs();
 let currentTarget = null;
 let scanning = false;
+let cameraJob = null;
 const SESSION = { attempts: 0, correct: 0, streak: 0 };
+const App = { phase: "welcome" };
 
 /* ---------- 3. Utilidades de voz y vibración (funcionan sin internet) --- */
 let speakBusy = false;
@@ -905,9 +907,7 @@ async function startWriteSession() {
   refreshExerciseTarget();
   const msg = t("writeStarted");
   announceForScreenReader(msg);
-  if (!scanning) {
-    try { await startScan(); } catch (e) { /* permiso de cámara opcional */ }
-  }
+  await ensureCamera();
   speak(msg);
   toast(t("modeWrite"));
 }
@@ -938,8 +938,8 @@ function updateProfesorUI() {
   const dock = document.getElementById("profesor-dock");
   const btn = document.getElementById("btn-profesor");
   const status = document.getElementById("profesor-status");
-  const sleeping = !!Assistant.sleeping;
-  const on = Voice.wanted && !Voice.paused && !sleeping;
+  const sleeping = App.phase === "paused";
+  const on = App.phase === "active" && Voice.wanted && !Voice.paused;
   if (dock) {
     dock.classList.toggle("is-listening", on);
     dock.classList.toggle("is-sleeping", sleeping);
@@ -976,12 +976,9 @@ function resumeVoiceListenSoon() {
 }
 
 function interruptSpeech() {
-  const wasBusy = speakBusy;
   speakBusy = false;
   try { if ("speechSynthesis" in window) window.speechSynthesis.cancel(); } catch (e) { /* ignore */ }
-  Voice.paused = false;
-  if (wasBusy && Assistant.on && !Voice.wanted) startProfesor({ silent: true });
-  else if (Voice.wanted) beginVoiceRec();
+  if (Voice.wanted) resumeVoiceListenSoon();
 }
 
 function voicePack(s) {
@@ -1089,6 +1086,7 @@ function ingestVoice(texts, { interim } = {}) {
   if (!hit.heard) return;
   if (isTtsEcho(hit.norm)) return;
   if (interim && !hit.intent) return;
+  if (App.phase !== "active" && hit.intent !== "on" && hit.intent !== "help") return;
   handleVoiceCommand(texts);
 }
 
@@ -1139,148 +1137,110 @@ function beginVoiceRec() {
   updateProfesorUI();
 }
 
-function startProfesor(opts) {
-  if (Assistant.sleeping) {
-    updateProfesorUI();
-    if (Voice.wanted) beginVoiceRec();
-    return;
-  }
-  const silent = opts && opts.silent;
-  Assistant.on = true;
-  Assistant.sleeping = false;
-  if (!canVoiceInput()) {
-    updateProfesorUI();
-    if (!silent) speak(t("profesorNoSupport"));
-    toast(t("profesorNoSupport"));
-    return;
-  }
-  Voice.wanted = true;
-  Voice.paused = false;
-  beginVoiceRec();
-  updateProfesorUI();
-  if (!silent) speak(t("profesorHello"));
-}
-
-function stopProfesor({ silent } = {}) {
-  Voice.wanted = false;
-  Voice.paused = false;
-  if (Voice.rec) {
-    try { Voice.rec.stop(); } catch (e) { /* ignore */ }
-  }
-  updateProfesorUI();
-  if (!silent) speak(t("profesorOff"), null, true);
-}
-
-function stopAssistant() {
-  if (Assistant.sleeping) {
-    updateProfesorUI();
-    return;
-  }
-  Assistant.sleeping = true;
-  Assistant.on = false;
-  if (canVoiceInput()) {
-    Voice.wanted = true;
-    Voice.paused = false;
-  } else {
-    Voice.wanted = false;
-    Voice.paused = false;
-    if (Voice.rec) {
-      try { Voice.rec.stop(); } catch (e) { /* ignore */ }
-    }
-  }
-  updateProfesorUI();
-  speak(t("assistantOff"), () => {
-    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
-    if (Voice.wanted) beginVoiceRec();
-  }, true);
-}
-
-function wakeAssistant() {
-  Assistant.booting = false;
-  Assistant.sleeping = false;
-  Assistant.on = true;
-  Voice.wanted = true;
-  Voice.paused = false;
-  beginVoiceRec();
-  updateProfesorUI();
-  speak(t("assistantOn"), null, true);
-}
-
 function isWelcomeOpen() {
   const gate = document.getElementById("welcome-gate");
   return !!(gate && !gate.hidden && document.body.classList.contains("is-welcome"));
 }
 
-function startAppFromWelcome() {
-  if (Assistant.started) {
-    dismissWelcome();
+function ensureCamera() {
+  if (scanning && stream) return Promise.resolve(true);
+  if (cameraJob) return cameraJob;
+  cameraJob = startScan()
+    .then(() => !!(scanning && stream))
+    .catch(() => false)
+    .finally(() => { cameraJob = null; });
+  return cameraJob;
+}
+
+function enterApp(opts) {
+  const greet = !opts || opts.greet !== false;
+  const fromWelcome = App.phase === "welcome" || isWelcomeOpen();
+  const fromPaused = App.phase === "paused";
+  if (App.phase === "active" && !fromWelcome) {
+    ensureCamera();
     return;
   }
-  Assistant.started = true;
+  App.phase = "active";
   window.__ynStarting = true;
-  dismissWelcome();
-  Assistant.booting = false;
+  Assistant.started = true;
   Assistant.sleeping = false;
   Assistant.on = true;
   Assistant.welcomed = true;
+  dismissWelcome();
   Voice.wanted = true;
   Voice.paused = true;
   updateProfesorUI();
-  setPlayMode("learn");
-  if (!scanning) startScan().catch(() => {});
-  if (speakBusy || Assistant.autoplaySpoken) {
+  if (fromWelcome) setPlayMode(PREFS.playMode || "learn");
+  ensureCamera();
+  if (greet && fromWelcome && !Assistant.autoplaySpoken) {
+    Assistant.autoplaySpoken = true;
+    speak(t("welcomeTalk"), null, true);
+  } else if (greet && fromPaused) {
+    speak(t("assistantOn"), null, true);
+  } else {
     resumeVoiceListenSoon();
-    return;
   }
-  Assistant.autoplaySpoken = true;
-  speak(t("welcomeTalk"), null, true);
 }
 
-window.bootYachayApp = function bootYachayApp() {
-  startAppFromWelcome();
-};
-
-if (window.__ynStarting) {
-  try { startAppFromWelcome(); } catch (e) { /* el HTML ya cerró la bienvenida */ }
+function pauseApp() {
+  if (App.phase !== "active") return;
+  App.phase = "paused";
+  Assistant.sleeping = true;
+  Assistant.on = false;
+  Voice.wanted = true;
+  updateProfesorUI();
+  speak(t("assistantOff"), null, true);
 }
 
-function startAssistantFromUser() {
-  if (isWelcomeOpen() || !Assistant.started) {
-    if (typeof bootYachay === "function") bootYachay();
-    else startAppFromWelcome();
+function resumeApp() {
+  if (App.phase === "welcome") {
+    enterApp({ greet: true });
     return;
   }
-  dismissWelcome();
-  if (Assistant.sleeping) {
-    wakeAssistant();
-    return;
-  }
-  Assistant.on = true;
+  if (App.phase === "active") return;
+  App.phase = "active";
   Assistant.sleeping = false;
-  if (Voice.wanted || Assistant.booting) {
-    if (!scanning) startScan().catch(() => {});
+  Assistant.on = true;
+  Voice.wanted = true;
+  updateProfesorUI();
+  ensureCamera();
+  speak(t("assistantOn"), null, true);
+}
+
+window.enterApp = enterApp;
+window.bootYachayApp = function bootYachayApp() {
+  enterApp({ greet: true });
+};
+if (window.__ynPendingEnter) enterApp({ greet: true });
+
+function startProfesor(opts) {
+  if (opts && opts.silent) {
+    Voice.wanted = true;
+    if (!speakBusy) {
+      Voice.paused = false;
+      beginVoiceRec();
+    }
+    updateProfesorUI();
     return;
   }
-  Assistant.booting = true;
-  Assistant.welcomed = true;
-  speakBusy = false;
-  try { if ("speechSynthesis" in window) window.speechSynthesis.cancel(); } catch (e) { /* ignore */ }
-  Voice.paused = false;
-  speak(t("profesorHello"), () => {
-    Assistant.booting = false;
-    if (Assistant.sleeping) {
-      if (Voice.wanted) beginVoiceRec();
-      return;
-    }
-    startProfesor({ silent: true });
-    if (!scanning) startScan().catch(() => {});
-  }, true);
+  enterApp({ greet: true });
 }
+
+function stopProfesor({ silent } = {}) {
+  pauseApp();
+  if (silent && Voice.rec) {
+    try { Voice.rec.stop(); } catch (e) { /* ignore */ }
+  }
+}
+
+function stopAssistant() { pauseApp(); }
+function wakeAssistant() { resumeApp(); }
+function startAppFromWelcome() { enterApp({ greet: true }); }
+function startAssistantFromUser() { enterApp({ greet: true }); }
 
 function toggleProfesor() {
-  if (Assistant.sleeping) startAssistantFromUser();
-  else if (Voice.wanted) stopAssistant();
-  else startAssistantFromUser();
+  if (App.phase === "active") pauseApp();
+  else enterApp({ greet: true });
 }
 
 const SPEECH_LETTER = {
@@ -1335,24 +1295,21 @@ function handleVoiceCommand(raw) {
   if (!norm || norm.length < 2) return;
 
   const intent = hit.intent;
-  if (Assistant.sleeping && intent !== "on" && intent !== "help" && intent !== "off") {
-    return;
-  }
-  const welcomeWasOpen = isWelcomeOpen();
-  if (intent && intent !== "off") dismissWelcome();
+  if (App.phase !== "active" && intent !== "on" && intent !== "help") return;
 
   const status = document.getElementById("profesor-status");
   if (status) status.textContent = t("profesorHeard", heard);
 
   if (intent && !acceptIntent(intent)) return;
 
-  if (intent === "help") { speak(t("profesorHelp"), null, Assistant.sleeping); return; }
-  if (intent === "off") { stopAssistant(); return; }
+  if (intent === "help") { speak(t("profesorHelp"), null, true); return; }
+  if (intent === "off") { pauseApp(); return; }
   if (intent === "on") {
-    if (typeof bootYachay === "function") bootYachay();
-    else startAssistantFromUser();
+    if (App.phase === "paused") resumeApp();
+    else enterApp({ greet: true });
     return;
   }
+  if (App.phase === "welcome") enterApp({ greet: false });
   if (intent === "autism") { startAutismSession(); return; }
   if (intent === "write") { startWriteSession(); return; }
   if (intent === "learn") { startLearningSession(); return; }
@@ -1378,7 +1335,7 @@ function handleVoiceCommand(raw) {
     return;
   }
   if (intent === "cam-off") { stopScan(); speak(t("cameraOff")); return; }
-  if (intent === "cam-on") { startScan(); speak(t("cameraOn")); return; }
+  if (intent === "cam-on") { ensureCamera().then(() => speak(t("cameraOn"))); return; }
   if (intent === "repeat") {
     document.getElementById("btn-repeat-audio")?.click();
     return;
@@ -1876,9 +1833,6 @@ function togglePiecesSheet() {
 }
 
 function leaveActiveService() {
-  try {
-    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
-  } catch (e) { /* ignore */ }
   currentTarget = null;
   autismHits = 0;
   if (typeof setAutismStep === "function") setAutismStep("look");
@@ -1938,9 +1892,7 @@ async function startAutismSession() {
       speak(t("autismPrompt", conceptLabel(currentTarget)), () => setAutismStep("do"));
     }
   });
-  if (!scanning) {
-    try { await startScan(); } catch (e) { /* cámara opcional: se puede tocar la grilla */ }
-  }
+  await ensureCamera();
 }
 
 function handleAutismScan(concept) {
@@ -2006,9 +1958,7 @@ async function startLearningSession() {
   if (target) target.textContent = t("learnStarted");
   speak(t("learnStarted"));
   announceForScreenReader(t("learnStarted"));
-  if (!scanning) {
-    await startScan();
-  }
+  await ensureCamera();
   toast(t("startLearning"));
 }
 
@@ -2024,7 +1974,7 @@ function startChallengeSession() {
   updateTargetPicto();
   updatePaceBar(true);
   renderPieceGrid();
-  if (!scanning) startScan();
+  ensureCamera();
 }
 
 function applyProfile(id) {
@@ -2255,6 +2205,9 @@ async function openCameraStream(facing) {
 
 async function startScan(facing) {
   try {
+    if (scanning && stream && video && video.srcObject && (!facing || facing === cameraFacing)) {
+      return;
+    }
     if (facing) cameraFacing = facing;
     stopCameraTracks();
     // Primera vez: pedir permiso genérico para poder leer etiquetas de cámara
@@ -2408,7 +2361,7 @@ function applyHandGesture(name) {
     },
     Pointing_Up: () => {
       showGestureBadge("CÁMARA");
-      if (!scanning) startScan();
+      if (!scanning) ensureCamera();
       speak(t("gesturePoint"));
     },
     Victory: () => {
@@ -2432,33 +2385,12 @@ function dismissWelcome() {
   document.body.classList.remove("is-welcome");
 }
 
-function listenAtBoot() {
-  if (!canVoiceInput()) return;
+function listenForStartCommand() {
+  if (App.phase !== "welcome" || !canVoiceInput() || speakBusy) return;
   Voice.wanted = true;
-  Voice.paused = true;
+  Voice.paused = false;
+  beginVoiceRec();
   updateProfesorUI();
-}
-
-function speakWelcomeOnLoad() {
-  Assistant.on = true;
-  Assistant.sleeping = false;
-  if (!("speechSynthesis" in window) || !PREFS.voice) return;
-  const trySpeak = () => {
-    if (Assistant.welcomed || Assistant.booting || Assistant.autoplaySpoken) return;
-    if (window.speechSynthesis.speaking || window.speechSynthesis.pending) return;
-    speak(t("welcomeTalk"), () => {
-      Assistant.welcomed = true;
-      Assistant.autoplaySpoken = true;
-    }, true);
-  };
-  trySpeak();
-  [350, 900, 1800, 3200, 5000, 7500].forEach((ms) => setTimeout(trySpeak, ms));
-  if (window.speechSynthesis.addEventListener) {
-    window.speechSynthesis.addEventListener("voiceschanged", trySpeak, { once: true });
-  }
-  document.addEventListener("visibilitychange", () => {
-    if (!document.hidden) trySpeak();
-  });
 }
 
 function scanLoop() {
@@ -3065,7 +2997,7 @@ document.getElementById("btn-clear").addEventListener("click", () => {
 /* ---------- 14. Registro del Service Worker (instalable / offline) ---------- */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("service-worker.js?v=29").then((reg) => {
+    navigator.serviceWorker.register("service-worker.js?v=30").then((reg) => {
       reg.update().catch(() => {});
       if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
     }).catch(() => {});
@@ -3276,12 +3208,5 @@ document.getElementById("welcome-gate")?.addEventListener("click", (ev) => {
   if (typeof bootYachay === "function") bootYachay(ev);
 });
 window.addEventListener("load", () => {
-  listenAtBoot();
-  speakWelcomeOnLoad();
-  setTimeout(() => {
-    if (!Assistant.started && !speakBusy && Voice.wanted) {
-      Voice.paused = false;
-      beginVoiceRec();
-    }
-  }, 2800);
+  setTimeout(listenForStartCommand, 800);
 });

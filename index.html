@@ -8,17 +8,17 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="styles.css?v=29">
+<link rel="stylesheet" href="styles.css?v=30">
 <script>
 function bootYachay(ev) {
-  if (window.__ynStarting) return;
-  window.__ynStarting = true;
   if (ev && ev.preventDefault) ev.preventDefault();
   var gate = document.getElementById("welcome-gate");
   if (gate) gate.hidden = true;
   document.body.classList.remove("is-welcome");
-  if (typeof window.bootYachayApp === "function") {
-    try { window.bootYachayApp(); } catch (e2) {}
+  if (typeof window.enterApp === "function") {
+    window.enterApp({ greet: true });
+  } else {
+    window.__ynPendingEnter = true;
   }
 }
 </script>
@@ -29,7 +29,7 @@ function bootYachay(ev) {
   <button type="button" id="btn-welcome-start" class="welcome-start">
     <span class="welcome-mark" aria-hidden="true">YÑ</span>
     <strong data-i18n="welcomeTitle">Hola, soy Yachay Ñan 3D</strong>
-    <span data-i18n="welcomeTap">Di iniciar. O toca para hablar.</span>
+    <span data-i18n="welcomeTap">Toca o di iniciar.</span>
   </button>
 </div>
 
@@ -527,6 +527,6 @@ function bootYachay(ev) {
 <script src="lib/braille.js"></script>
 <script src="lib/ui-icons.js"></script>
 <script src="lib/gestures.js"></script>
-<script src="app.js?v=29"></script>
+<script src="app.js?v=30"></script>
 </body>
 </html>
