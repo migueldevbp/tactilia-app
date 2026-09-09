@@ -2,7 +2,7 @@
    Cachea todos los archivos de la app para que funcione 100% offline
    después de la primera visita (requisito clave para aulas rurales sin internet). */
 
-const CACHE_NAME = "yachay-nan-cache-v26";
+const CACHE_NAME = "yachay-nan-cache-v27";
 const ASSETS = [
   "./",
   "./index.html",

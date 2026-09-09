@@ -113,8 +113,9 @@ const I18N = {
     autismNo: (label) => `Esa no. Busca: ${label}.`,
     autismDone: "Terminamos esta ronda. Puedes descansar.",
     welcomeTitle: "Hola, soy Yachay Ñan 3D",
-    welcomeTap: "Toca para hablar conmigo",
-    welcomeTalk: "Hola, soy Yachay Ñan 3D. Te escucho. Di explorar, escribir o dictado.",
+    welcomeTap: "Di iniciar. O toca para hablar.",
+    welcomeTalk: "Hola, soy Yachay Ñan 3D. Di iniciar para empezar. También puedes decir explorar, escribir o dictado.",
+    appReady: "Listo. Cámara abierta. Di explorar, escribir o dictado.",
     assistantOff: "Asistente en pausa. Di activar para volver.",
     assistantOn: "Asistente activado. Te escucho.",
     assistantSleeping: "En pausa. Di activar o activate.",
@@ -299,8 +300,9 @@ const I18N = {
     autismNo: (label) => `Manam. Maskay: ${label}.`,
     autismDone: "Tukuy. Samayta atinki.",
     welcomeTitle: "Napaykullayki, Yachay Ñan 3D kani",
-    welcomeTap: "Ñitiy rimaypaq",
-    welcomeTalk: "Napaykullayki. Yachay Ñan 3D kani. Niy: explorar, qillqay icha dictado.",
+    welcomeTap: "Iniciar niy. Ñitiyta atinki.",
+    welcomeTalk: "Napaykullayki. Yachay Ñan 3D kani. Iniciar niy qallarinapaq. Niyta atinki: explorar, qillqay icha dictado.",
+    appReady: "Listo. Kamara kachkan. Niy: explorar, qillqay icha dictado.",
     assistantOff: "Asistente sayasqa. Activar niy kutimunapaq.",
     assistantOn: "Asistente kachkan. Uyarishayki.",
     assistantSleeping: "Sayasqa. Activar icha activate niy.",
@@ -599,6 +601,26 @@ let lastSpokenTs = 0;
 let lastSpeakEndTs = 0;
 const Assistant = { on: true, welcomed: false, autoplaySpoken: false, booting: false, sleeping: false };
 
+function pickSpeechVoice() {
+  if (!("speechSynthesis" in window)) return null;
+  const voices = window.speechSynthesis.getVoices() || [];
+  const want = LANG === "qu" ? /es-PE|es-MX|es-US|es-/i : /es-PE|es-MX|es-US|es-ES|es-/i;
+  return voices.find((v) => /es-PE/i.test(v.lang))
+    || voices.find((v) => want.test(v.lang))
+    || null;
+}
+
+function resumeSpeechIfStuck() {
+  if (!("speechSynthesis" in window)) return;
+  try {
+    if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+  } catch (e) { /* Safari a veces pausa solo */ }
+}
+
+if (!window.__ynSpeechWatch) {
+  window.__ynSpeechWatch = setInterval(resumeSpeechIfStuck, 220);
+}
+
 function speak(text, onEnd, force) {
   if (!text) {
     if (onEnd) onEnd();
@@ -615,11 +637,14 @@ function speak(text, onEnd, force) {
     return;
   }
   speakBusy = true;
+  resumeSpeechIfStuck();
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
   u.lang = "es-PE";
   u.rate = PREFS.calmMode ? 0.78 : (LANG === "qu" ? 0.88 : 0.95);
   u.pitch = PREFS.calmMode ? 0.95 : 1;
+  const voice = pickSpeechVoice();
+  if (voice) u.voice = voice;
   const done = () => {
     lastSpeakEndTs = Date.now();
     if (!speakBusy) {
@@ -633,6 +658,12 @@ function speak(text, onEnd, force) {
   u.onend = done;
   u.onerror = done;
   window.speechSynthesis.speak(u);
+  setTimeout(() => {
+    resumeSpeechIfStuck();
+    if (speakBusy && !window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
+      try { window.speechSynthesis.speak(u); } catch (e) { /* segundo intento */ }
+    }
+  }, 280);
 }
 
 function shouldAnimate() {
@@ -1005,8 +1036,12 @@ function voiceIntentFromNorm(norm, packed) {
     || /activate(the)?(voice)?(assistant)?/.test(p)
     || /enciendeasistente|prendeasistente|hablaasistente|startassistant|turnon/.test(p)
     || /enciende(la|el)?voz|prendelavoz/.test(p)
+    || /inici(a|ar)(el|la|l)?(asistente|voz|app|aplicacion|todo)?/.test(p)
+    || /comenz(a|ar)|empecemos|empezamos|startapp/.test(p)
     || p === "activar" || p === "activate" || p === "activa" || p === "enciende"
-    || p === "prende" || p === "wake" || p === "hey") return "on";
+    || p === "prende" || p === "wake" || p === "hey"
+    || p === "iniciar" || p === "inicia" || p === "start" || p === "comenzar"
+    || p === "comienza" || p === "empezar" || p === "empieza") return "on";
   return "";
 }
 
@@ -1181,7 +1216,32 @@ function wakeAssistant() {
   speak(t("assistantOn"), null, true);
 }
 
+function isWelcomeOpen() {
+  const gate = document.getElementById("welcome-gate");
+  return !!(gate && !gate.hidden && document.body.classList.contains("is-welcome"));
+}
+
+function startAppFromWelcome() {
+  dismissWelcome();
+  Assistant.booting = false;
+  Assistant.sleeping = false;
+  Assistant.on = true;
+  Assistant.welcomed = true;
+  Assistant.autoplaySpoken = true;
+  Voice.wanted = true;
+  Voice.paused = false;
+  beginVoiceRec();
+  updateProfesorUI();
+  setPlayMode("learn");
+  speak(t("appReady"), null, true);
+  if (!scanning) startScan().catch(() => {});
+}
+
 function startAssistantFromUser() {
+  if (isWelcomeOpen()) {
+    startAppFromWelcome();
+    return;
+  }
   dismissWelcome();
   if (Assistant.sleeping) {
     wakeAssistant();
@@ -1189,7 +1249,10 @@ function startAssistantFromUser() {
   }
   Assistant.on = true;
   Assistant.sleeping = false;
-  if (Voice.wanted || Assistant.booting) return;
+  if (Voice.wanted || Assistant.booting) {
+    if (!scanning) startScan().catch(() => {});
+    return;
+  }
   Assistant.booting = true;
   Assistant.welcomed = true;
   speakBusy = false;
@@ -1202,6 +1265,7 @@ function startAssistantFromUser() {
       return;
     }
     startProfesor({ silent: true });
+    if (!scanning) startScan().catch(() => {});
   }, true);
 }
 
@@ -1266,6 +1330,8 @@ function handleVoiceCommand(raw) {
   if (Assistant.sleeping && intent !== "on" && intent !== "help" && intent !== "off") {
     return;
   }
+  const welcomeWasOpen = isWelcomeOpen();
+  if (intent && intent !== "off") dismissWelcome();
 
   const status = document.getElementById("profesor-status");
   if (status) status.textContent = t("profesorHeard", heard);
@@ -1274,7 +1340,11 @@ function handleVoiceCommand(raw) {
 
   if (intent === "help") { speak(t("profesorHelp"), null, Assistant.sleeping); return; }
   if (intent === "off") { stopAssistant(); return; }
-  if (intent === "on") { startAssistantFromUser(); return; }
+  if (intent === "on") {
+    if (welcomeWasOpen) startAppFromWelcome();
+    else startAssistantFromUser();
+    return;
+  }
   if (intent === "autism") { startAutismSession(); return; }
   if (intent === "write") { startWriteSession(); return; }
   if (intent === "learn") { startLearningSession(); return; }
@@ -2353,30 +2423,34 @@ function dismissWelcome() {
   document.body.classList.remove("is-welcome");
 }
 
+function listenAtBoot() {
+  if (!canVoiceInput()) return;
+  Voice.wanted = true;
+  Voice.paused = false;
+  beginVoiceRec();
+  updateProfesorUI();
+}
+
 function speakWelcomeOnLoad() {
-  if (Assistant.autoplaySpoken) return;
   Assistant.on = true;
-  if (!("speechSynthesis" in window)) return;
-  const talk = () => {
-    if (Assistant.autoplaySpoken || Voice.wanted) return;
-    Assistant.autoplaySpoken = true;
-    try {
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(t("welcomeTalk"));
-      u.lang = "es-PE";
-      u.rate = 0.92;
-      u.onend = () => { Assistant.welcomed = true; lastSpeakEndTs = Date.now(); };
-      window.speechSynthesis.speak(u);
-      lastSpokenNorm = normalizeVoice(t("welcomeTalk"));
-      lastSpokenTs = Date.now();
-    } catch (e) {
-      Assistant.autoplaySpoken = false;
-    }
+  Assistant.sleeping = false;
+  if (!("speechSynthesis" in window) || !PREFS.voice) return;
+  const trySpeak = () => {
+    if (Assistant.welcomed || Assistant.booting || Assistant.autoplaySpoken) return;
+    if (window.speechSynthesis.speaking || window.speechSynthesis.pending) return;
+    speak(t("welcomeTalk"), () => {
+      Assistant.welcomed = true;
+      Assistant.autoplaySpoken = true;
+    }, true);
   };
-  talk();
-  if (window.speechSynthesis && speechSynthesis.addEventListener) {
-    speechSynthesis.addEventListener("voiceschanged", talk, { once: true });
+  trySpeak();
+  [350, 900, 1800, 3200, 5000, 7500].forEach((ms) => setTimeout(trySpeak, ms));
+  if (window.speechSynthesis.addEventListener) {
+    window.speechSynthesis.addEventListener("voiceschanged", trySpeak, { once: true });
   }
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) trySpeak();
+  });
 }
 
 function scanLoop() {
@@ -2983,7 +3057,7 @@ document.getElementById("btn-clear").addEventListener("click", () => {
 /* ---------- 14. Registro del Service Worker (instalable / offline) ---------- */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("service-worker.js?v=26").then((reg) => {
+    navigator.serviceWorker.register("service-worker.js?v=27").then((reg) => {
       reg.update().catch(() => {});
       if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
     }).catch(() => {});
@@ -3188,9 +3262,10 @@ document.getElementById("btn-read-braille")?.addEventListener("click", () => {
 });
 document.getElementById("btn-welcome-start")?.addEventListener("click", () => startAssistantFromUser());
 document.addEventListener("pointerdown", () => {
-  if (document.body.classList.contains("is-welcome")) startAssistantFromUser();
+  if (isWelcomeOpen()) startAssistantFromUser();
 }, { once: true });
 window.addEventListener("load", () => {
+  listenAtBoot();
   speakWelcomeOnLoad();
-  setTimeout(speakWelcomeOnLoad, 400);
+  setTimeout(speakWelcomeOnLoad, 500);
 });
