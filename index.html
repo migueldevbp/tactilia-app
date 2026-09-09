@@ -8,13 +8,13 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=24">
 </head>
 <body class="kid-ui yn-ui is-welcome home-locked" data-tab="estudiante">
 
 <div id="welcome-gate" class="welcome-gate">
   <button type="button" id="btn-welcome-start" class="welcome-start">
-    <span class="welcome-mark" aria-hidden="true">Aa</span>
+    <span class="welcome-mark" aria-hidden="true">YÑ</span>
     <strong data-i18n="welcomeTitle">Hola, soy Yachay Ñan 3D</strong>
     <span data-i18n="welcomeTap">Toca para hablar conmigo</span>
   </button>
@@ -127,7 +127,7 @@
               <span data-i18n="profesorBtn">Activar voz</span>
             </button>
             <button id="btn-flip-camera-row" class="yn-ghost" type="button" hidden data-i18n="flipCamera">Girar</button>
-            <button id="btn-toggle-pieces" class="yn-ghost" type="button" aria-expanded="false" aria-controls="pieces-sheet" data-i18n="piecesBtn">Piezas</button>
+            <button id="btn-toggle-pieces" class="sr-only" type="button" aria-expanded="false" aria-controls="pieces-sheet" data-i18n="piecesBtn">Piezas</button>
             <span class="yn-jsqr">Lector jsQR</span>
           </div>
           <p id="scan-status" class="status-text sr-only" data-i18n="cameraOff" role="status" aria-live="polite">Cámara apagada.</p>
@@ -135,13 +135,13 @@
         </div>
 
         <div class="yn-col yn-col-panel">
-          <div class="session-strip yn-stats" aria-label="Progreso de la sesión">
+          <div class="session-strip yn-stats sr-only" aria-label="Progreso de la sesión">
             <div class="session-stat"><span class="n" id="stat-streak">0</span><span class="l" data-i18n="statStreak">Racha</span></div>
             <div class="session-stat"><span class="n" id="stat-correct">0</span><span class="l" data-i18n="statCorrect">Aciertos</span></div>
             <div class="session-stat"><span class="n" id="stat-accuracy">—</span><span class="l" data-i18n="statAccuracy">Precisión</span></div>
           </div>
           <p id="play-mode-help" class="sr-only" data-i18n="modeLearnHelp">Acerca una pieza. La app te dice qué es.</p>
-          <p id="exercise-target" class="target-text" data-i18n="learnPrompt" role="status" aria-live="polite">Acerca una pieza al recuadro.</p>
+          <p id="exercise-target" class="target-text yn-dictado-prompt" data-i18n="learnPrompt" role="status" aria-live="polite">Acerca una pieza al recuadro.</p>
           <div id="pace-bar" class="pace-bar" hidden>
             <div id="pace-fill" class="pace-fill"></div>
             <span id="pace-label" class="pace-label" data-i18n="paceLabel">Tómate tu tiempo</span>
@@ -156,7 +156,7 @@
             <p class="autism-then" data-i18n="autismThen">Primero esta pieza. Después, descanso.</p>
           </div>
 
-          <div class="card result-card yn-explore" id="result-card" hidden role="status" aria-live="assertive" aria-atomic="true">
+          <div class="card result-card yn-explore" id="result-card" role="status" aria-live="assertive" aria-atomic="true">
             <div class="yn-letter-row">
               <div id="explore-glyphs" class="yn-glyphs">—</div>
               <div id="result-icon" class="result-icon" aria-hidden="true">—</div>
@@ -514,6 +514,6 @@
 <script src="lib/braille.js"></script>
 <script src="lib/ui-icons.js"></script>
 <script src="lib/gestures.js"></script>
-<script src="app.js"></script>
+<script src="app.js?v=24"></script>
 </body>
 </html>

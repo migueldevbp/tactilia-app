@@ -2,7 +2,7 @@
    Cachea todos los archivos de la app para que funcione 100% offline
    después de la primera visita (requisito clave para aulas rurales sin internet). */
 
-const CACHE_NAME = "tactilia-cache-v23";
+const CACHE_NAME = "yachay-nan-cache-v24";
 const ASSETS = [
   "./",
   "./index.html",
@@ -50,6 +50,22 @@ self.addEventListener("fetch", (event) => {
       fetch(req)
         .then((response) => {
           if (response.ok) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match(req))
+    );
+    return;
+  }
+
+  const isShell = /\.(html|css|js)$/.test(url.pathname) || url.pathname.endsWith("/") || url.pathname.endsWith("/tactilia-app");
+  if (isShell) {
+    event.respondWith(
+      fetch(req)
+        .then((response) => {
+          if (response && response.ok) {
             const clone = response.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
           }

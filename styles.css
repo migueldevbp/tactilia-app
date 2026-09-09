@@ -964,22 +964,35 @@ body.yn-ui .yn-modes.play-mode-switch {
   padding: 0;
   background: var(--yn-navy-2);
 }
+body.yn-ui .play-learn,
+body.yn-ui .play-write,
+body.yn-ui .play-challenge,
+body.yn-ui .play-autism,
+body.yn-ui .play-learn.active,
+body.yn-ui .play-write.active,
+body.yn-ui .play-challenge.active {
+  background: transparent !important;
+  color: inherit !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
 body.yn-ui .yn-modes .play-mode-btn {
-  min-height: 52px;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-  color: #d6deea;
-  flex-direction: row;
+  min-height: 52px !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #d6deea !important;
+  flex-direction: row !important;
   gap: 6px;
-  font-size: 14px;
-  box-shadow: none;
-  transform: none;
+  font-size: 14px !important;
+  box-shadow: none !important;
+  transform: none !important;
+  padding: 8px 6px !important;
 }
 body.yn-ui .yn-modes .play-mode-btn.active {
-  background: #fff;
-  color: var(--yn-navy);
-  box-shadow: inset 0 -4px 0 var(--yn-gold);
+  background: #fff !important;
+  color: var(--yn-navy) !important;
+  box-shadow: inset 0 -4px 0 var(--yn-gold) !important;
 }
 body.yn-ui .play-mode-ico { font-size: 16px; }
 body.yn-ui .yn-num {
@@ -1115,6 +1128,21 @@ body.yn-ui .yn-pill-repeat { background: #f8e2c8; color: #9a4b12; }
 body.yn-ui .yn-pill-quiet { background: #f6efb8; color: #7a6410; }
 body.yn-ui.service-write #challenge-actions,
 body.yn-ui.service-learn #challenge-actions { display: none; }
+body.yn-ui:not(.service-challenge) .yn-dictado-prompt { display: none !important; }
+body.yn-ui .welcome-gate {
+  background: var(--yn-navy);
+}
+body.yn-ui .welcome-start {
+  background: #fff;
+  color: var(--yn-navy);
+  border-color: var(--yn-gold);
+}
+body.yn-ui .welcome-mark { background: #e8eef8; color: var(--yn-navy); }
+body.yn-ui #result-card[hidden] { display: none !important; }
+body.yn-ui.service-learn #result-card { display: block; }
+body.yn-ui.service-write #result-card { display: none !important; }
+body.yn-ui.service-write #write-panel { display: block; }
+body.yn-ui:not(.service-write) #write-panel { display: none !important; }
 
 body.yn-ui:not(.home-locked) main {
   padding: 16px;

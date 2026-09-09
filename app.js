@@ -1690,6 +1690,18 @@ function syncPlayModeUI() {
   renderWritePanel();
   refreshExerciseTarget();
   renderPieceGrid();
+  const resultCard = document.getElementById("result-card");
+  if (resultCard) {
+    resultCard.hidden = mode === "write";
+    if (mode === "learn" && !lastExplored) {
+      const glyphs = document.getElementById("explore-glyphs");
+      if (glyphs) glyphs.textContent = "Aa";
+      const lab = document.getElementById("result-label");
+      if (lab) lab.textContent = "Acerca una pieza";
+      const fb = document.getElementById("result-feedback");
+      if (fb) fb.textContent = "Aquí verás la letra, el braille y un ejemplo.";
+    }
+  }
 }
 
 function closePiecesSheet() {
@@ -2904,7 +2916,7 @@ document.getElementById("btn-clear").addEventListener("click", () => {
 /* ---------- 14. Registro del Service Worker (instalable / offline) ---------- */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("service-worker.js?v=23").then((reg) => {
+    navigator.serviceWorker.register("service-worker.js?v=24").then((reg) => {
       reg.update().catch(() => {});
       if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
     }).catch(() => {});
