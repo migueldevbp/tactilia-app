@@ -114,10 +114,10 @@ const I18N = {
     autismDone: "Terminamos esta ronda. Puedes descansar.",
     welcomeTitle: "Hola, soy Yachay Ñan 3D",
     welcomeTap: "Di iniciar. O toca para hablar.",
-    welcomeTalk: "Hola, soy Yachay Ñan 3D. Di iniciar para empezar. También puedes decir explorar, escribir o dictado.",
-    appReady: "Listo. Cámara abierta. Di explorar, escribir o dictado.",
-    assistantOff: "Asistente en pausa. Di activar para volver.",
-    assistantOn: "Asistente activado. Te escucho.",
+    welcomeTalk: "Hola, soy Yachay Ñan 3D. Estoy aquí contigo.",
+    appReady: "Listo. Ya puedes usar la app.",
+    assistantOff: "Asistente en pausa.",
+    assistantOn: "Te escucho.",
     assistantSleeping: "En pausa. Di activar o activate.",
     gestureThumbUp: "Pulgar arriba. Sí.",
     gesturePalm: "Palma. Pauso.",
@@ -149,7 +149,7 @@ const I18N = {
     profesorBtnStop: "Silenciar voz",
     profesorIdle: "Di activar. O toca Activar voz.",
     profesorListening: "Te escucho. Di explorar, escribir, dictado, parar asistente, o activar.",
-    profesorHello: "Asistente activado. Di explorar, escribir, dictado, o parar asistente.",
+    profesorHello: "Hola. Ya te escucho.",
     profesorClarify: "¿Explorar, escribir, dictado, parar o activar?",
     profesorHeard: (s) => `Escuché: ${s}`,
     profesorNoSupport: "Este navegador no reconoce la voz. Prueba Chrome en Android, o usa los botones del panel.",
@@ -301,10 +301,10 @@ const I18N = {
     autismDone: "Tukuy. Samayta atinki.",
     welcomeTitle: "Napaykullayki, Yachay Ñan 3D kani",
     welcomeTap: "Iniciar niy. Ñitiyta atinki.",
-    welcomeTalk: "Napaykullayki. Yachay Ñan 3D kani. Iniciar niy qallarinapaq. Niyta atinki: explorar, qillqay icha dictado.",
-    appReady: "Listo. Kamara kachkan. Niy: explorar, qillqay icha dictado.",
-    assistantOff: "Asistente sayasqa. Activar niy kutimunapaq.",
-    assistantOn: "Asistente kachkan. Uyarishayki.",
+    welcomeTalk: "Napaykullayki. Yachay Ñan 3D kani. Kayllapi kachkani.",
+    appReady: "Listo. App kachkan.",
+    assistantOff: "Asistente sayasqa.",
+    assistantOn: "Uyarishayki.",
     assistantSleeping: "Sayasqa. Activar icha activate niy.",
     gestureThumbUp: "Arí.",
     gesturePalm: "Sayay.",
@@ -336,7 +336,7 @@ const I18N = {
     profesorBtnStop: "Ama uyarichu",
     profesorIdle: "Activar niy. Ñitiyta atinki.",
     profesorListening: "Uyarishayki. Niy: explorar, qillqay, dictado, parar asistente.",
-    profesorHello: "Asistente kachkan. Niy: explorar, qillqay, dictado, icha parar.",
+    profesorHello: "Uyarishayki.",
     profesorHeard: (s) => `Uyarirqani: ${s}`,
     profesorNoSupport: "Kay navegador mana rimayta hap'inchu. Chromewan Androidpi.",
     profesorMicDenied: "Micrófono mana kanchu. Permisota quy.",
@@ -637,6 +637,7 @@ function speak(text, onEnd, force) {
     return;
   }
   speakBusy = true;
+  pauseVoiceListen();
   resumeSpeechIfStuck();
   if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
     window.speechSynthesis.cancel();
@@ -655,7 +656,7 @@ function speak(text, onEnd, force) {
     }
     speakBusy = false;
     if (onEnd) onEnd();
-    if (Voice.wanted && !Voice.paused) beginVoiceRec();
+    resumeVoiceListenSoon();
   };
   u.onend = done;
   u.onerror = done;
@@ -969,9 +970,9 @@ function resumeVoiceListenSoon() {
   if (!Voice.wanted) return;
   clearTimeout(resumeVoiceListenSoon._t);
   resumeVoiceListenSoon._t = setTimeout(() => {
-    if (Voice.wanted && !speakBusy) beginVoiceRec();
+    if (Voice.wanted && !speakBusy && Date.now() - lastSpeakEndTs >= 900) beginVoiceRec();
     updateProfesorUI();
-  }, 650);
+  }, 1000);
 }
 
 function interruptSpeech() {
@@ -1064,17 +1065,12 @@ function acceptIntent(name) {
 }
 
 function isTtsEcho(norm) {
+  if (speakBusy || Date.now() - lastSpeakEndTs < 1100) return true;
   const packedHeard = voicePack(norm);
   const packedSpoken = voicePack(lastSpokenNorm);
-  if (!packedHeard || packedHeard.length < 4 || !packedSpoken) return false;
-  const during = speakBusy;
-  const justAfter = Date.now() - lastSpeakEndTs < 700;
-  if (!during && !justAfter) return false;
-  const echoIntent = voiceIntentFromNorm(norm, packedHeard);
-  if ((echoIntent === "on" || echoIntent === "off") && packedHeard.length < packedSpoken.length * 0.7) {
-    return false;
-  }
-  return packedSpoken.includes(packedHeard);
+  if (!packedHeard || packedHeard.length < 3 || !packedSpoken) return false;
+  if (Date.now() - lastSpeakEndTs > 2200) return false;
+  return packedSpoken.includes(packedHeard) || packedHeard.includes(packedSpoken);
 }
 
 function collectTranscripts(result) {
@@ -1087,13 +1083,11 @@ function collectTranscripts(result) {
 }
 
 function ingestVoice(texts, { interim } = {}) {
+  if (Voice.paused || speakBusy) return;
+  if (Date.now() - lastSpeakEndTs < 1100) return;
   const hit = voiceIntent(texts);
   if (!hit.heard) return;
   if (isTtsEcho(hit.norm)) return;
-  if (speakBusy) {
-    if (!hit.intent) return;
-    interruptSpeech();
-  }
   if (interim && !hit.intent) return;
   handleVoiceCommand(texts);
 }
@@ -1229,13 +1223,17 @@ function startAppFromWelcome() {
   Assistant.sleeping = false;
   Assistant.on = true;
   Assistant.welcomed = true;
-  Assistant.autoplaySpoken = true;
   Voice.wanted = true;
-  Voice.paused = false;
-  beginVoiceRec();
+  Voice.paused = true;
   updateProfesorUI();
   setPlayMode("learn");
   if (!scanning) startScan().catch(() => {});
+  if (speakBusy || Assistant.autoplaySpoken) {
+    resumeVoiceListenSoon();
+    return;
+  }
+  Assistant.autoplaySpoken = true;
+  speak(t("welcomeTalk"), null, true);
 }
 
 window.bootYachayApp = function bootYachayApp() {
@@ -2437,8 +2435,7 @@ function dismissWelcome() {
 function listenAtBoot() {
   if (!canVoiceInput()) return;
   Voice.wanted = true;
-  Voice.paused = false;
-  beginVoiceRec();
+  Voice.paused = true;
   updateProfesorUI();
 }
 
@@ -3068,7 +3065,7 @@ document.getElementById("btn-clear").addEventListener("click", () => {
 /* ---------- 14. Registro del Service Worker (instalable / offline) ---------- */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("service-worker.js?v=28").then((reg) => {
+    navigator.serviceWorker.register("service-worker.js?v=29").then((reg) => {
       reg.update().catch(() => {});
       if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
     }).catch(() => {});
@@ -3281,4 +3278,10 @@ document.getElementById("welcome-gate")?.addEventListener("click", (ev) => {
 window.addEventListener("load", () => {
   listenAtBoot();
   speakWelcomeOnLoad();
+  setTimeout(() => {
+    if (!Assistant.started && !speakBusy && Voice.wanted) {
+      Voice.paused = false;
+      beginVoiceRec();
+    }
+  }, 2800);
 });
