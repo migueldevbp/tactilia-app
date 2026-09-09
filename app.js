@@ -115,8 +115,9 @@ const I18N = {
     welcomeTitle: "Hola, soy Yachay Ñan 3D",
     welcomeTap: "Toca para hablar conmigo",
     welcomeTalk: "Hola, soy Yachay Ñan 3D. Te escucho. Di explorar, escribir o dictado.",
-    assistantOff: "Asistente apagado. Toca Hablar cuando quieras que vuelva.",
-    assistantOn: "Asistente encendido. Te escucho.",
+    assistantOff: "Asistente en pausa. Di activar para volver.",
+    assistantOn: "Asistente activado. Te escucho.",
+    assistantSleeping: "En pausa. Di activar o activate.",
     gestureThumbUp: "Pulgar arriba. Sí.",
     gesturePalm: "Palma. Pauso.",
     gestureFist: "Puño. Cámara en pausa.",
@@ -145,14 +146,14 @@ const I18N = {
     startWriting: "Escribir",
     profesorBtn: "Activar voz",
     profesorBtnStop: "Silenciar voz",
-    profesorIdle: "Toca Activar voz. Di: explorar, escribir o dictado.",
-    profesorListening: "Te escucho. Di explorar, escribir, dictado, dime qué dice, o silencio.",
-    profesorHello: "Te escucho. Di explorar, escribir o dictado.",
-    profesorClarify: "¿Explorar, escribir o dictado?",
+    profesorIdle: "Di activar. O toca Activar voz.",
+    profesorListening: "Te escucho. Di explorar, escribir, dictado, parar asistente, o activar.",
+    profesorHello: "Asistente activado. Di explorar, escribir, dictado, o parar asistente.",
+    profesorClarify: "¿Explorar, escribir, dictado, parar o activar?",
     profesorHeard: (s) => `Escuché: ${s}`,
     profesorNoSupport: "Este navegador no reconoce la voz. Prueba Chrome en Android, o usa los botones del panel.",
     profesorMicDenied: "No pude usar el micrófono. Permite el micrófono y vuelve a pulsar Profesor.",
-    profesorHelp: "Di: modo escritura; modo autismo; modo jugar; modo escuchar; dime qué dice; apaga asistente; cámara; ayuda.",
+    profesorHelp: "Di: activar; parar asistente; explorar; escribir; dictado; dime qué dice; cámara; ayuda.",
     profesorUnknown: "No entendí. Di ayuda para oír los comandos.",
     profesorOff: "Dejé de escuchar.",
     startLearning: "Empezar",
@@ -300,8 +301,9 @@ const I18N = {
     welcomeTitle: "Napaykullayki, Yachay Ñan 3D kani",
     welcomeTap: "Ñitiy rimaypaq",
     welcomeTalk: "Napaykullayki. Yachay Ñan 3D kani. Niy: explorar, qillqay icha dictado.",
-    assistantOff: "Asistente sayasqa.",
-    assistantOn: "Asistente kachkan.",
+    assistantOff: "Asistente sayasqa. Activar niy kutimunapaq.",
+    assistantOn: "Asistente kachkan. Uyarishayki.",
+    assistantSleeping: "Sayasqa. Activar icha activate niy.",
     gestureThumbUp: "Arí.",
     gesturePalm: "Sayay.",
     gestureFist: "Kamara sayay.",
@@ -330,13 +332,13 @@ const I18N = {
     startWriting: "Qillqayta qallariy",
     profesorBtn: "Profesor rimaywan",
     profesorBtnStop: "Ama uyarichu",
-    profesorIdle: "Profesorta ñitiy. Niy: qillqay, autismo, pukllay.",
-    profesorListening: "Uyarishayki. Niy: qillqay, autismo, pukllay, uyariy.",
-    profesorHello: "Uyarishayki. Niy: qillqay, autismo, pukllay.",
+    profesorIdle: "Activar niy. Ñitiyta atinki.",
+    profesorListening: "Uyarishayki. Niy: explorar, qillqay, dictado, parar asistente.",
+    profesorHello: "Asistente kachkan. Niy: explorar, qillqay, dictado, icha parar.",
     profesorHeard: (s) => `Uyarirqani: ${s}`,
     profesorNoSupport: "Kay navegador mana rimayta hap'inchu. Chromewan Androidpi.",
     profesorMicDenied: "Micrófono mana kanchu. Permisota quy.",
-    profesorHelp: "Niyta atinki: qillqay; autismo; yachay; atipanakuy; imata niy; apaga asistente; kamara; ayuda.",
+    profesorHelp: "Niyta atinki: activar; parar asistente; explorar; qillqay; dictado; imata niy; kamara; ayuda.",
     profesorUnknown: "Manam hamutani. Ayuda niy.",
     profesorClarify: "¿Qillqay, autismo, pukllay icha uyariy?",
     profesorOff: "Manaña uyariniñachu.",
@@ -595,7 +597,7 @@ let speakBusy = false;
 let lastSpokenNorm = "";
 let lastSpokenTs = 0;
 let lastSpeakEndTs = 0;
-const Assistant = { on: true, welcomed: false, autoplaySpoken: false, booting: false };
+const Assistant = { on: true, welcomed: false, autoplaySpoken: false, booting: false, sleeping: false };
 
 function speak(text, onEnd, force) {
   if (!text) {
@@ -604,7 +606,7 @@ function speak(text, onEnd, force) {
   }
   lastSpokenNorm = normalizeVoice(text);
   lastSpokenTs = Date.now();
-  if (!force && !Assistant.on) {
+  if (!force && (!Assistant.on || Assistant.sleeping)) {
     if (onEnd) onEnd();
     return;
   }
@@ -908,8 +910,12 @@ function updateProfesorUI() {
   const dock = document.getElementById("profesor-dock");
   const btn = document.getElementById("btn-profesor");
   const status = document.getElementById("profesor-status");
-  const on = Voice.wanted && !Voice.paused;
-  if (dock) dock.classList.toggle("is-listening", on);
+  const sleeping = !!Assistant.sleeping;
+  const on = Voice.wanted && !Voice.paused && !sleeping;
+  if (dock) {
+    dock.classList.toggle("is-listening", on);
+    dock.classList.toggle("is-sleeping", sleeping);
+  }
   if (btn) {
     btn.setAttribute("aria-pressed", on ? "true" : "false");
     const label = btn.querySelector("[data-i18n]") || btn.querySelector("[data-i18n-text]");
@@ -918,7 +924,10 @@ function updateProfesorUI() {
     else btn.textContent = text;
     if (typeof decorateButtonsWithIcons === "function") decorateButtonsWithIcons();
   }
-  if (status) status.textContent = t(on ? "profesorListening" : "profesorIdle");
+  if (status) {
+    if (sleeping) status.textContent = t("assistantSleeping");
+    else status.textContent = t(on ? "profesorListening" : "profesorIdle");
+  }
 }
 
 function pauseVoiceListen() {
@@ -959,10 +968,17 @@ function voiceIntentFromNorm(norm, packed) {
   const p = packed || voicePack(norm);
   const n = " " + norm + " ";
 
-  if (/(callate|silencio|adios|hasta luego|ama uyarichu)/.test(n)
-    || /apaga(r)?(el|la|l)?asistente/.test(p)
-    || /apagalavoz|dejadeescuchar|paradeescuchar/.test(p)) return "off";
-  if (/enciendeasistente|prendeasistente|activaasistente|hablaasistente/.test(p)) return "on";
+  if (/(callate|silencio|adios|hasta luego|ama uyarichu|\bstop\b|\bdeactivate\b)/.test(n)
+    || /apag(a|ar)(el|la|l)?(asistente|voz|microfono|micro)/.test(p)
+    || /par(a|ar)(el|la|l)?(asistente|voz|microfono|micro|deescuchar|dehablar)/.test(p)
+    || ((p === "desactivar" || p === "desactiva" || /desactiv(a|ar)(el|la|l)?(asistente|voz|microfono|micro)/.test(p)))
+    || /detener(el|la)?(asistente|voz)/.test(p)
+    || /cierra(el|la)?asistente/.test(p)
+    || /apagalavoz|dejadeescuchar|paradeescuchar|turnoff|stopassistant/.test(p)
+    || p === "parar" || p === "silencio" || p === "stop" || p === "deactivate") return "off";
+
+  if (/apagacamara|detenercamara|para(r)?camara/.test(p)) return "cam-off";
+  if (/activ(a|ar)(el|la)?camara|abrecamara|prendecamara|escanear/.test(p)) return "cam-on";
 
   if (/(dimequedice|quedice|quedije|leelo|leertexto|imataniy|imatanin)/.test(p)
     || /lee lo que/.test(n)) return "read";
@@ -970,8 +986,6 @@ function voiceIntentFromNorm(norm, packed) {
   if (/(borraultim|borrarultim|quitaultim|borraletra|qhipatapichay)/.test(p)) return "back";
   if (/\bespacio\b/.test(n) || /palabra nueva/.test(n)) return "space";
 
-  if (/apagacamara|detenercamara|paracamara/.test(p)) return "cam-off";
-  if (/activacamara|abrecamara|prendecamara|escanear/.test(p)) return "cam-on";
   if (/\brepetir\b|\botra vez\b|\bkutichiy\b/.test(n)) return "repeat";
   if (/(ayuda|comandos|quepuedodecir|imataniytaatini)/.test(p)) return "help";
 
@@ -986,6 +1000,13 @@ function voiceIntentFromNorm(norm, packed) {
     || /\b(aprender|escuchar|yachay|uyariy)\b/.test(n)) return "learn";
 
   if (/\b(moto|modo|modos|motor)\b/.test(n) && /\b(letra|letras|palabra|texto)\b/.test(n)) return "write";
+
+  if (/activ(a|ar|ate)(el|la|l)?(asistente|voz|microfono|micro)/.test(p)
+    || /activate(the)?(voice)?(assistant)?/.test(p)
+    || /enciendeasistente|prendeasistente|hablaasistente|startassistant|turnon/.test(p)
+    || /enciende(la|el)?voz|prendelavoz/.test(p)
+    || p === "activar" || p === "activate" || p === "activa" || p === "enciende"
+    || p === "prende" || p === "wake" || p === "hey") return "on";
   return "";
 }
 
@@ -1018,6 +1039,10 @@ function isTtsEcho(norm) {
   const during = speakBusy;
   const justAfter = Date.now() - lastSpeakEndTs < 700;
   if (!during && !justAfter) return false;
+  const echoIntent = voiceIntentFromNorm(norm, packedHeard);
+  if ((echoIntent === "on" || echoIntent === "off") && packedHeard.length < packedSpoken.length * 0.7) {
+    return false;
+  }
   return packedSpoken.includes(packedHeard);
 }
 
@@ -1090,8 +1115,14 @@ function beginVoiceRec() {
 }
 
 function startProfesor(opts) {
+  if (Assistant.sleeping) {
+    updateProfesorUI();
+    if (Voice.wanted) beginVoiceRec();
+    return;
+  }
   const silent = opts && opts.silent;
   Assistant.on = true;
+  Assistant.sleeping = false;
   if (!canVoiceInput()) {
     updateProfesorUI();
     if (!silent) speak(t("profesorNoSupport"));
@@ -1116,21 +1147,48 @@ function stopProfesor({ silent } = {}) {
 }
 
 function stopAssistant() {
-  Voice.wanted = false;
-  Voice.paused = false;
-  if (Voice.rec) {
-    try { Voice.rec.stop(); } catch (e) { /* ignore */ }
+  if (Assistant.sleeping) {
+    updateProfesorUI();
+    return;
+  }
+  Assistant.sleeping = true;
+  Assistant.on = false;
+  if (canVoiceInput()) {
+    Voice.wanted = true;
+    Voice.paused = false;
+  } else {
+    Voice.wanted = false;
+    Voice.paused = false;
+    if (Voice.rec) {
+      try { Voice.rec.stop(); } catch (e) { /* ignore */ }
+    }
   }
   updateProfesorUI();
   speak(t("assistantOff"), () => {
-    Assistant.on = false;
     if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    if (Voice.wanted) beginVoiceRec();
   }, true);
+}
+
+function wakeAssistant() {
+  Assistant.booting = false;
+  Assistant.sleeping = false;
+  Assistant.on = true;
+  Voice.wanted = true;
+  Voice.paused = false;
+  beginVoiceRec();
+  updateProfesorUI();
+  speak(t("assistantOn"), null, true);
 }
 
 function startAssistantFromUser() {
   dismissWelcome();
+  if (Assistant.sleeping) {
+    wakeAssistant();
+    return;
+  }
   Assistant.on = true;
+  Assistant.sleeping = false;
   if (Voice.wanted || Assistant.booting) return;
   Assistant.booting = true;
   Assistant.welcomed = true;
@@ -1139,12 +1197,17 @@ function startAssistantFromUser() {
   Voice.paused = false;
   speak(t("profesorHello"), () => {
     Assistant.booting = false;
+    if (Assistant.sleeping) {
+      if (Voice.wanted) beginVoiceRec();
+      return;
+    }
     startProfesor({ silent: true });
   }, true);
 }
 
 function toggleProfesor() {
-  if (Voice.wanted) stopAssistant();
+  if (Assistant.sleeping) startAssistantFromUser();
+  else if (Voice.wanted) stopAssistant();
   else startAssistantFromUser();
 }
 
@@ -1199,13 +1262,17 @@ function handleVoiceCommand(raw) {
   const norm = hit.norm || normalizeVoice(heard);
   if (!norm || norm.length < 2) return;
 
+  const intent = hit.intent;
+  if (Assistant.sleeping && intent !== "on" && intent !== "help" && intent !== "off") {
+    return;
+  }
+
   const status = document.getElementById("profesor-status");
   if (status) status.textContent = t("profesorHeard", heard);
 
-  const intent = hit.intent;
   if (intent && !acceptIntent(intent)) return;
 
-  if (intent === "help") { speak(t("profesorHelp")); return; }
+  if (intent === "help") { speak(t("profesorHelp"), null, Assistant.sleeping); return; }
   if (intent === "off") { stopAssistant(); return; }
   if (intent === "on") { startAssistantFromUser(); return; }
   if (intent === "autism") { startAutismSession(); return; }
@@ -2916,7 +2983,7 @@ document.getElementById("btn-clear").addEventListener("click", () => {
 /* ---------- 14. Registro del Service Worker (instalable / offline) ---------- */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("service-worker.js?v=25").then((reg) => {
+    navigator.serviceWorker.register("service-worker.js?v=26").then((reg) => {
       reg.update().catch(() => {});
       if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
     }).catch(() => {});
@@ -3105,7 +3172,7 @@ document.getElementById("btn-back")?.addEventListener("click", () => {
   }
   activateService("learn");
 });
-document.getElementById("btn-what-now")?.addEventListener("click", () => speak(t("profesorHelp")));
+document.getElementById("btn-what-now")?.addEventListener("click", () => speak(t("profesorHelp"), null, Assistant.sleeping));
 document.getElementById("btn-footer-repeat")?.addEventListener("click", () => {
   document.getElementById("btn-repeat-audio")?.click();
 });
