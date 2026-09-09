@@ -599,7 +599,7 @@ let speakBusy = false;
 let lastSpokenNorm = "";
 let lastSpokenTs = 0;
 let lastSpeakEndTs = 0;
-const Assistant = { on: true, welcomed: false, autoplaySpoken: false, booting: false, sleeping: false };
+const Assistant = { on: true, welcomed: false, autoplaySpoken: false, booting: false, sleeping: false, started: false };
 
 function pickSpeechVoice() {
   if (!("speechSynthesis" in window)) return null;
@@ -638,7 +638,9 @@ function speak(text, onEnd, force) {
   }
   speakBusy = true;
   resumeSpeechIfStuck();
-  window.speechSynthesis.cancel();
+  if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+    window.speechSynthesis.cancel();
+  }
   const u = new SpeechSynthesisUtterance(text);
   u.lang = "es-PE";
   u.rate = PREFS.calmMode ? 0.78 : (LANG === "qu" ? 0.88 : 0.95);
@@ -658,12 +660,6 @@ function speak(text, onEnd, force) {
   u.onend = done;
   u.onerror = done;
   window.speechSynthesis.speak(u);
-  setTimeout(() => {
-    resumeSpeechIfStuck();
-    if (speakBusy && !window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
-      try { window.speechSynthesis.speak(u); } catch (e) { /* segundo intento */ }
-    }
-  }, 280);
 }
 
 function shouldAnimate() {
@@ -1222,6 +1218,12 @@ function isWelcomeOpen() {
 }
 
 function startAppFromWelcome() {
+  if (Assistant.started) {
+    dismissWelcome();
+    return;
+  }
+  Assistant.started = true;
+  window.__ynStarting = true;
   dismissWelcome();
   Assistant.booting = false;
   Assistant.sleeping = false;
@@ -1233,13 +1235,21 @@ function startAppFromWelcome() {
   beginVoiceRec();
   updateProfesorUI();
   setPlayMode("learn");
-  speak(t("appReady"), null, true);
   if (!scanning) startScan().catch(() => {});
 }
 
+window.bootYachayApp = function bootYachayApp() {
+  startAppFromWelcome();
+};
+
+if (window.__ynStarting) {
+  try { startAppFromWelcome(); } catch (e) { /* el HTML ya cerró la bienvenida */ }
+}
+
 function startAssistantFromUser() {
-  if (isWelcomeOpen()) {
-    startAppFromWelcome();
+  if (isWelcomeOpen() || !Assistant.started) {
+    if (typeof bootYachay === "function") bootYachay();
+    else startAppFromWelcome();
     return;
   }
   dismissWelcome();
@@ -1341,7 +1351,7 @@ function handleVoiceCommand(raw) {
   if (intent === "help") { speak(t("profesorHelp"), null, Assistant.sleeping); return; }
   if (intent === "off") { stopAssistant(); return; }
   if (intent === "on") {
-    if (welcomeWasOpen) startAppFromWelcome();
+    if (typeof bootYachay === "function") bootYachay();
     else startAssistantFromUser();
     return;
   }
@@ -1421,7 +1431,8 @@ function applyI18n() {
   document.documentElement.lang = LANG === "qu" ? "qu" : "es";
   const langLab = document.getElementById("lang-toggle-label");
   if (langLab) langLab.textContent = LANG === "qu" ? t("langRunasimi") : t("langCastellano");
-  document.getElementById("scan-status").textContent = scanning ? t("cameraOn") : t("cameraOff");
+  const scanStatus = document.getElementById("scan-status");
+  if (scanStatus) scanStatus.textContent = scanning ? t("cameraOn") : t("cameraOff");
   updateSessionUI();
   renderKitChips();
   syncPlayModeUI();
@@ -3057,7 +3068,7 @@ document.getElementById("btn-clear").addEventListener("click", () => {
 /* ---------- 14. Registro del Service Worker (instalable / offline) ---------- */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("service-worker.js?v=27").then((reg) => {
+    navigator.serviceWorker.register("service-worker.js?v=28").then((reg) => {
       reg.update().catch(() => {});
       if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
     }).catch(() => {});
@@ -3260,12 +3271,14 @@ document.getElementById("btn-listen-again")?.addEventListener("click", () => {
 document.getElementById("btn-read-braille")?.addEventListener("click", () => {
   if (lastExplored && typeof brailleSpoken === "function") speak(brailleSpoken(lastExplored));
 });
-document.getElementById("btn-welcome-start")?.addEventListener("click", () => startAssistantFromUser());
-document.addEventListener("pointerdown", () => {
-  if (isWelcomeOpen()) startAssistantFromUser();
-}, { once: true });
+document.getElementById("btn-welcome-start")?.addEventListener("click", (ev) => {
+  if (typeof bootYachay === "function") bootYachay(ev);
+  else startAssistantFromUser();
+});
+document.getElementById("welcome-gate")?.addEventListener("click", (ev) => {
+  if (typeof bootYachay === "function") bootYachay(ev);
+});
 window.addEventListener("load", () => {
   listenAtBoot();
   speakWelcomeOnLoad();
-  setTimeout(speakWelcomeOnLoad, 500);
 });

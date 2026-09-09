@@ -8,26 +8,35 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="styles.css?v=27">
+<link rel="stylesheet" href="styles.css?v=28">
 <script>
-(function () {
-  if (sessionStorage.getItem("yn_sw_flush")) return;
-  if (!("serviceWorker" in navigator) || !window.caches) return;
-  sessionStorage.setItem("yn_sw_flush", "1");
-  Promise.all([
-    navigator.serviceWorker.getRegistrations().then(function (rs) {
-      return Promise.all(rs.map(function (r) { return r.unregister(); }));
-    }),
-    caches.keys().then(function (keys) {
-      return Promise.all(keys.map(function (k) { return caches.delete(k); }));
-    })
-  ]).then(function () { location.reload(); });
-})();
+function bootYachay(ev) {
+  if (window.__ynStarting) return;
+  window.__ynStarting = true;
+  if (ev && ev.preventDefault) ev.preventDefault();
+  var gate = document.getElementById("welcome-gate");
+  if (gate) gate.hidden = true;
+  document.body.classList.remove("is-welcome");
+  try {
+    if (window.speechSynthesis) {
+      var u = new SpeechSynthesisUtterance(
+        "Hola, soy Yachay Ñan 3D. Di explorar, escribir o dictado."
+      );
+      u.lang = "es-PE";
+      u.rate = 0.95;
+      if (speechSynthesis.speaking || speechSynthesis.pending) speechSynthesis.cancel();
+      speechSynthesis.speak(u);
+    }
+  } catch (e) {}
+  if (typeof window.bootYachayApp === "function") {
+    try { window.bootYachayApp(); } catch (e2) {}
+  }
+}
 </script>
 </head>
 <body class="kid-ui yn-ui is-welcome home-locked" data-tab="estudiante">
 
-<div id="welcome-gate" class="welcome-gate">
+<div id="welcome-gate" class="welcome-gate" onclick="bootYachay(event)">
   <button type="button" id="btn-welcome-start" class="welcome-start">
     <span class="welcome-mark" aria-hidden="true">YÑ</span>
     <strong data-i18n="welcomeTitle">Hola, soy Yachay Ñan 3D</strong>
@@ -529,6 +538,6 @@
 <script src="lib/braille.js"></script>
 <script src="lib/ui-icons.js"></script>
 <script src="lib/gestures.js"></script>
-<script src="app.js?v=27"></script>
+<script src="app.js?v=28"></script>
 </body>
 </html>
