@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yachay Ñan 3D</title>
+<style>
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center;
+    font-family: system-ui, sans-serif; background: #1b2a4a; color: #fff; text-align: center; }
+  strong { display: block; font-size: 28px; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+  <p><strong>Yachay Ñan 3D</strong>Actualizando la interfaz…</p>
+  <script>
+    Promise.all([
+      navigator.serviceWorker ? navigator.serviceWorker.getRegistrations().then(function (rs) {
+        return Promise.all(rs.map(function (r) { return r.unregister(); }));
+      }) : Promise.resolve(),
+      window.caches ? caches.keys().then(function (keys) {
+        return Promise.all(keys.map(function (k) { return caches.delete(k); }));
+      }) : Promise.resolve()
+    ]).then(function () {
+      location.replace("./?fresh=1");
+    }).catch(function () {
+      location.replace("./?fresh=1");
+    });
+  </script>
+</body>
+</html>

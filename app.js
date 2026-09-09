@@ -2916,7 +2916,7 @@ document.getElementById("btn-clear").addEventListener("click", () => {
 /* ---------- 14. Registro del Service Worker (instalable / offline) ---------- */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("service-worker.js?v=24").then((reg) => {
+    navigator.serviceWorker.register("service-worker.js?v=25").then((reg) => {
       reg.update().catch(() => {});
       if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
     }).catch(() => {});
