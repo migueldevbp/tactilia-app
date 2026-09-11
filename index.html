@@ -6,10 +6,30 @@
 <title>Yachay Ñan 3D — Kit educativo inclusivo con IA y RA</title>
 <meta name="theme-color" content="#1b2a4a" id="meta-theme">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="styles.css?v=31">
+<link rel="icon" href="icons/icon-192.png?v=32">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=32">
+<link rel="stylesheet" href="styles.css?v=32">
 <script>
+(function () {
+  var V = "32";
+  if (/[?&]v=32(?:&|$)/.test(location.search)) {
+    try { localStorage.setItem("yn_cache", V); } catch (e0) {}
+    return;
+  }
+  try { if (localStorage.getItem("yn_cache") === V) return; } catch (e) {}
+  try { localStorage.setItem("yn_cache", V); } catch (e2) {}
+  var go = function () {
+    location.replace("./?v=" + V);
+  };
+  Promise.all([
+    navigator.serviceWorker ? navigator.serviceWorker.getRegistrations().then(function (rs) {
+      return Promise.all(rs.map(function (r) { return r.unregister(); }));
+    }) : Promise.resolve(),
+    window.caches ? caches.keys().then(function (keys) {
+      return Promise.all(keys.map(function (k) { return caches.delete(k); }));
+    }) : Promise.resolve()
+  ]).then(go, go);
+})();
 function bootYachay(ev) {
   if (ev && ev.preventDefault) ev.preventDefault();
   var gate = document.getElementById("welcome-gate");
@@ -26,11 +46,20 @@ function bootYachay(ev) {
 <body class="kid-ui yn-ui is-welcome home-locked" data-tab="estudiante">
 
 <div id="welcome-gate" class="welcome-gate" onclick="bootYachay(event)">
-  <button type="button" id="btn-welcome-start" class="welcome-start">
-    <img class="welcome-logo" src="icons/logo-yachay-nan.png" alt="Yachay Ñan 3D" width="148" height="148">
-    <strong data-i18n="welcomeTitle">Hola, soy Yachay Ñan 3D</strong>
-    <span data-i18n="welcomeTap">Toca o di iniciar.</span>
-  </button>
+  <div class="welcome-stage">
+    <span class="welcome-float f-a" aria-hidden="true">A</span>
+    <span class="welcome-float f-b" aria-hidden="true">B</span>
+    <span class="welcome-float f-c" aria-hidden="true">C</span>
+    <span class="welcome-float f-1" aria-hidden="true">1</span>
+    <span class="welcome-float f-2" aria-hidden="true">2</span>
+    <span class="welcome-float f-n" aria-hidden="true">Ñ</span>
+    <span class="welcome-float f-tri" aria-hidden="true">▲</span>
+    <button type="button" id="btn-welcome-start" class="welcome-start">
+      <img class="welcome-logo" src="icons/logo-yachay-nan.png?v=32" alt="Yachay Ñan 3D" width="188" height="188">
+      <strong data-i18n="welcomeTitle">Hola, soy Yachay Ñan 3D</strong>
+      <span data-i18n="welcomeTap">Toca o di iniciar.</span>
+    </button>
+  </div>
 </div>
 
 <div class="peru-band" aria-hidden="true"></div>
@@ -62,7 +91,7 @@ function bootYachay(ev) {
       <button type="button" id="btn-back" class="yn-icon-btn" aria-label="Volver">
         <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M15 6 L9 12 L15 18"/></svg>
       </button>
-      <img class="brand-logo" src="icons/logo-yachay-nan.png" alt="Yachay Ñan 3D" width="40" height="40">
+      <img class="brand-logo" src="icons/logo-yachay-nan.png?v=32" alt="Yachay Ñan 3D" width="52" height="52">
       <img class="brand-chakana" data-decor="chakana" alt="" hidden>
       <div class="brand-text">
         <h1>Yachay Ñan 3D</h1>
@@ -379,7 +408,7 @@ function bootYachay(ev) {
   <!-- VISTA ACERCA DE -->
   <section id="view-acerca" class="view" role="tabpanel" aria-labelledby="tab-acerca">
     <div class="card">
-      <img class="about-logo" src="icons/logo-yachay-nan.png" alt="Yachay Ñan 3D">
+      <img class="about-logo" src="icons/logo-yachay-nan.png?v=32" alt="Yachay Ñan 3D">
       <h2>Yachay Ñan 3D</h2>
       <p><em>Yachay Ñan</em> significa, en quechua, «camino del aprendizaje». Es un kit 3D + QR + voz para leer y escribir con las manos, en homenaje a las comunidades quechuahablantes de Pasco y de otras regiones andinas.</p>
       <p>Prototipo para la <strong>Hackathon en Tecnologías Digitales 2026 (Minedu) — Categoría A</strong>: integrar tecnologías emergentes para la atención de estudiantes de Educación Básica Especial.</p>
@@ -529,6 +558,6 @@ function bootYachay(ev) {
 <script src="lib/braille.js"></script>
 <script src="lib/ui-icons.js"></script>
 <script src="lib/gestures.js"></script>
-<script src="app.js?v=31"></script>
+<script src="app.js?v=32"></script>
 </body>
 </html>

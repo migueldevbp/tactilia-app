@@ -3,16 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Yachay Ñan 3D</title>
+<meta http-equiv="Cache-Control" content="no-store">
+<title>Actualizar Yachay Ñan 3D</title>
 <style>
   body { margin: 0; min-height: 100vh; display: grid; place-items: center;
-    font-family: system-ui, sans-serif; background: #1b2a4a; color: #fff; text-align: center; }
-  strong { display: block; font-size: 28px; margin-bottom: 8px; }
+    font-family: system-ui, sans-serif; background: #1b2a4a; color: #fff; text-align: center;
+    padding: 24px; }
+  img { width: 180px; height: 180px; border-radius: 50%; background: #071428;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.35); margin-bottom: 16px; }
+  strong { display: block; font-size: 26px; margin-bottom: 8px; }
+  p { margin: 0; opacity: 0.9; }
 </style>
 </head>
 <body>
-  <p><strong>Yachay Ñan 3D</strong>Actualizando la interfaz…</p>
+  <div>
+    <img src="icons/logo-yachay-nan.png?v=32" alt="Yachay Ñan 3D">
+    <strong>Yachay Ñan 3D</strong>
+    <p>Actualizando la interfaz…</p>
+  </div>
   <script>
+    try { localStorage.setItem("yn_cache", "32"); } catch (e) {}
     Promise.all([
       navigator.serviceWorker ? navigator.serviceWorker.getRegistrations().then(function (rs) {
         return Promise.all(rs.map(function (r) { return r.unregister(); }));
@@ -21,9 +31,9 @@
         return Promise.all(keys.map(function (k) { return caches.delete(k); }));
       }) : Promise.resolve()
     ]).then(function () {
-      location.replace("./?fresh=1");
+      location.replace("./?v=32");
     }).catch(function () {
-      location.replace("./?fresh=1");
+      location.replace("./?v=32");
     });
   </script>
 </body>
